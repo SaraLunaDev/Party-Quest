@@ -1,0 +1,181 @@
+[gd_scene load_steps=8 format=3 uid="uid://djruk5peqqucq"]
+
+[ext_resource type="Script" uid="uid://bwpixmepy22dx" path="res://Scripts/Tabblero/tool_set_casillas.gd" id="1_8wd55"]
+[ext_resource type="PackedScene" uid="uid://dofhnfr83kg16" path="res://Scenes/Tablero/casilla.tscn" id="2_0xlk7"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0xlk7"]
+albedo_color = Color(0.180005, 0.180005, 0.180005, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_y80hf"]
+lightmap_size_hint = Vector2i(204, 108)
+material = SubResource("StandardMaterial3D_0xlk7")
+size = Vector3(40, 0.25, 40)
+
+[sub_resource type="Curve3D" id="Curve3D_f2amj"]
+closed = true
+_data = {
+"points": PackedVector3Array(4, 0, 4, -4, 0, -4, 4, 0, -8, -1, 0, -4, 1, 0, 4, -7, 0, -7, -1, 0, -3, 1, 0, 3, -1, 0, -4, 0, 0, -6, 0, 0, 6, -7, 0, 3, -3, 0, 3, 3, 0, -3, 6, 0, 7),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0)
+}
+point_count = 5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mdxdp"]
+albedo_color = Color(0.209322, 0.473466, 0.698275, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_gd3qw"]
+material = SubResource("StandardMaterial3D_mdxdp")
+top_radius = 0.475
+height = 0.1
+radial_segments = 24
+
+[node name="tablero" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, 0)
+mesh = SubResource("BoxMesh_y80hf")
+
+[node name="Path3D" type="Path3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+curve = SubResource("Curve3D_f2amj")
+script = ExtResource("1_8wd55")
+num_casillas = 20
+casilla_escena = ExtResource("2_0xlk7")
+
+[node name="PF3D_Casilla_0" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 4, 0, -8)
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_0" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_1" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(0.374528, 0, 0.927216, 0, 1, 0, -0.927216, 0, 0.374528, 1.18249, 0, -9.83288)
+progress = 3.38385
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_1" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_2" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(0.0390417, 0, 0.999238, 0, 1, 0, -0.999238, 0, 0.0390417, -2.10998, 0, -10.5393)
+progress = 6.7677
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_2" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_3" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(-0.431912, 0, 0.901915, 0, 1, 0, -0.901915, 0, -0.431912, -5.41207, 0, -9.95988)
+progress = 10.1516
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_3" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_4" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(-0.989498, 0, -0.144545, 0, 1, 0, 0.144545, 0, -0.989498, -7.05777, 0, -7.29051)
+progress = 13.5354
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_4" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_5" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(-0.0427349, 0, -0.999086, 0, 1, 0, 0.999086, 0, -0.0427349, -4.91553, 0, -5.08353)
+progress = 16.9193
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_5" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_6" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(-0.596892, 0, -0.802322, 0, 1, 0, 0.802322, 0, -0.596892, -1.59948, 0, -4.90482)
+progress = 20.3031
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_6" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_7" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(-0.406633, 0, 0.913592, 0, 1, 0, -0.913592, 0, -0.406633, -1.97642, 0, -2.24309)
+progress = 23.687
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_7" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_8" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(-0.547289, 0, 0.836943, 0, 1, 0, -0.836943, 0, -0.547289, -5.07958, 0, -0.91154)
+progress = 27.0708
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_8" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_9" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(-0.982613, 0, 0.185664, 0, 1, 0, -0.185664, 0, -0.982613, -6.89705, 0, 1.82523)
+progress = 30.4547
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_9" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_10" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(-0.893636, 0, -0.448792, 0, 1, 0, 0.448792, 0, -0.893636, -6.51109, 0, 5.12751)
+progress = 33.8385
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_10" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_11" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(-0.480938, 0, -0.876755, 0, 1, 0, 0.876755, 0, -0.480938, -4.13355, 0, 7.46228)
+progress = 37.2224
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_11" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_12" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(-0.15108, 0, -0.988522, 0, 1, 0, 0.988522, 0, -0.15108, -0.931491, 0, 8.50307)
+progress = 40.6062
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_12" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_13" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(0.143639, 0, -0.98963, 0, 1, 0, 0.98963, 0, 0.143639, 2.44026, 0, 8.52608)
+progress = 43.9901
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_13" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_14" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(0.598074, 0, -0.801441, 0, 1, 0, 0.801441, 0, 0.598074, 5.58159, 0, 7.36021)
+progress = 47.3739
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_14" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_15" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(0.959649, 0, -0.2812, 0, 1, 0, 0.2812, 0, 0.959649, 7.364, 0, 4.55264)
+progress = 50.7578
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_15" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_16" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(0.99937, 0, 0.0354788, 0, 1, 0, -0.0354788, 0, 0.99937, 7.73602, 0, 1.2035)
+progress = 54.1416
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_16" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_17" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(0.965505, 0, 0.260385, 0, 1, 0, -0.260385, 0, 0.965505, 7.22376, 0, -2.13404)
+progress = 57.5255
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_17" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_18" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(0.881483, 0, 0.472216, 0, 1, 0, -0.472216, 0, 0.881483, 5.98732, 0, -5.27612)
+progress = 60.9093
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_18" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
+
+[node name="PF3D_Casilla_19" type="PathFollow3D" parent="Path3D"]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 4, 0, -8)
+progress = 64.2932
+
+[node name="casilla" type="MeshInstance3D" parent="Path3D/PF3D_Casilla_19" instance=ExtResource("2_0xlk7")]
+mesh = SubResource("CylinderMesh_gd3qw")
