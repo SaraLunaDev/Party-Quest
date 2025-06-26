@@ -110,6 +110,7 @@ func _cambiar_tipo_casillas():
 	var total_minijuegos = max(1, int(num_casillas * porcentaje_minijuegos / 100))
 	var casillas_minijuego = []
 	
+	# Bucle para Sustituir Casillas Azules y Rojas por Minijuegos
 	var espaciado = float(num_casillas) / float(total_minijuegos + 1)
 	for i in range(total_minijuegos):
 		var pos_ideal = int((i + 1) * espaciado)
