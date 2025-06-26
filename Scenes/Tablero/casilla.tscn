@@ -1,4 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://dofhnfr83kg16"]
+[gd_scene load_steps=6 format=3 uid="uid://dofhnfr83kg16"]
+
+[ext_resource type="Material" uid="uid://2gip4h3mnccq" path="res://Materials/Tablero/Casillas/normal.tres" id="1_6b1di"]
+[ext_resource type="Script" uid="uid://cg8asbjn6f8h" path="res://Scripts/Tablero/casilla.gd" id="1_pgg6m"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mdxdp"]
 albedo_color = Color(0.209322, 0.473466, 0.698275, 1)
@@ -7,7 +10,19 @@ albedo_color = Color(0.209322, 0.473466, 0.698275, 1)
 material = SubResource("StandardMaterial3D_mdxdp")
 top_radius = 0.475
 height = 0.1
-radial_segments = 24
+radial_segments = 32
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6b1di"]
+top_radius = 0.55
+bottom_radius = 0.6
+height = 0.075
+radial_segments = 32
 
 [node name="casilla" type="MeshInstance3D"]
 mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("1_6b1di")
+script = ExtResource("1_pgg6m")
+
+[node name="borde" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.025, 0)
+mesh = SubResource("CylinderMesh_6b1di")
