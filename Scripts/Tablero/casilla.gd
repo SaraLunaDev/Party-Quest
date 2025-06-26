@@ -6,8 +6,11 @@ enum tipo_casilla {
 	NORMAL,
 	ROJA,
 	MINIJUEGO,
-	ESTRELLA
+	CORONA
 }
+
+# Numero que Representa la casilla en el Tablero
+@export var index: int = -1
 
 # Selector de Tipo
 @export var tipo: tipo_casilla = tipo_casilla.NORMAL:
@@ -25,3 +28,11 @@ func actualizar_apariencia():
 	var mat: Material = load(ruta)
 	# Lo aplico en la parte Override Material
 	set_surface_override_material(0, mat)
+
+# Establece el idex de la Casilla en el Tablero
+func set_index(value: int):
+	index = value
+
+# Establece el tipo de la Casilla en el Tablero
+func set_tipo(value: tipo_casilla):
+	tipo = value

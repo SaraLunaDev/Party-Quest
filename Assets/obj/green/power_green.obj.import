@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://y4ti1sxl422w"
+path="res://.godot/imported/power_green.obj-f2388642426eee1b55516aecfcf846ca.mesh"
+
+[deps]
+
+files=["res://.godot/imported/power_green.obj-f2388642426eee1b55516aecfcf846ca.mesh"]
+
+source_file="res://Assets/obj/green/power_green.obj"
+dest_files=["res://.godot/imported/power_green.obj-f2388642426eee1b55516aecfcf846ca.mesh", "res://.godot/imported/power_green.obj-f2388642426eee1b55516aecfcf846ca.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dqrmesiiw5tif"
+path="res://.godot/imported/flag_B_red.obj-bc715cbfff131426abec895cf6700cff.mesh"
+
+[deps]
+
+files=["res://.godot/imported/flag_B_red.obj-bc715cbfff131426abec895cf6700cff.mesh"]
+
+source_file="res://Assets/obj/red/flag_B_red.obj"
+dest_files=["res://.godot/imported/flag_B_red.obj-bc715cbfff131426abec895cf6700cff.mesh", "res://.godot/imported/flag_B_red.obj-bc715cbfff131426abec895cf6700cff.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

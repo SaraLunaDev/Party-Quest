@@ -18,11 +18,12 @@ bottom_radius = 0.6
 height = 0.075
 radial_segments = 32
 
-[node name="casilla" type="MeshInstance3D"]
+[node name="Casilla" type="MeshInstance3D"]
 mesh = SubResource("CylinderMesh_gd3qw")
 surface_material_override/0 = ExtResource("1_6b1di")
 script = ExtResource("1_pgg6m")
+index = null
 
-[node name="borde" type="MeshInstance3D" parent="."]
+[node name="Borde" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.025, 0)
 mesh = SubResource("CylinderMesh_6b1di")

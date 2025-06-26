@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://xvtmcu3fi2f4"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_or7eb"]
+albedo_color = Color(0.948973, 0.614781, 0.887223, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_or7eb"]
+material = SubResource("StandardMaterial3D_or7eb")
+
+[node name="Jugador" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_or7eb")
