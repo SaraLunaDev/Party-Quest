@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://cns8ts8ffh68i"]
+
+[ext_resource type="Script" uid="uid://dtah23e0654qt" path="res://Scripts/Jugador/jugador.gd" id="1_ddy1a"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_ddy1a"]
+
+[node name="Jugador" type="Node3D"]
+script = ExtResource("1_ddy1a")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_ddy1a")

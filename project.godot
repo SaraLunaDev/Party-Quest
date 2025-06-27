@@ -11,5 +11,6 @@ config_version=5
 [application]
 
 config/name="Party Quest"
+run/main_scene="uid://cj3f644um1a0t"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"

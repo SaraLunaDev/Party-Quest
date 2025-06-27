@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://cj3f644um1a0t"]
+
+[ext_resource type="Script" uid="uid://cxqv6join2muh" path="res://Scripts/game_manager.gd" id="1_l0xde"]
+[ext_resource type="PackedScene" uid="uid://cns8ts8ffh68i" path="res://Scenes/Jugadores/jugador.tscn" id="2_hvtsq"]
+[ext_resource type="PackedScene" uid="uid://3og6nnjp33t1" path="res://Scenes/Tablero/tablero.tscn" id="2_kb54r"]
+
+[node name="Mapa_Prueba" type="Node"]
+
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("tablero")]
+script = ExtResource("1_l0xde")
+tablero = NodePath("../Tablero")
+jugador_escena = ExtResource("2_hvtsq")
+
+[node name="Tablero" parent="." instance=ExtResource("2_kb54r")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.707107, -0.183013, 0.683013, -6.38514e-08, 0.965926, 0.258819, -0.707107, -0.183013, 0.683013, 40, 16, 40)
+fov = 22.6
+size = 5.265
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 32.9384, 0)

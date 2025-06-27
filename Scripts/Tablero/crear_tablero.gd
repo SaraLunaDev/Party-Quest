@@ -27,7 +27,7 @@ func _limpiar_casillas():
 func _crear_casillas():
 	# Comprueba que haya una escena Casilla valida
 	if casilla_escena == null:
-		push_error("No hay una escena Casilla establecida")
+		push_error("😠 No hay una escena Casilla establecida")
 		return
 	
 	# Limpia las Casillas del Path3D
