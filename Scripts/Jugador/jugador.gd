@@ -26,20 +26,10 @@ func _ready() -> void:
 
 # Cambiar el color de su Mesh
 func actualizar_color():
-	print("🎨 Actualizando color de ", nombre, " a ", color)
 	if mesh_instance_3d:
-		print("✅ MeshInstance3D encontrado")
-		var material = mesh_instance_3d.get_surface_override_material(0)
-		if material:
-			print("✅ Material encontrado, aplicando color")
-			material.albedo_color = color
-		else:
-			print("❌ No hay material override, creando uno nuevo")
-			var nuevo_material = StandardMaterial3D.new()
-			nuevo_material.albedo_color = color
-			mesh_instance_3d.set_surface_override_material(0, nuevo_material)
-	else:
-		print("❌ MeshInstance3D no encontrado")
+		var nuevo_material = StandardMaterial3D.new()
+		nuevo_material.albedo_color = color
+		mesh_instance_3d.set_surface_override_material(0, nuevo_material)
 
 # Establecer Monedas
 func establecer_monedas(cantidad: int):

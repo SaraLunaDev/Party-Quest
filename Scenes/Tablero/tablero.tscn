@@ -297,7 +297,7 @@ mesh = SubResource("CylinderMesh_gd3qw")
 index = 28
 
 [node name="PF3D_Casilla_29" type="PathFollow3D" parent="."]
-transform = Transform3D(0.0879997, 0, 0.996121, 0, 1, 0, -0.996121, 0, 0.0879997, -8.6701, -0.185, 15.8076)
+transform = Transform3D(0.0879996, 0, 0.996119, 0, 1, 0, -0.996119, 0, 0.0879996, -8.6701, -0.185, 15.8076)
 progress = 62.8908
 
 [node name="Casilla" parent="PF3D_Casilla_29" instance=ExtResource("2_0xlk7")]
@@ -391,7 +391,7 @@ index = 38
 tipo = 1
 
 [node name="PF3D_Casilla_39" type="PathFollow3D" parent="."]
-transform = Transform3D(0.997699, 0, -0.0677993, 0, 1, 0, 0.0677993, 0, 0.997699, -15.9493, -0.185, -1.52593)
+transform = Transform3D(0.997699, 0, -0.0677992, 0, 1, 0, 0.0677992, 0, 0.997699, -15.9493, -0.185, -1.52593)
 progress = 84.5772
 
 [node name="Casilla" parent="PF3D_Casilla_39" instance=ExtResource("2_0xlk7")]
