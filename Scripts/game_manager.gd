@@ -16,7 +16,8 @@ var rondas_completadas: int = 0
 var partida_activa: bool = false
 var esperando_dado: bool = false
 
-# Posicion de la Corona
+# Posicion de la Corona y Casillas
+var tipos_originnales_casillas: Array = []
 var posicion_corona: int = -1
 
 # Ejecutar cosas al inicio
@@ -41,29 +42,28 @@ func configurar_jugadores(datos_jugadores: Array):
 	
 	print("Jugadores configurados: ", jugadores.size())
 
-# Instancia los Jugadores en el la casilla 0 del Tablero
+# Instancia los Jugadores en el la posicion 0 del Tablero
 func instanciar_jugador_en_tablero(jugador: Node3D):
-	# Bucle para todos los hijos del Tablero
-	for i in tablero.get_child_count():
-		# Obtener el Hijo
-		var pf = tablero.get_child(i)
-		var casilla = pf.get_child(0)
-		# Comprobar que sea una Casilla
-		if pf is PathFollow3D and casilla.has_method("set_tipo"):
-			# TODO: El jugador no se añadira a la primera casilla
-			#		hasta que no empiece su turno. En su lugar, 
-			#		el turno de elegir el orden de jugadores se
-			#		hara en un lugar cercano a la primera casilla
-			#		y cuando el orden se establezca, tras usar
-			#		el primer dado del primer turno, entonces
-			#		se movera al jugador hacia esa casilla 0
-			#		y empezara su movimiento sobre el tablero.
-			#		Con el resto de primeros turnos igual, cada
-			#		jugador hara lo mismo cuando llegue su primer
-			#		turno.
-			# Se añade el jugador a esa casilla
-			casilla.add_child(jugador)
-			jugador.actualizar_color()
+	# Crea un PathFollow3D dentro del Tablero
+	var pf = PathFollow3D.new()
+	pf.name = "PF3D_" + jugador.nombre
+	tablero.add_child(pf)
+	# Añadir el Jugador al PathFollow3D
+	pf.add_child(jugador)
+	pf.progress_ratio = 0.0
+	# Guardar la referencia dentro del Jugador
+	jugador.pf = pf
+	# TODO: El jugador no se añadira a la primera casilla
+	#		hasta que no empiece su turno. En su lugar, 
+	#		el turno de elegir el orden de jugadores se
+	#		hara en un lugar cercano a la primera casilla
+	#		y cuando el orden se establezca, tras usar
+	#		el primer dado del primer turno, entonces
+	#		se movera al jugador hacia esa casilla 0
+	#		y empezara su movimiento sobre el tablero.
+	#		Con el resto de primeros turnos igual, cada
+	#		jugador hara lo mismo cuando llegue su primer
+	#		turno.
 
 # Inicia la Partida
 func iniciar_partida():
@@ -77,6 +77,8 @@ func iniciar_partida():
 	# TODO CAMARA: La Camara muestra a los Jugadores
 	for i in jugadores.size():
 		print("- ", jugadores[i].nombre, " (", jugadores[i].color, ")")
+	# Guardar los tipos de casilla originales para poder revertir cambios
+	guardar_tipos_originales()
 	# Funcion que muestra donde esta la corona
 	# TODO CAMARA: La Camara muestra la corona
 	determinar_posicion_corona()
@@ -91,13 +93,26 @@ func iniciar_partida():
 	print("🏃‍♂️ Partida iniciada! Primer turno: ", jugadores[0].nombre)
 	iniciar_turno()
 
-# Obtener la posicion de la Corona
+# Guardar los Tipos de casillas originales
+func guardar_tipos_originales():
+	tipos_originnales_casillas.clear()
+	for i in tablero.num_casillas:
+		var casilla = obtener_casilla_en_posicion(i)
+		if casilla:
+			tipos_originnales_casillas.append(casilla.tipo)
+
+# Establecer la posicion de la Corona Inicial
 func determinar_posicion_corona():
-	for i in tablero.get_child_count():
+	# Randomizar la posicion de la Corona
+	var rng = RandomNumberGenerator.new()
+	var casilla_corona = (rng.randi_range(0, tablero.num_casillas - 1))
+	# Bucle para buscar la Casilla en cuestion y cambiar su tipo
+	for i in tablero.num_casillas:
 		var pf = tablero.get_child(i)
 		if pf is PathFollow3D:
 			var casilla = pf.get_child(0)
-			if casilla.tipo == casilla.tipo_casilla.CORONA:
+			if casilla.index == casilla_corona:
+				casilla.set_tipo(casilla.tipo_casilla.CORONA)
 				posicion_corona = casilla.index
 				print("👑 La Corona esta en la casilla: ", posicion_corona)
 				break
@@ -176,21 +191,38 @@ func procesar_tirada_dado():
 	siguiente_turno()
 
 # Mover Jugador por el Tablero
-# TODO: Reemplazar logica de movimiento
 func mover_jugador(jugador: Node3D, espacios: int):
 	print("🏃‍♂️ Moviendo a ", jugador.nombre, " ", espacios, " espacios...")
-	# TODO: El jugador debe estar bajo un PathFollow3d y moverse por el path3d del trablero haciendo uso de el
-	#		por ahora se teletransporta entre casillas pero esto ha de cambiar por completo.
 	for i in espacios:
-		jugador.posicion_tablero = (jugador.posicion_tablero + 1) % tablero.get_child_count()
-		var nueva_casilla = tablero.get_child(jugador.posicion_tablero)
-		if nueva_casilla is PathFollow3D:
-			if jugador.get_parent():
-				jugador.get_parent().remove_child(jugador)
-			nueva_casilla.add_child(jugador)
-		await get_tree().create_timer(0.5).timeout
+		var nueva_posicion = (jugador.posicion_tablero + 1) % tablero.num_casillas
+		var es_vuelta_completa = nueva_posicion < jugador.posicion_tablero
+		jugador.posicion_tablero = (jugador.posicion_tablero + 1) % tablero.num_casillas
+		var progress_destino = float(jugador.posicion_tablero) / float(tablero.num_casillas)
+		# Soluciona el bug de dar una vuelta completa cuando pasa de la ultima a la primera casilla                               
+		if es_vuelta_completa:
+			# Primero completar el movimiento hasta el final
+			var tween = create_tween()
+			tween.tween_property(jugador.pf, "progress_ratio", 1.0, 0.5)
+			await tween.finished
+			# Luego saltar inmediatamente al inicio
+			jugador.pf.progress_ratio = 0.0
+			# Y continuar con el resto del movimiento si es necesario
+			if progress_destino > 0:
+				tween = create_tween()
+				tween.tween_property(jugador.pf, "progress_ratio", progress_destino, 0.5)
+				await tween.finished
+		else: 
+			# Movimiento fluido usando Tween
+			var tween = create_tween()
+			tween.tween_property(jugador.pf, "progress_ratio", progress_destino, 0.5)
+			await tween.finished
+			
+			if jugador.posicion_tablero == posicion_corona:
+				print("👑 ", jugador.nombre, " paso por la casilla de la corona")
+				await get_tree().create_timer(2.0).timeout
+				transferir_corona(jugador)
+				await get_tree().create_timer(2.0).timeout
 	print("🎯 ", jugador.nombre, " llego a la casilla ", jugador.posicion_tablero)
-	emit_signal("jugador_movido", jugador, jugador.posicion_tablero)
 
 # Obtener el tipo de Casilla en la que el Jugador ha caido
 func procesar_casilla(jugador: Node3D):
@@ -227,8 +259,9 @@ func transferir_corona(jugador_corona: Node3D):
 	# Cambiar la casilla actual de la corona a una de tipo Normal
 	var casilla_corona_actual = obtener_casilla_en_posicion(posicion_corona)
 	if casilla_corona_actual:
-		casilla_corona_actual.set_tipo(casilla_corona_actual.tipo_casilla.NORMAL)
-		print("🍃 La casilla ", posicion_corona, "ahora es NORMAL")
+		var tipo_original = tipos_originnales_casillas[posicion_corona]
+		casilla_corona_actual.set_tipo(tipo_original)
+		print("🍃 La casilla ", posicion_corona, " volvió a su tipo original: ", casilla_corona_actual.tipo_casilla.keys()[tipo_original])
 	# Reposicionar la Casilla de Corona a una nueva Casilla
 	reposicionar_corona()
 
@@ -236,8 +269,8 @@ func transferir_corona(jugador_corona: Node3D):
 func reposicionar_corona():
 	var casillas_disponibles = []
 	# Obtener cada casilla Roja o Normal
-	for i in tablero.get_child_count():
-		var pf = tablero.get_child(0)
+	for i in tablero.num_casillas:
+		var pf = tablero.get_child(i)
 		if pf is PathFollow3D:
 			var casilla = pf.get_child(0)
 			if casilla.tipo == casilla.tipo_casilla.ROJA or casilla.tipo == casilla.tipo_casilla.NORMAL:
@@ -255,7 +288,7 @@ func reposicionar_corona():
 
 # Metodo auxiliar para obbtener el tipo de casilla en una posicion dada
 func obtener_casilla_en_posicion(posicion: int):
-	if posicion < 0 or posicion >= tablero.get_child_count():
+	if posicion < 0 or posicion >= tablero.num_casillas:
 		return null
 	var pf = tablero.get_child(posicion)
 	if pf is PathFollow3D and pf.get_child_count() > 0:

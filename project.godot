@@ -14,3 +14,7 @@ config/name="Party Quest"
 run/main_scene="uid://cj3f644um1a0t"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+
+[editor]
+
+movie_writer/movie_file="C:/Users/black/Videos/Godot/debug.avi"

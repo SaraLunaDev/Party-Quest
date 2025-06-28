@@ -9,6 +9,8 @@ extends Path3D
 # Array de indices
 @export var indices_casillas: Array
 var rng = RandomNumberGenerator.new()
+# Rango de Casillas Rojas
+@export_range(0, 100, 1, "suffix:%") var porcentaje_rojas: int = 50
 # Rango de Casillas Multijugador
 @export_range(0, 100, 1, "suffix:%") var porcentaje_minijuegos: int = 10
 
@@ -62,68 +64,72 @@ func _crear_casillas():
 
 # Cambia el tipo de las Casillas existentes
 func _cambiar_tipo_casillas():
-	var rojas_colocadas = 0
-	var rojas_seguidas = 0
-	var total_rojas = int(num_casillas / 2)
+	var total_rojas = int(num_casillas * porcentaje_rojas / 100.0)
+	var indices = range(num_casillas)
+	indices.shuffle()
 	
-	# Bucle que no para hasta tener el mismo numero de casillas Rojas que Normales
-	while rojas_colocadas != total_rojas:
-		rojas_seguidas = 0
-		rojas_colocadas = 0
-		
-		# Bucle para leer todas las Casillas
-		for pf in get_children():
-			if pf is PathFollow3D:
-				var casilla = pf.get_child(0)
-				
-				# Limitar el numero de Rojas
-				if rojas_colocadas >= total_rojas:
-					casilla.set_tipo(casilla.tipo_casilla.NORMAL)
-					rojas_seguidas = 0
-					continue
-				
-				# Limitar el numero de Rojas seguidas
-				if rojas_seguidas >= max_rojas_seguidas:
-					casilla.set_tipo(casilla.tipo_casilla.NORMAL)
-					rojas_seguidas = 0
-					continue
-				
-				var es_roja = randf() < 0.5
-				if es_roja:
-					casilla.set_tipo(casilla.tipo_casilla.ROJA)
-					rojas_colocadas += 1
-					rojas_seguidas += 1
+	# Primero todas las rojas
+	for i in range(total_rojas):
+		if i >= indices.size():
+			break
+		var idx = indices[i]
+		var pf = get_child(idx)
+		var casilla = pf.get_child(0)
+		casilla.set_tipo(casilla.tipo_casilla.ROJA)
+	
+	# Luego ajustar las seguidas
+	for i in range(num_casillas):
+		var pf = get_child(i)
+		var casilla = pf.get_child(0)
+		if casilla.tipo == casilla.tipo_casilla.ROJA:
+			# Si hay demasiadas seguidas
+			var seguidas = 1
+			for j in range(i-1, max(-1, i-max_rojas_seguidas-1), -1):
+				if get_child(j).get_child(0).tipo == casilla.tipo_casilla.ROJA:
+					seguidas += 1
 				else:
-					casilla.set_tipo(casilla.tipo_casilla.NORMAL)
-					rojas_seguidas = 0
+					break
+			if seguidas > max_rojas_seguidas:
+				# Cambiar excedentes a normales
+				for k in range(i-seguidas+max_rojas_seguidas, i):
+					get_child(k).get_child(0).set_tipo(casilla.tipo_casilla.NORMAL)
+
+	# El resto son normales por si acaso
+	for i in range(num_casillas):
+		var casilla = get_child(i).get_child(0)
+		if casilla.tipo != casilla.tipo_casilla.ROJA && casilla.tipo != casilla.tipo_casilla.MINIJUEGO:
+			casilla.set_tipo(casilla.tipo_casilla.NORMAL)
 	
-	# Randomizar la posicion de la Corona
-	var casilla_corona = (rng.randi_range(0, num_casillas - 1))
-	# Bucle para buscar la Casilla en cuestion y cambiar su tipo
-	for pf in get_children():
-		if pf is PathFollow3D:
-			var casilla = pf.get_child(0)
-			if casilla.index == casilla_corona:
-				casilla.set_tipo(casilla.tipo_casilla.CORONA)
-	
-	# Aplicar un 10% de Casillas Minijuego
+	# Aplicar el porcentaje de Minijuegos
 	var total_minijuegos = max(1, int(num_casillas * porcentaje_minijuegos / 100))
-	var casillas_minijuego = []
-	
-	# Bucle para Sustituir Casillas Azules y Rojas por Minijuegos
-	var espaciado = float(num_casillas) / float(total_minijuegos + 1)
+	var seccion_size = float(num_casillas) / float(total_minijuegos)
+	var posiciones_minijuegos = []
+
+	# Posiciones equiespaciadas con offset aleatorio
 	for i in range(total_minijuegos):
-		var pos_ideal = int((i + 1) * espaciado)
-		
-		for offset in range(0, 5):
-			var idx = pos_ideal + (offset if i%2==0 else -offset)
-			idx = clampi(idx, 0, num_casillas - 1)
-			
+		var pos_base = (i * seccion_size) + (seccion_size * 0.5)
+		var offset = rng.randf_range(-seccion_size * 0.4, seccion_size * 0.4)
+		var pos_final = int(clamp(pos_base + offset, 0, num_casillas - 1))
+		posiciones_minijuegos.append(pos_final)
+
+	# Ordenar y asegurar espaciado minimo
+	posiciones_minijuegos.sort()
+	for i in range(posiciones_minijuegos.size() - 1, 0, -1):
+		var espaciado_minimo = num_casillas / (total_minijuegos * 2)
+		if posiciones_minijuegos[i] - posiciones_minijuegos[i-1] < espaciado_minimo:
+			posiciones_minijuegos[i] = min(posiciones_minijuegos[i-1] + espaciado_minimo, num_casillas - 1)
+
+	# Aplicar los minijuegos verificando adyacentes
+	for pos in posiciones_minijuegos:
+		var intentos = 0
+		var idx = pos
+		var colocada = false
+		while intentos < 5 and not colocada:
 			var pf = get_child(idx)
 			var casilla = pf.get_child(0)
-			
 			if casilla.tipo != casilla.tipo_casilla.CORONA:
 				var valida = true
+				# Verificar adyacentes
 				for j in range(max(0, idx - 1), min(num_casillas - 1, idx + 1) + 1):
 					var c_ady = get_child(j).get_child(0)
 					if c_ady.tipo == c_ady.tipo_casilla.MINIJUEGO:
@@ -131,5 +137,11 @@ func _cambiar_tipo_casillas():
 						break
 				if valida:
 					casilla.set_tipo(casilla.tipo_casilla.MINIJUEGO)
-					casillas_minijuego.append(idx)
-					break
+					colocada = true
+				else:
+					# Buscar alternativa cercana
+					idx = (idx + rng.randi_range(1, 3)) % num_casillas
+					intentos += 1
+			else:
+				idx = (idx + 1) % num_casillas
+				intentos += 1

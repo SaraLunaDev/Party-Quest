@@ -1,11 +1,13 @@
 extends Node3D
 
+# Variables
 var nombre: String
 var color: Color
 var monedas: int = 10
-var posicion_tablero: int = 0
 var coronas: int = 0
+var posicion_tablero: int = 0
 @onready var mesh_instance_3d: MeshInstance3D = $MeshInstance3D
+var pf: PathFollow3D
 
 # Iniciar Jugador con nombre y color
 func _init(p_nombre: String = "", p_color: Color = Color.WHITE) -> void:
