@@ -1,13 +1,16 @@
 extends Node
+class_name GameManager
 
 # Señales
 signal turno_cambiado(jugador_actual)
 signal jugador_movido(jugador, casilla_index)
 signal partida_iniciada()
+signal partida_finalizada(ganador)
 
 # Referencias al Juego en si
 @export var tablero: Path3D
 @export var jugador_escena: PackedScene
+@export var camera_manager: CameraManager
 var jugadores: Array = []
 var jugador_actual_index: int = 0
 var rondas_completadas: int = 0
@@ -19,6 +22,12 @@ var esperando_dado: bool = false
 # Posicion de la Corona y Casillas
 var tipos_originnales_casillas: Array = []
 var posicion_corona: int = -1
+
+# Variables Fin de Partida
+enum TipoVictoria {RONDAS, CORONAS}
+@export var tipo_victoria: TipoVictoria = TipoVictoria.RONDAS
+@export var limite_rondas: int = 10
+@export var limite_coronas: int = 3
 
 # Ejecutar cosas al inicio
 func _ready() -> void:
@@ -53,6 +62,7 @@ func instanciar_jugador_en_tablero(jugador: Node3D):
 	pf.progress_ratio = 0.0
 	# Guardar la referencia dentro del Jugador
 	jugador.pf = pf
+
 	# TODO: El jugador no se añadira a la primera casilla
 	#		hasta que no empiece su turno. En su lugar, 
 	#		el turno de elegir el orden de jugadores se
@@ -74,16 +84,22 @@ func iniciar_partida():
 	print("🌸 Iniciando Partida")
 	print("🙍 Jugadores:")
 	# Mostrar los jugadores.
-	# TODO CAMARA: La Camara muestra a los Jugadores
+	if camera_manager:
+		camera_manager.establecer_vista_general()
+	
 	for i in jugadores.size():
 		print("- ", jugadores[i].nombre, " (", jugadores[i].color, ")")
 	# Guardar los tipos de casilla originales para poder revertir cambios
 	guardar_tipos_originales()
 	# Funcion que muestra donde esta la corona
-	# TODO CAMARA: La Camara muestra la corona
-	determinar_posicion_corona()
-	# Determina el orden en el Tablero
-	# TODO CAMARA: La Camara muestra a los Jugadores
+	reposicionar_corona()
+	if camera_manager and posicion_corona >= 0:
+		var casilla_corona = obtener_casilla_en_posicion(posicion_corona)
+		if casilla_corona:
+			var pf_corona = tablero.get_child(posicion_corona)
+			camera_manager.enfocar_evento(pf_corona.global_position, 2.0)
+			await get_tree().create_timer(2.0).timeout
+	
 	await determinar_orden_inicial()
 	# TODO CAMARA: La Camara muestra al primer Jugador
 	partida_activa = true
@@ -100,22 +116,6 @@ func guardar_tipos_originales():
 		var casilla = obtener_casilla_en_posicion(i)
 		if casilla:
 			tipos_originnales_casillas.append(casilla.tipo)
-
-# Establecer la posicion de la Corona Inicial
-func determinar_posicion_corona():
-	# Randomizar la posicion de la Corona
-	var rng = RandomNumberGenerator.new()
-	var casilla_corona = (rng.randi_range(0, tablero.num_casillas - 1))
-	# Bucle para buscar la Casilla en cuestion y cambiar su tipo
-	for i in tablero.num_casillas:
-		var pf = tablero.get_child(i)
-		if pf is PathFollow3D:
-			var casilla = pf.get_child(0)
-			if casilla.index == casilla_corona:
-				casilla.set_tipo(casilla.tipo_casilla.CORONA)
-				posicion_corona = casilla.index
-				print("👑 La Corona esta en la casilla: ", posicion_corona)
-				break
 
 # Determinar el orden inicial de Jugadores
 func determinar_orden_inicial():
@@ -211,7 +211,7 @@ func mover_jugador(jugador: Node3D, espacios: int):
 				tween = create_tween()
 				tween.tween_property(jugador.pf, "progress_ratio", progress_destino, 0.5)
 				await tween.finished
-		else: 
+		else:
 			# Movimiento fluido usando Tween
 			var tween = create_tween()
 			tween.tween_property(jugador.pf, "progress_ratio", progress_destino, 0.5)
@@ -223,6 +223,8 @@ func mover_jugador(jugador: Node3D, espacios: int):
 				transferir_corona(jugador)
 				await get_tree().create_timer(2.0).timeout
 	print("🎯 ", jugador.nombre, " llego a la casilla ", jugador.posicion_tablero)
+	# Emitimos la señal de que el jugador se ha movido
+	emit_signal("jugador_movido", jugador, jugador.posicion_tablero)
 
 # Obtener el tipo de Casilla en la que el Jugador ha caido
 func procesar_casilla(jugador: Node3D):
@@ -245,15 +247,7 @@ func procesar_casilla(jugador: Node3D):
 			print("👑 ", jugador.nombre, " llego a la casilla de la CORONA!")
 			transferir_corona(jugador)
 
-# TODO: La Corona no solo se podra obtener si el jugador cae en la casilla, si
-#		mientras el jugador se esta moviendo pasa por la casilla de estrella,
-#		debera pausar su movimiento, obtener la estrella, y seguir con el resto
-#		de movimiento que le quedase.
-# TODO: La casilla no siempre sera normal tras haber sido Corona, debera ser
-#		lo que en un inicio fue antes de que se posicionara la corona. Para
-#		esto hay que almacenar el tablero original sin corona, y cuando esta
-#		cambie de posicion, la casilla volvera a ser lo que fue.
-# Añadir la Corona al Jugador
+# Transfiere la Corona al Jugador que ha llegado a la casilla de la Corona
 func transferir_corona(jugador_corona: Node3D):
 	jugador_corona.establecer_corona(1)
 	# Cambiar la casilla actual de la corona a una de tipo Normal
@@ -275,17 +269,23 @@ func reposicionar_corona():
 			var casilla = pf.get_child(0)
 			if casilla.tipo == casilla.tipo_casilla.ROJA or casilla.tipo == casilla.tipo_casilla.NORMAL:
 				# Añadir la Casilla a un Array
-				casillas_disponibles.append({"index": casilla.index, "casilla": casilla})
-	# Se elige una casilla aleatoriamente
+				casillas_disponibles.append({"index": casilla.index, "casilla": casilla, "posicion": pf.global_position})
+	# Encontrar la casilla mas alejada fisicamente
 	if casillas_disponibles.size() > 0:
-		var casilla_elegida = casillas_disponibles[randi() % casillas_disponibles.size()]
-		# Se establece la nueva posicion de la Corona
-		casilla_elegida.casilla.set_tipo(casilla_elegida.casilla.tipo_casilla.CORONA)
-		posicion_corona = casilla_elegida.index
-		print("👑 La corona se reposiciono a la casilla ", posicion_corona)
+		var mejor_casilla = null
+		var max_distancia = -1
+		for casilla_info in casillas_disponibles:
+			var distancia = casilla_info.posicion.distance_to(tablero.get_child(posicion_corona).global_position)
+			if distancia > max_distancia:
+				max_distancia = distancia
+				mejor_casilla = casilla_info.casilla
+		if mejor_casilla:
+			mejor_casilla.set_tipo(mejor_casilla.tipo_casilla.CORONA)
+			posicion_corona = mejor_casilla.index
+			print("👑 La Corona se ha reposicionado en la casilla: ", posicion_corona)
 	else:
-		print("😭 No hay casillas disponibles para reposicionar la corona")
-
+		print("😢 No hay casillas disponibles para reposicionar la Corona")
+		
 # Metodo auxiliar para obbtener el tipo de casilla en una posicion dada
 func obtener_casilla_en_posicion(posicion: int):
 	if posicion < 0 or posicion >= tablero.num_casillas:
@@ -306,8 +306,71 @@ func siguiente_turno():
 		rondas_completadas += 1
 		print("🍃 Fin de ronda ", rondas_completadas)
 		motrar_estado_jugadores()
+		# Finalizar partida si las rondas llegan a las establecidas
+		if tipo_victoria == TipoVictoria.RONDAS and rondas_completadas >= limite_rondas:
+			finalizar_partida()
+			return
+	# Finalizar partida si las coronas llegan a las establecidas
+	if tipo_victoria == TipoVictoria.CORONAS:
+		for jugador in jugadores:
+			if jugador.coronas >= limite_coronas:
+				finalizar_partida()
+				return
 	# Inicia el siguiente turno
 	iniciar_turno()
+
+func finalizar_partida():
+	partida_activa = false
+	print("🏁 ¡FIN DE PARTIDA!")
+	var ganador = determinar_ganador()
+	mostrar_resultados_finales(ganador)
+	# Emitir señal de fin de partida
+	emit_signal("partida_finalizada", ganador)
+
+# Determina quien es el ganador
+func determinar_ganador():
+	var mejor_jugador = jugadores[0]
+	match tipo_victoria:
+		TipoVictoria.CORONAS:
+			# En modo coronas, ya sabemos que alguien alcanzo el límite
+			for jugador in jugadores:
+				if jugador.coronas >= limite_coronas:
+					return jugador
+
+		TipoVictoria.RONDAS:
+			# En modo rondas, gana quien tenga más coronas
+			for jugador in jugadores:
+				if jugador.coronas > mejor_jugador.coronas:
+					mejor_jugador = jugador
+				elif jugador.coronas == mejor_jugador.coronas:
+					# En caso de empate, gana quien tenga más monedas
+					if jugador.monedas > mejor_jugador.monedas:
+						mejor_jugador = jugador
+
+	return mejor_jugador
+
+# Muestra los resultados finales
+func mostrar_resultados_finales(ganador):
+	print("\n🏆 ¡¡¡ RESULTADOS FINALES !!!")
+	print("🥇 GANADOR: ", ganador.nombre)
+	print("👑 Coronas: ", ganador.coronas)
+	print("💰 Monedas: ", ganador.monedas)
+	print("\n📊 Clasificación final:")
+
+	# Ordenar jugadores por coronas y luego por monedas
+	var jugadores_ordenados = jugadores.duplicate()
+	jugadores_ordenados.sort_custom(func(a, b):
+		if a.coronas != b.coronas:
+			return a.coronas > b.coronas
+		else:
+			return a.monedas > b.monedas
+	)
+
+	for i in jugadores_ordenados.size():
+		var j = jugadores_ordenados[i]
+		var posicion = i + 1
+		var medal = "🥇" if posicion == 1 else "🥈" if posicion == 2 else "🥉" if posicion == 3 else "🏅"
+		print(medal, " ", posicion, ". ", j.nombre, " - ", j.coronas, "👑 ", j.monedas, "💰")
 
 # Mostrar estado de Jugadores
 # TODO: Por ahora es solo un log, pero despues de cada ronda habra un UI

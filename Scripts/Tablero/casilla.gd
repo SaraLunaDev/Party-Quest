@@ -2,12 +2,7 @@
 extends MeshInstance3D
 
 # Tipos de Casilla
-enum tipo_casilla {
-	NORMAL,
-	ROJA,
-	MINIJUEGO,
-	CORONA
-}
+enum tipo_casilla {NORMAL,ROJA,MINIJUEGO,CORONA}
 
 # Numero que Representa la casilla en el Tablero
 @export var index: int = -1

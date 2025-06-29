@@ -1,15 +1,25 @@
-[gd_scene load_steps=4 format=3 uid="uid://cj3f644um1a0t"]
+[gd_scene load_steps=5 format=3 uid="uid://cj3f644um1a0t"]
 
 [ext_resource type="Script" uid="uid://cxqv6join2muh" path="res://Scripts/game_manager.gd" id="1_l0xde"]
 [ext_resource type="PackedScene" uid="uid://cns8ts8ffh68i" path="res://Scenes/Jugadores/jugador.tscn" id="2_hvtsq"]
 [ext_resource type="PackedScene" uid="uid://3og6nnjp33t1" path="res://Scenes/Tablero/tablero.tscn" id="2_kb54r"]
+[ext_resource type="Script" uid="uid://drxcit0hvg1nc" path="res://Scripts/Camera/camera_manager.gd" id="3_hvtsq"]
 
 [node name="Mapa_Prueba" type="Node"]
 
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("tablero")]
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("tablero", "camera_manager")]
 script = ExtResource("1_l0xde")
 tablero = NodePath("../Tablero")
 jugador_escena = ExtResource("2_hvtsq")
+camera_manager = NodePath("../CameraManager")
+tipo_victoria = 1
+limite_coronas = 1
+
+[node name="CameraManager" type="Node" parent="." node_paths=PackedStringArray("camera", "tablero", "game_manager")]
+script = ExtResource("3_hvtsq")
+camera = NodePath("../Camera3D")
+tablero = NodePath("../Tablero")
+game_manager = NodePath("../GameManager")
 
 [node name="Tablero" parent="." instance=ExtResource("2_kb54r")]
 porcentaje_rojas = 50
@@ -215,7 +225,7 @@ progress = 106.264
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.707107, -0.183013, 0.683013, -6.38514e-08, 0.965926, 0.258819, -0.707107, -0.183013, 0.683013, 40, 16, 40)
-fov = 22.6
+fov = 50.0
 size = 5.265
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
