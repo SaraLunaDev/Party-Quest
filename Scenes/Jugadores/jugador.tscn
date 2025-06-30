@@ -1,12 +1,40 @@
-[gd_scene load_steps=3 format=3 uid="uid://cns8ts8ffh68i"]
+[gd_scene load_steps=7 format=3 uid="uid://cns8ts8ffh68i"]
 
 [ext_resource type="Script" uid="uid://dtah23e0654qt" path="res://Scripts/Jugador/jugador.gd" id="1_ddy1a"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ddy1a"]
+radius = 0.4
+height = 1.5
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_iybht"]
+radius = 0.105
+height = 0.48
+radial_segments = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ddy1a"]
+transparency = 1
+blend_mode = 1
+albedo_color = Color(0.760784, 1, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ddy1a"]
+size = Vector3(0.485, 0.585, 0.27)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iybht"]
+albedo_color = Color(0.489045, 0.320584, 0.157421, 1)
 
 [node name="Jugador" type="Node3D"]
 script = ExtResource("1_ddy1a")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.755951, 0)
 mesh = SubResource("CapsuleMesh_ddy1a")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.30557e-08, 1.195, -7.05939e-08, 0, -5.22351e-08, -1.615, -0.985, -5.22351e-08, 3.08576e-15, 9.35793e-06, 1.09719, -0.35826)
+mesh = SubResource("CapsuleMesh_iybht")
+surface_material_override/0 = SubResource("StandardMaterial3D_ddy1a")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.789925, 0.424125)
+mesh = SubResource("BoxMesh_ddy1a")
+surface_material_override/0 = SubResource("StandardMaterial3D_iybht")

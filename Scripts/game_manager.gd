@@ -81,27 +81,16 @@ func iniciar_partida():
 	if jugadores.size() < 2:
 		push_error("😭 Se necesitan al menos 2 jugadores para iniciar")
 		return
+	
 	print("🌸 Iniciando Partida")
 	print("🙍 Jugadores:")
-	# Mostrar los jugadores.
-	if camera_manager:
-		camera_manager.establecer_vista_general()
-	
 	for i in jugadores.size():
 		print("- ", jugadores[i].nombre, " (", jugadores[i].color, ")")
 	# Guardar los tipos de casilla originales para poder revertir cambios
 	guardar_tipos_originales()
 	# Funcion que muestra donde esta la corona
 	reposicionar_corona()
-	if camera_manager and posicion_corona >= 0:
-		var casilla_corona = obtener_casilla_en_posicion(posicion_corona)
-		if casilla_corona:
-			var pf_corona = tablero.get_child(posicion_corona)
-			camera_manager.enfocar_evento(pf_corona.global_position, 2.0)
-			await get_tree().create_timer(2.0).timeout
-	
 	await determinar_orden_inicial()
-	# TODO CAMARA: La Camara muestra al primer Jugador
 	partida_activa = true
 	jugador_actual_index = 0
 	emit_signal("partida_iniciada")
@@ -193,6 +182,9 @@ func procesar_tirada_dado():
 # Mover Jugador por el Tablero
 func mover_jugador(jugador: Node3D, espacios: int):
 	print("🏃‍♂️ Moviendo a ", jugador.nombre, " ", espacios, " espacios...")
+
+	var tween_secuencial = create_tween()
+
 	for i in espacios:
 		var nueva_posicion = (jugador.posicion_tablero + 1) % tablero.num_casillas
 		var es_vuelta_completa = nueva_posicion < jugador.posicion_tablero
@@ -200,28 +192,24 @@ func mover_jugador(jugador: Node3D, espacios: int):
 		var progress_destino = float(jugador.posicion_tablero) / float(tablero.num_casillas)
 		# Soluciona el bug de dar una vuelta completa cuando pasa de la ultima a la primera casilla                               
 		if es_vuelta_completa:
-			# Primero completar el movimiento hasta el final
-			var tween = create_tween()
-			tween.tween_property(jugador.pf, "progress_ratio", 1.0, 0.5)
-			await tween.finished
-			# Luego saltar inmediatamente al inicio
-			jugador.pf.progress_ratio = 0.0
-			# Y continuar con el resto del movimiento si es necesario
+			tween_secuencial.tween_property(jugador.pf, "progress_ratio", 1.0, 0.5)
+			tween_secuencial.tween_callback(func(): jugador.pf.progress_ratio = 0.0)
 			if progress_destino > 0:
-				tween = create_tween()
-				tween.tween_property(jugador.pf, "progress_ratio", progress_destino, 0.5)
-				await tween.finished
+				tween_secuencial.tween_property(jugador.pf, "progress_ratio", progress_destino, 0.5)
 		else:
-			# Movimiento fluido usando Tween
-			var tween = create_tween()
-			tween.tween_property(jugador.pf, "progress_ratio", progress_destino, 0.5)
-			await tween.finished
-			
-			if jugador.posicion_tablero == posicion_corona:
-				print("👑 ", jugador.nombre, " paso por la casilla de la corona")
-				await get_tree().create_timer(2.0).timeout
+			tween_secuencial.tween_property(jugador.pf, "progress_ratio", progress_destino, 0.5)
+		
+		if jugador.posicion_tablero == posicion_corona:
+			tween_secuencial.tween_interval(1.0)
+			tween_secuencial.tween_callback(func():
+				print("👑 ", jugador.nombre, " ha llegado a la casilla de la Corona!")
 				transferir_corona(jugador)
-				await get_tree().create_timer(2.0).timeout
+			)
+			tween_secuencial.tween_interval(1.0)
+	
+	# Esperar a que el tween se complete antes de continuar
+	await tween_secuencial.finished
+	
 	print("🎯 ", jugador.nombre, " llego a la casilla ", jugador.posicion_tablero)
 	# Emitimos la señal de que el jugador se ha movido
 	emit_signal("jugador_movido", jugador, jugador.posicion_tablero)

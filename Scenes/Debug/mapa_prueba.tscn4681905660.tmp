@@ -13,6 +13,7 @@ tablero = NodePath("../Tablero")
 jugador_escena = ExtResource("2_hvtsq")
 camera_manager = NodePath("../CameraManager")
 tipo_victoria = 1
+limite_rondas = null
 limite_coronas = 1
 
 [node name="CameraManager" type="Node" parent="." node_paths=PackedStringArray("camara", "game_manager")]

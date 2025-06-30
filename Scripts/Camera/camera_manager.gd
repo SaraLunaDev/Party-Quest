@@ -2,235 +2,129 @@ extends Node
 class_name CameraManager
 
 # Variables
-@export var camera: Camera3D
-@export var tablero: Path3D
+@export var camara: Camera3D
 @export var game_manager: GameManager
 
-# Seguimiento continuo del jugador
-var seguimiento_continuo: bool = false
-var tween_seguimiento: Tween = null
+# Control de seguimiento
+@export var jugador_actual_seguido: Node3D = null
+var pathfollow_camara: PathFollow3D = null
 
-# Control de actualizacion de posicion
-@export var frecuencia_actualizacion: float = 0.05
-var timer_actualizacion: float = 0.0
+# Offset para la camara
+@export var offset_posicion: Vector3 = Vector3(0, 7, 10)
+@export var offset_rotacion: Vector3 = Vector3(-30, 0, 0)
 
-# Estados de la camara
-enum EstadoCamara {
-	VISTA_GENERAL,
-	VISTA_JUGADOR,
-	VISTA_ESPECIAL,
-	RESULTADO_FINAL
-}
-
-var estado_actual: EstadoCamara = EstadoCamara.VISTA_GENERAL
-var jugador_objetivo: Node3D = null
-var posicion_objetivo: Vector3
-var rotacion_objetivo: Vector3
-
-# Cofiguracion de seguimiento
-@export var distancia_seguimiento: float = 8.0
-@export var altura_seguimiento: float = 5.0
-@export var velocidad_transicion: float = 2.0
-@export var velocidad_rotacion: float = 3.0
-
-# Configuracion de vista general
-@export var posicion_vista_general: Vector3 = Vector3(0, 20, 30)
-@export var rotacion_vista_general: Vector3 = Vector3(-40, 0, 0)
+# Sincronizacion de posicion
+var sincronizando_posicion: bool = false
 
 func _ready() -> void:
-	# Configurar la camara inicial
-	establecer_vista_general()
-
 	if game_manager:
 		game_manager.connect("turno_cambiado", _on_turno_cambiado)
-		game_manager.connect("jugador_movido", _on_jugador_movido)
 		game_manager.connect("partida_iniciada", _on_partida_iniciada)
 		game_manager.connect("partida_finalizada", _on_partida_finalizada)
 
-# Agregar la funcion _process para seguimiento en tiempo real
-func _process(delta: float) -> void:
-	if not seguimiento_continuo or not jugador_objetivo or not jugador_objetivo.pf:
+func _process(_delta: float) -> void:
+	if not sincronizando_posicion or not jugador_actual_seguido or not pathfollow_camara:
 		return
 	
-	# Control de frecuencia de actualizacion
-	timer_actualizacion += delta
-	if timer_actualizacion >= frecuencia_actualizacion:
-		timer_actualizacion = 0.0
-		actualizar_seguimiento_continuo()
+	# Sincronizar progress_ratio de la camara con el jugador actual
+	if jugador_actual_seguido.pf:
+		pathfollow_camara.progress_ratio = jugador_actual_seguido.pf.progress_ratio
 
-# Actualizar posicion de camara basada en la posicion actual del jugador
-func actualizar_seguimiento_continuo() -> void:
-	if not jugador_objetivo or not jugador_objetivo.pf:
-		return
-	
-	# Calcular nueva posicion basada en donde esta el jugador AHORA MISMO
-	var posicion_actual_jugador = jugador_objetivo.pf.global_position
-	var direccion_camara = Vector3.BACK * distancia_seguimiento
-	direccion_camara.y = altura_seguimiento
-	var nueva_posicion_objetivo = posicion_actual_jugador + direccion_camara
-	
-	# Solo actualizar si la posicion cambio significativamente
-	if posicion_objetivo.distance_to(nueva_posicion_objetivo) > 0.1:
-		posicion_objetivo = nueva_posicion_objetivo
-		rotacion_objetivo = Vector3(-30, 0, 0)
-		
-		# Transicion suave y rapida para seguimiento continuo
-		transicionar_camara_suave()
-
-# Transicion mas suave y rapida para seguimiento continuo
-func transicionar_camara_suave() -> void:
-	if not camera:
-		return
-	
-	# Cancelar tween anterior si existe
-	if tween_seguimiento:
-		tween_seguimiento.kill()
-	
-	# Crear nuevo tween mas rapido para seguimiento continuo
-	tween_seguimiento = create_tween()
-	tween_seguimiento.set_parallel(true)
-	
-	# Transiciones mas rapidas para seguimiento fluido
-	var duracion_seguimiento = 0.1 # Mas rapido que transicion normal
-	tween_seguimiento.tween_property(camera, "global_position", posicion_objetivo, duracion_seguimiento)
-	tween_seguimiento.tween_property(camera, "rotation_degrees", rotacion_objetivo, duracion_seguimiento)
-
-# Teleport instantaneo de la camara a una posicion
-func teleport_camara(nueva_posicion: Vector3, nueva_rotacion: Vector3) -> void:
-	print("📷 Camara: Teleport instantaneo a nueva posicion")
-	
-	# Detener cualquier tween activo
-	if tween_seguimiento:
-		tween_seguimiento.kill()
-		tween_seguimiento = null
-	
-	# Establecer posicion y rotacion INSTANTANEAMENTE
-	posicion_objetivo = nueva_posicion
-	rotacion_objetivo = nueva_rotacion
-	
-	# Aplicar directamente sin animacion
-	if camera:
-		camera.global_position = posicion_objetivo
-		camera.rotation_degrees = rotacion_objetivo
-
-# Teleport instantaneo hacia un jugador especifico
-func teleport_a_jugador(jugador: Node3D) -> void:
-	if not jugador or not jugador.pf:
-		return
-	
-	print("📷 Camara: Teleport instantaneo al jugador ", jugador.nombre)
-	estado_actual = EstadoCamara.VISTA_JUGADOR
-	jugador_objetivo = jugador
-	
-	# Calcular posicion del jugador
-	var posicion_jugador = jugador.pf.global_position
-	var direccion_camara = Vector3.BACK * distancia_seguimiento
-	direccion_camara.y = altura_seguimiento
-	var posicion_camara = posicion_jugador + direccion_camara
-	var rotacion_camara = Vector3(-30, 0, 0)
-	
-	# Teleport instantaneo
-	teleport_camara(posicion_camara, rotacion_camara)
-	
-	# Iniciar seguimiento continuo despues del teleport
-	seguimiento_continuo = true
-
-func establecer_vista_general() -> void:
-	print("📷 Camara: Vista general del tablero")
-	detener_seguimiento_continuo()
-	estado_actual = EstadoCamara.VISTA_GENERAL
-	posicion_objetivo = posicion_vista_general
-	rotacion_objetivo = rotacion_vista_general
-	transicionar_camara()
-
-# Modificar seguir_jugador para usar seguimiento continuo
+# Hacer que la camara siga a un jugador especifico
 func seguir_jugador(jugador: Node3D) -> void:
 	if not jugador or not jugador.pf:
+		print("😤 Jugador sin PathFollow3D valido")
 		return
-	print("📷 Camara: Siguiendo al jugador ", jugador.nombre)
-	estado_actual = EstadoCamara.VISTA_JUGADOR
 	
-	# Iniciar seguimiento continuo en lugar de posicion fija
-	iniciar_seguimiento_continuo(jugador)
+	print("📷 Camara: Siguiendo a ", jugador.nombre)
+	if jugador_actual_seguido and jugador_actual_seguido.pf:
+		# Desconectar la camara del PathFollow3D del jugador actual
+		desconectar_camara_jugador()
+	# Conectar la camara al PathFollow3D del jugador
+	conectar_camara_jugador(jugador)
+	# Establecer jugador actual seguido
+	jugador_actual_seguido = jugador
 
-# Iniciar seguimiento continuo del jugador
-func iniciar_seguimiento_continuo(jugador: Node3D) -> void:
+# Conectar la camara al PathFollow3D del jugador
+func conectar_camara_jugador(jugador: Node3D) -> void:
 	if not jugador or not jugador.pf:
 		return
 	
-	print("📷 Camara: Iniciando seguimiento continuo de ", jugador.nombre)
-	jugador_objetivo = jugador
-	seguimiento_continuo = true
-
-	# Calcular posicion inicial
-	calcular_posicion_seguimiento()
-	transicionar_camara()
-
-# Detener seguimiento continuo
-func detener_seguimiento_continuo() -> void:
-	print("📷 Camara: Deteniendo seguimiento continuo")
-	seguimiento_continuo = false
-	if tween_seguimiento:
-		tween_seguimiento.kill()
-		tween_seguimiento = null
-
-func calcular_posicion_seguimiento() -> void:
-	if not jugador_objetivo or not jugador_objetivo.pf:
+	print("🔌 Camara: Conectando a ", jugador.nombre)
+	# Limpiar PathFollow3D anterior si existe
+	if pathfollow_camara:
+		pathfollow_camara.queue_free()
+		pathfollow_camara = null
+	# Crear un nuevo PathFollow3D para la camara
+	pathfollow_camara = PathFollow3D.new()
+	pathfollow_camara.name = "PF3D_Camara_" + jugador.nombre
+	# Configurar para que no rote
+	pathfollow_camara.rotation_mode = PathFollow3D.ROTATION_NONE
+	# Obtener el tablero desde el jugador
+	var tablero = jugador.pf.get_parent()
+	tablero.add_child(pathfollow_camara)
+	# Sincronizar posicion con la del jugador
+	pathfollow_camara.progress_ratio = jugador.pf.progress_ratio
+	# Eliminar camara de su padre actual
+	if camara.get_parent():
+		camara.get_parent().remove_child(camara)
+	# Añadir camara al PathFollow3D del jugador
+	pathfollow_camara.add_child(camara)
+	# Ajustar posicion y rotacion de la camara
+	camara.position = offset_posicion
+	camara.rotation_degrees = offset_rotacion
+	# Iniciar sincronizazcion continua
+	sincronizando_posicion = true
+	
+# Deconectar la camara del PathFollow3D del jugador actual
+func desconectar_camara_jugador() -> void:
+	if not camara or not camara.get_parent():
 		return
 	
-	var posicion_jugador = jugador_objetivo.pf.global_position
-	var direccion_camara = Vector3.BACK * distancia_seguimiento
-	direccion_camara.y = altura_seguimiento
-	posicion_objetivo = posicion_jugador + direccion_camara
-	rotacion_objetivo = Vector3(-30, 0, 0)
+	print("🔌 Camara: Desconectando de ", jugador_actual_seguido.nombre)
+	# Guardar posicion global antes de desconectar
+	var posicion_global = camara.global_position
+	var rotacion_global = camara.global_rotation
+	# Eliminar la camara de su padre actual
+	if camara.get_parent():
+		camara.get_parent().remove_child(camara)
+	# Limpiar PathFollow3D de la camara
+	pathfollow_camara.queue_free()
+	pathfollow_camara = null
+	# Temporalmente añadir la camara a la escena actual para evitar errores
+	get_tree().current_scene.add_child(camara)
+	# Restaurar la posicion y rotacion global
+	camara.global_position = posicion_global
+	camara.global_rotation = rotacion_global
 
-func enfocar_evento(posicion: Vector3, duracion: float = 3.0) -> void:
-	print("📷 Camara: Enfocando evento especial en ", posicion)
-	var estado_anterior = estado_actual
-	estado_actual = EstadoCamara.VISTA_ESPECIAL
-	
-	var direccion_camara = Vector3.BACK * distancia_seguimiento
-	direccion_camara.y = altura_seguimiento * 1.5
-	posicion_objetivo = posicion + direccion_camara
-	
-	transicionar_camara()
-	
-	await get_tree().create_timer(duracion).timeout
-	estado_actual = estado_anterior
-	if jugador_objetivo:
-		seguir_jugador(jugador_objetivo)
-	else:
-		establecer_vista_general()
-
-func transicionar_camara() -> void:
-	if not camera:
+# Cambio instananeo de jugador
+func cambiar_jugador(jugador: Node3D) -> void:
+	if not jugador or not jugador.pf:
 		return
 	
-	var tween = create_tween()
-	tween.set_parallel(true)
-	
-	tween.tween_property(camera, "global_position", posicion_objetivo, 1.0 / velocidad_transicion)
-	tween.tween_property(camera, "rotation_degrees", rotacion_objetivo, 1.0 / velocidad_rotacion)
+	print("⚡ Teleport instantaneo al jugador ", jugador.nombre)
+	# Cambiar inmediatamente al nuevo jugador
+	seguir_jugador(jugador)
+	print("✅ Teleport completado - Camara ahora sigue a ", jugador.nombre)
+
+func _exit_tree() -> void:
+	# Limpiar PathFollow3D de la camara
+	if pathfollow_camara:
+		pathfollow_camara.queue_free()
+		pathfollow_camara = null
+	sincronizando_posicion = false
 
 # Responder al cambio de turno
 func _on_turno_cambiado(jugador_actual: Node3D):
-	print("📷 Camara: Nuevo turno - ", jugador_actual.nombre)
-	detener_seguimiento_continuo()
-	teleport_a_jugador(jugador_actual)
-
-# Responder al movimiento del jugador
-func _on_jugador_movido(jugador: Node3D, casilla_index: int):
-	print("📷 Camara: Jugador ", jugador.nombre, " se movio a la casilla ", casilla_index)
+	print("📷Camara: Nuevoturno - ", jugador_actual.nombre)
+	cambiar_jugador(jugador_actual)
 
 # Responder al inicio de partida
 func _on_partida_iniciada():
-	print("📷 Camara: Partida iniciada")
-	await get_tree().create_timer(2.0).timeout
-	# La camara ya seguira al primer jugador cuando cambie el turno
+	print("📷Camara: Partidainiciada")
 
 # Responder al final de partida
 func _on_partida_finalizada(ganador: Node3D):
-	print("📷 Camara: Mostrando ganador")
-	# Enfocar dramaticamente al ganador
-	if ganador and ganador.pf:
-		enfocar_evento(ganador.pf.global_position, 5.0)
+	print("📷Camara: Mostrandoa", ganador, ", ganadordelapartida")
+	if ganador != jugador_actual_seguido:
+		cambiar_jugador(ganador)
