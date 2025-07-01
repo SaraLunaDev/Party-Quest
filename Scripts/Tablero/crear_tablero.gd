@@ -40,6 +40,9 @@ func _crear_casillas():
 		# Crea un PathFollow3D
 		var pathFollow = PathFollow3D.new()
 		pathFollow.name = "PF3D_Casilla_" + str(i)
+
+		# Añadir modo de rotacion
+		pathFollow.rotation_mode = PathFollow3D.ROTATION_XY
 		
 		# Instancia la Casilla
 		var casilla = casilla_escena.instantiate()
@@ -61,7 +64,6 @@ func _crear_casillas():
 	# Aplicar Tipo a cada Casilla
 	_cambiar_tipo_casillas()
 	
-
 # Cambia el tipo de las Casillas existentes
 func _cambiar_tipo_casillas():
 	var total_rojas = int(num_casillas * porcentaje_rojas / 100.0)
@@ -84,14 +86,14 @@ func _cambiar_tipo_casillas():
 		if casilla.tipo == casilla.tipo_casilla.ROJA:
 			# Si hay demasiadas seguidas
 			var seguidas = 1
-			for j in range(i-1, max(-1, i-max_rojas_seguidas-1), -1):
+			for j in range(i - 1, max(-1, i - max_rojas_seguidas - 1), -1):
 				if get_child(j).get_child(0).tipo == casilla.tipo_casilla.ROJA:
 					seguidas += 1
 				else:
 					break
 			if seguidas > max_rojas_seguidas:
 				# Cambiar excedentes a normales
-				for k in range(i-seguidas+max_rojas_seguidas, i):
+				for k in range(i - seguidas + max_rojas_seguidas, i):
 					get_child(k).get_child(0).set_tipo(casilla.tipo_casilla.NORMAL)
 
 	# El resto son normales por si acaso
@@ -101,7 +103,7 @@ func _cambiar_tipo_casillas():
 			casilla.set_tipo(casilla.tipo_casilla.NORMAL)
 	
 	# Aplicar el porcentaje de Minijuegos
-	var total_minijuegos = max(1, int(num_casillas * porcentaje_minijuegos / 100))
+	var total_minijuegos = max(1, int(float(num_casillas) * float(porcentaje_minijuegos) / 100.0))
 	var seccion_size = float(num_casillas) / float(total_minijuegos)
 	var posiciones_minijuegos = []
 
@@ -116,8 +118,8 @@ func _cambiar_tipo_casillas():
 	posiciones_minijuegos.sort()
 	for i in range(posiciones_minijuegos.size() - 1, 0, -1):
 		var espaciado_minimo = num_casillas / (total_minijuegos * 2)
-		if posiciones_minijuegos[i] - posiciones_minijuegos[i-1] < espaciado_minimo:
-			posiciones_minijuegos[i] = min(posiciones_minijuegos[i-1] + espaciado_minimo, num_casillas - 1)
+		if posiciones_minijuegos[i] - posiciones_minijuegos[i - 1] < espaciado_minimo:
+			posiciones_minijuegos[i] = min(posiciones_minijuegos[i - 1] + espaciado_minimo, num_casillas - 1)
 
 	# Aplicar los minijuegos verificando adyacentes
 	for pos in posiciones_minijuegos:

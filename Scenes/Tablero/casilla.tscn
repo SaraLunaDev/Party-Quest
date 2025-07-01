@@ -22,7 +22,6 @@ radial_segments = 32
 mesh = SubResource("CylinderMesh_gd3qw")
 surface_material_override/0 = ExtResource("1_6b1di")
 script = ExtResource("1_pgg6m")
-index = null
 
 [node name="Borde" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.025, 0)

@@ -17,4 +17,6 @@ config/icon="res://icon.svg"
 
 [editor]
 
+movie_writer/mjpeg_quality=0.25
 movie_writer/movie_file="C:/Users/black/Videos/Godot/debug.avi"
+movie_writer/disable_vsync=true

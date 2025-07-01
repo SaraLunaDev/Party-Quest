@@ -11,6 +11,7 @@ signal partida_finalizada(ganador)
 @export var tablero: Path3D
 @export var jugador_escena: PackedScene
 @export var camera_manager: CameraManager
+@export var nodo_inicio: Node3D
 var jugadores: Array = []
 var jugador_actual_index: int = 0
 var rondas_completadas: int = 0
@@ -48,32 +49,102 @@ func configurar_jugadores(datos_jugadores: Array):
 		jugadores.append(jugador)
 		# Instanciar el jugador en el trablero
 		instanciar_jugador_en_tablero(jugador)
-	
 	print("Jugadores configurados: ", jugadores.size())
 
 # Instancia los Jugadores en el la posicion 0 del Tablero
 func instanciar_jugador_en_tablero(jugador: Node3D):
-	# Crea un PathFollow3D dentro del Tablero
+	print("🏗️ Instanciando ", jugador.nombre, " en zona de inicio...")
+	# Verificar nodo inicio
+	if nodo_inicio == null:
+		push_error("😠 No hay un nodo de inicio establecido")
+		return
+	# Añadir jugador al nodo inicio
+	nodo_inicio.add_child(jugador)
+	jugador.position = Vector3.ZERO
+	# Configurar estado inicial
+	jugador.pf = null
+	jugador.posicion_tablero = -1
+	print("👤 ", jugador.nombre, " instanciado en zona de inicio")
+	print("📍 Posicion: ", jugador.global_position)
+
+# Encontrar la posicion REAL de la casilla 0 (no progress_ratio 0)
+func obtener_posicion_casilla_0() -> Vector3:
+	print("🔍 Buscando posicion real de la casilla 0...")
+	# Buscar la primera casilla del tablero (index 0)
+	for child in tablero.get_children():
+		if child is PathFollow3D and child.get_child_count() > 0:
+			for grandchild in child.get_children():
+				if grandchild.has_method("set_tipo") and grandchild.index == 0:
+					print("✅ Casilla 0 encontrada en: ", child.global_position)
+					return child.global_position
+	# Si no se encuentra, usar progress_ratio 0.0 como fallback
+	var pf_temp = PathFollow3D.new()
+	pf_temp.progress_ratio = 0.0
+	tablero.add_child(pf_temp)
+	var pos = pf_temp.global_position
+	tablero.remove_child(pf_temp)
+	pf_temp.queue_free()
+	print("⚠️ Usando progress_ratio 0.0 como fallback: ", pos)
+	return pos
+
+# Mover jugador desde zona inicio hacia la casilla 0 REAL
+func mover_jugador_a_casilla_0(jugador: Node3D):
+	print("🚀 Moviendo ", jugador.nombre, " desde inicio hacia casilla 0...")
+	# Obtener posicion actual y destino
+	var posicion_inicial = jugador.global_position
+	var posicion_casilla_0 = obtener_posicion_casilla_0()
+	print("📍 Desde: ", posicion_inicial)
+	print("📍 Hacia: ", posicion_casilla_0)
+	# ANIMAR movimiento
+	var tween_movimiento = create_tween()
+	tween_movimiento.set_ease(Tween.EASE_IN_OUT)
+	tween_movimiento.tween_property(jugador, "global_position", posicion_casilla_0, 1.0)
+	await tween_movimiento.finished
+	print("✅ ", jugador.nombre, " llegó a la casilla 0")
+
+# Asociar PathFollow3D al jugador una vez que esté en la casilla 0
+func asociar_pathfollow_al_jugador(jugador: Node3D):
+	print("🔗 Asociando PathFollow3D a ", jugador.nombre, "...")
+	# 🎯 CREAR PathFollow3D
 	var pf = PathFollow3D.new()
 	pf.name = "PF3D_" + jugador.nombre
+	pf.rotation_mode = PathFollow3D.ROTATION_Y
+	# 🔍 BUSCAR casilla 0 con variable de control
+	var progress_ratio_casilla_0 = 0.0
+	var casilla_encontrada = false # ← NUEVA VARIABLE DE CONTROL
+	for child in tablero.get_children():
+		if child is PathFollow3D and child.get_child_count() > 0:
+			for grandchild in child.get_children():
+				if grandchild.has_method("set_tipo") and grandchild.index == 0:
+					progress_ratio_casilla_0 = child.progress_ratio
+					casilla_encontrada = true # ← MARCAR COMO ENCONTRADA
+					print("✅ Casilla 0 encontrada con progress_ratio: ", progress_ratio_casilla_0)
+					print("📍 Posicion de casilla 0: ", child.global_position)
+					break
+		if casilla_encontrada: # ← USAR VARIABLE DE CONTROL
+			break
+	# 📍 CONFIGURAR PathFollow3D
 	tablero.add_child(pf)
-	# Añadir el Jugador al PathFollow3D
+	pf.progress_ratio = progress_ratio_casilla_0
+	print("🎯 PathFollow3D configurado con progress_ratio: ", pf.progress_ratio)
+	print("📍 Posicion final PathFollow3D: ", pf.global_position)
+	# 🔄 MOVER jugador al PathFollow3D
+	nodo_inicio.remove_child(jugador)
+	jugador.position = Vector3.ZERO
 	pf.add_child(jugador)
-	pf.progress_ratio = 0.0
-	# Guardar la referencia dentro del Jugador
+	# 🔧 CONFIGURAR referencias
 	jugador.pf = pf
+	jugador.posicion_tablero = 0
+	print("✅ PathFollow3D asociado a ", jugador.nombre, " con progress_ratio FINAL: ", jugador.pf.progress_ratio)
 
-	# TODO: El jugador no se añadira a la primera casilla
-	#		hasta que no empiece su turno. En su lugar, 
-	#		el turno de elegir el orden de jugadores se
-	#		hara en un lugar cercano a la primera casilla
-	#		y cuando el orden se establezca, tras usar
-	#		el primer dado del primer turno, entonces
-	#		se movera al jugador hacia esa casilla 0
-	#		y empezara su movimiento sobre el tablero.
-	#		Con el resto de primeros turnos igual, cada
-	#		jugador hara lo mismo cuando llegue su primer
-	#		turno.
+# Mover jugador desde zona inicio hacia el Tablero
+func mover_jugador_al_tablero(jugador: Node3D):
+	print("🏃‍♂️ Llevando a ", jugador.nombre, " al tablero...")
+	# Paso 1: Mover a la casilla 0
+	await mover_jugador_a_casilla_0(jugador)
+	# Paso 2: Asociar PathFollow3D
+	asociar_pathfollow_al_jugador(jugador)
+	print("🎯 ", jugador.nombre, " está listo para jugar en el tablero")
 
 # Inicia la Partida
 func iniciar_partida():
@@ -120,7 +191,6 @@ func determinar_orden_inicial():
 		var resultado = tirar_dado()
 		resultados_dados.append({"jugador": jugador, "dado": resultado})
 		print(jugador.nombre, " tiró: ", resultado)
-		await get_tree().create_timer(1.0).timeout
 	# Se ordenan el Array de los resultados de mayor a menor
 	resultados_dados.sort_custom(func(a, b): return a.dado > b.dado)
 	# Se llena el Array de Jugadores con el orden establecido
@@ -142,6 +212,19 @@ func iniciar_turno():
 		return
 	# Se obtiene el jugador actual
 	var jugador_actual = jugadores[jugador_actual_index]
+	if jugador_actual.posicion_tablero == -1:
+		print("\n🌟 Primer turno de ", jugador_actual.nombre)
+		print("🏃‍♂️ Moviendo al tablero...")
+		await mover_jugador_al_tablero(jugador_actual)
+		await get_tree().create_timer(1.0).timeout
+		print("🎯 ", jugador_actual.nombre, " está en el tablero")
+		print("🎲 ¡Ahora tira el dado para tu primer movimiento!")
+		emit_signal("turno_cambiado", jugador_actual)
+		# Activar la espera del dado (como turno normal)
+		esperando_dado = true
+		print("🎲 Presiona ESPACIO para tirar el dado")
+		return
+
 	print("\n🎯 Turno de ", jugador_actual.nombre)
 	print("🔖 Posicion actual: Casilla ", jugador_actual.posicion_tablero)
 	print("💰 Monedas: ", jugador_actual.monedas)
@@ -164,9 +247,9 @@ func procesar_tirada_dado():
 	# No se procesa si ya se esta tirando o no hay partida activa
 	if not esperando_dado or not partida_activa:
 		return
+	var jugador_actual = jugadores[jugador_actual_index]
 	esperando_dado = false
 	# El jugador actual en el turno tira los dados
-	var jugador_actual = jugadores[jugador_actual_index]
 	var resultado_dado = tirar_dado()
 	print("🎲 ", jugador_actual.nombre, " tiro: ", resultado_dado)
 	# Mover al jugador hacia la posicion que obtuvo por los Dados
@@ -182,23 +265,40 @@ func procesar_tirada_dado():
 # Mover Jugador por el Tablero
 func mover_jugador(jugador: Node3D, espacios: int):
 	print("🏃‍♂️ Moviendo a ", jugador.nombre, " ", espacios, " espacios...")
-
+	print("📍 Progress ratio inicial: ", jugador.pf.progress_ratio)
 	var tween_secuencial = create_tween()
-
 	for i in espacios:
+		var posicion_anterior = jugador.posicion_tablero
 		var nueva_posicion = (jugador.posicion_tablero + 1) % tablero.num_casillas
-		var es_vuelta_completa = nueva_posicion < jugador.posicion_tablero
-		jugador.posicion_tablero = (jugador.posicion_tablero + 1) % tablero.num_casillas
-		var progress_destino = float(jugador.posicion_tablero) / float(tablero.num_casillas)
-		# Soluciona el bug de dar una vuelta completa cuando pasa de la ultima a la primera casilla                               
-		if es_vuelta_completa:
+		var progress_actual = jugador.pf.progress_ratio
+		var progress_destino = obtener_progress_ratio_de_casilla(nueva_posicion)
+		print("🚀 Paso ", i + 1, ": casilla ", posicion_anterior, " → ", nueva_posicion)
+		print("📊 Progress: ", progress_actual, " → ", progress_destino)
+		# 🔧 SIMPLIFICAR: Solo vuelta completa en caso específico
+		var necesita_vuelta_completa = false
+		# ÚNICAMENTE cuando pasa de la última casilla a la primera
+		if posicion_anterior == (tablero.num_casillas - 1) and nueva_posicion == 0:
+			necesita_vuelta_completa = true
+			print("🔄 Vuelta completa: última casilla → primera casilla")
+		elif posicion_anterior == 0 and progress_actual > 0.8 and progress_destino < 0.2:
+			necesita_vuelta_completa = true
+		else:
+			print("➡️ Movimiento normal")
+		jugador.posicion_tablero = nueva_posicion
+		# Aplicar movimiento
+		if necesita_vuelta_completa:
+			print("🔄 Aplicando secuencia de vuelta completa")
 			tween_secuencial.tween_property(jugador.pf, "progress_ratio", 1.0, 0.5)
-			tween_secuencial.tween_callback(func(): jugador.pf.progress_ratio = 0.0)
+			tween_secuencial.tween_callback(func():
+				print("🔄 Reseteando a progress_ratio 0.0")
+				jugador.pf.progress_ratio = 0.0
+			)
 			if progress_destino > 0:
 				tween_secuencial.tween_property(jugador.pf, "progress_ratio", progress_destino, 0.5)
 		else:
+			print("➡️ Movimiento directo a progress_ratio: ", progress_destino)
 			tween_secuencial.tween_property(jugador.pf, "progress_ratio", progress_destino, 0.5)
-		
+		# Si el jugador llega a la casilla de la Corona, animar y transferir
 		if jugador.posicion_tablero == posicion_corona:
 			tween_secuencial.tween_interval(1.0)
 			tween_secuencial.tween_callback(func():
@@ -206,13 +306,25 @@ func mover_jugador(jugador: Node3D, espacios: int):
 				transferir_corona(jugador)
 			)
 			tween_secuencial.tween_interval(1.0)
-	
-	# Esperar a que el tween se complete antes de continuar
 	await tween_secuencial.finished
-	
 	print("🎯 ", jugador.nombre, " llego a la casilla ", jugador.posicion_tablero)
-	# Emitimos la señal de que el jugador se ha movido
+	print("📍 Progress ratio final: ", jugador.pf.progress_ratio)
 	emit_signal("jugador_movido", jugador, jugador.posicion_tablero)
+
+# Obtener el progress_ratio REAL de una casilla específica
+func obtener_progress_ratio_de_casilla(indice_casilla: int) -> float:
+	print("🔍 Buscando progress_ratio real de casilla ", indice_casilla)
+	# Buscar la casilla con el indice específico
+	for child in tablero.get_children():
+		if child is PathFollow3D and child.get_child_count() > 0:
+			for grandchild in child.get_children():
+				if grandchild.has_method("set_tipo") and grandchild.index == indice_casilla:
+					print("✅ Casilla ", indice_casilla, " encontrada con progress_ratio: ", child.progress_ratio)
+					return child.progress_ratio
+	# Si no se encuentra, usar cálculo matemático como fallback
+	var progress_fallback = float(indice_casilla) / float(tablero.num_casillas)
+	print("⚠️ Casilla ", indice_casilla, " no encontrada, usando fallback: ", progress_fallback)
+	return progress_fallback
 
 # Obtener el tipo de Casilla en la que el Jugador ha caido
 func procesar_casilla(jugador: Node3D):

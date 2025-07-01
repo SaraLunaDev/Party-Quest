@@ -10,8 +10,8 @@ class_name CameraManager
 var pathfollow_camara: PathFollow3D = null
 
 # Offset para la camara
-@export var offset_posicion: Vector3 = Vector3(0, 7, 10)
-@export var offset_rotacion: Vector3 = Vector3(-30, 0, 0)
+@export var offset_posicion: Vector3 = Vector3(10, 12, 20)
+@export var offset_rotacion: Vector3 = Vector3(-30, 30, 0)
 
 # Sincronizacion de posicion
 var sincronizando_posicion: bool = false
@@ -32,7 +32,7 @@ func _process(_delta: float) -> void:
 
 # Hacer que la camara siga a un jugador especifico
 func seguir_jugador(jugador: Node3D) -> void:
-	if not jugador or not jugador.pf:
+	if not jugador:
 		print("😤 Jugador sin PathFollow3D valido")
 		return
 	
