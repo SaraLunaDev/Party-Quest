@@ -34,7 +34,7 @@ shader_parameter/FOAM_COL_HIT = Color(0.8125, 0.9609, 0.9648, 1)
 shader_parameter/distortion_speed = 2.0
 shader_parameter/tile = Vector2(128, 128)
 shader_parameter/wave_speed = 1.0
-shader_parameter/wave_amplitude = 0.1
+shader_parameter/wave_amplitude = 0.25
 shader_parameter/wave_frequency = 1.5
 shader_parameter/time_offset = 0.0
 shader_parameter/water_size = Vector2(128, 128)
@@ -49,8 +49,8 @@ shader_parameter/foam_distortion_amount = 0.1
 [sub_resource type="PlaneMesh" id="PlaneMesh_nxy0g"]
 material = SubResource("ShaderMaterial_eq22w")
 size = Vector2(128, 128)
-subdivide_width = 50
-subdivide_depth = 50
+subdivide_width = 100
+subdivide_depth = 100
 
 [node name="Mapa_01" type="Node3D"]
 

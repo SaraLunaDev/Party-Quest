@@ -53,6 +53,7 @@ func configurar_jugadores(datos_jugadores: Array):
 		var jugador = jugador_escena.instantiate()
 		jugador.configurar(dato.nombre, dato.color)
 		jugadores.append(jugador)
+	for jugador in jugadores:
 		instanciar_jugador_inicial(jugador)
 	print("Jugadores configurados: ", jugadores.size())
 
@@ -61,7 +62,9 @@ func instanciar_jugador_inicial(jugador: Node3D):
 		push_error("No hay nodo de inicio establecido")
 		return
 	nodo_inicio.add_child(jugador)
-	jugador.position = Vector3.ZERO
+	var posicion_distribuida = calcular_posicion_spawn_jugador(jugador)
+	jugador.position = posicion_distribuida
+	jugador.rotation_degrees = Vector3(0, -90, 0)
 	jugador.pf = null
 	jugador.posicion_tablero = -1
 
@@ -214,6 +217,7 @@ func crear_pathfollow_para_jugador(jugador: Node3D):
 	nodo_inicio.remove_child(jugador)
 	pf.add_child(jugador)
 	jugador.position = Vector3.ZERO
+	jugador.rotation_degrees = Vector3(0, 0, 0)
 	
 	# Configurar referencias
 	jugador.pf = pf
@@ -315,6 +319,58 @@ func establecer_corona_en_casilla(info_casilla):
 # ============================================================================
 # BUSQUEDA Y CALCULOS
 # ============================================================================
+
+func calcular_posicion_spawn_jugador(jugador_actual: Node3D) -> Vector3:
+	var indice_jugador = -1
+	for i in jugadores.size():
+		if jugadores[i] == jugador_actual:
+			indice_jugador = i
+			break
+
+	if indice_jugador == -1:
+		print("⚠️ Jugador no encontrado en la lista, usando posicion por defecto")
+		return Vector3.ZERO
+
+	var separacion_desde_centro = 0.75
+
+	match jugadores.size():
+		1: # Un jugador, spawn en el centro
+			return Vector3.ZERO
+		2: # Dos jugadores, spawn en extremos opuestos
+			if indice_jugador == 0:
+				return Vector3(0, 0, -separacion_desde_centro)
+			else:
+				return Vector3(0, 0, separacion_desde_centro)
+		3: # Tres jugadores, spawn en triangulo equilatero
+			var angulo = indice_jugador * (2.0 * PI / 3.0)
+			return Vector3(separacion_desde_centro * cos(angulo), 0, separacion_desde_centro * sin(angulo))
+		4: # Cuatro jugadores, spawn en cuadrado
+			if indice_jugador == 0:
+				return Vector3(-separacion_desde_centro, 0, -separacion_desde_centro)
+			elif indice_jugador == 1:
+				return Vector3(separacion_desde_centro, 0, -separacion_desde_centro)
+			elif indice_jugador == 2:
+				return Vector3(separacion_desde_centro, 0, separacion_desde_centro)
+			else:
+				return Vector3(-separacion_desde_centro, 0, separacion_desde_centro)
+		_: # Mas de 4 jugadores, distribucion circular
+			var angulo = indice_jugador * (2.0 * PI / float(jugadores.size()))
+			# 🎯 USAR separacion_desde_centro como limite maximo
+			var radio = min(calcular_radio_optimo(jugadores.size()), separacion_desde_centro)
+			return Vector3(radio * cos(angulo), 0, radio * sin(angulo))
+
+func calcular_radio_optimo(num_jugadores: int) -> float:
+	if num_jugadores <= 1:
+		return 0.0
+
+	var diferencia_minima_entre_jugadores = 2.0
+	var angulo_central = PI / float(num_jugadores)
+	var radio_calculado = diferencia_minima_entre_jugadores / (2.0 * sin(angulo_central))
+
+	var radio_minimo = 2.0
+	var radio_final = max(radio_calculado, radio_minimo)
+
+	return radio_final
 
 func obtener_casillas_disponibles() -> Array:
 	var disponibles = []
@@ -496,8 +552,9 @@ func _input(event):
 					var datos = [
 						{"nombre": "Mario", "color": Color.RED},
 						{"nombre": "Luigi", "color": Color.GREEN},
-						{"nombre": "Peach", "color": Color.PINK},
-						{"nombre": "Wario", "color": Color.YELLOW}
+						{"nombre": "Peach", "color": Color.YELLOW},
+						{"nombre": "Bowser", "color": Color.ORANGE},
+						{"nombre": "Toad", "color": Color.BLUE}
 					]
 					configurar_jugadores(datos)
 					await get_tree().create_timer(1.0).timeout
