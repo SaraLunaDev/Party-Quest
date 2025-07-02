@@ -31,19 +31,22 @@ background_energy_multiplier = 5.06
 
 [node name="Mapa_Prueba" type="Node"]
 
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("tablero", "camara_manager", "nodo_inicio")]
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("tablero", "camera_manager", "nodo_inicio")]
 script = ExtResource("1_l0xde")
 tablero = NodePath("../Tablero_01")
 jugador_escena = ExtResource("2_hvtsq")
-camara_manager = NodePath("../CameraManager")
+camera_manager = NodePath("../CameraManager")
 nodo_inicio = NodePath("../Tablero_01/Inicio")
 tipo_victoria = 1
-limite_coronas = 2
+limite_rondas = null
+limite_coronas = 1
 
 [node name="CameraManager" type="Node" parent="." node_paths=PackedStringArray("camara", "game_manager")]
 script = ExtResource("3_hvtsq")
 camara = NodePath("../Camera3D")
 game_manager = NodePath("../GameManager")
+offset_posicion = null
+offset_rotacion = null
 
 [node name="Tablero_01" type="Path3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.05288, 0)
