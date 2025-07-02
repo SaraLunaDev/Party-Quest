@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://c5yfos5ayxjkn"]
+[gd_scene load_steps=26 format=3 uid="uid://c5yfos5ayxjkn"]
 
 [ext_resource type="ArrayMesh" uid="uid://cefjc7ce5i2wn" path="res://Assets/obj/blue/platform_4x4x4_blue.obj" id="1_febbs"]
 [ext_resource type="ArrayMesh" uid="uid://bjyesyrhd6phw" path="res://Assets/obj/blue/platform_slope_4x4x4_blue.obj" id="2_xmry2"]
@@ -20,14 +20,37 @@
 [ext_resource type="ArrayMesh" uid="uid://bs6w0ygnrwbh" path="res://Assets/obj/blue/platform_4x2x1_blue.obj" id="20_t2hov"]
 [ext_resource type="ArrayMesh" uid="uid://bblgkukf2sbek" path="res://Assets/obj/neutral/structure_B.obj" id="21_ny5e2"]
 [ext_resource type="ArrayMesh" uid="uid://c16ru7n16cnko" path="res://Assets/obj/green/pipe_90_B_green.obj" id="22_p4ohj"]
+[ext_resource type="Shader" uid="uid://b30be74kowse1" path="res://Shaders/Water/water.gdshader" id="23_dfgk2"]
 [ext_resource type="ArrayMesh" uid="uid://bv66t5holdg5g" path="res://Assets/obj/green/pipe_end_green.obj" id="23_eq22w"]
 [ext_resource type="ArrayMesh" uid="uid://4k6w8jgqfqum" path="res://Assets/obj/neutral/sign.obj" id="23_nxy0g"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_p4ohj"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_eq22w"]
+render_priority = 0
+shader = ExtResource("23_dfgk2")
+shader_parameter/WATER_COL = Color(0.269168, 0.418495, 0.589985, 1)
+shader_parameter/WATER2_COL = Color(0.27597, 0.390509, 0.553583, 1)
+shader_parameter/FOAM_COL = Color(0.35088, 0.491592, 0.638119, 1)
+shader_parameter/FOAM_COL_HIT = Color(0.8125, 0.9609, 0.9648, 1)
+shader_parameter/distortion_speed = 2.0
+shader_parameter/tile = Vector2(128, 128)
+shader_parameter/wave_speed = 1.0
+shader_parameter/wave_amplitude = 0.1
+shader_parameter/wave_frequency = 1.5
+shader_parameter/time_offset = 0.0
+shader_parameter/water_size = Vector2(128, 128)
+shader_parameter/water_transparency = 0.95
+shader_parameter/water_depth_factor = 4.0
+shader_parameter/foam_width = 1.0
+shader_parameter/foam_edge_softness = 0.05
+shader_parameter/foam_smoothness = 0.03
+shader_parameter/foam_distortion_speed = 0.5
+shader_parameter/foam_distortion_amount = 0.1
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p4ohj"]
-albedo_color = Color(0.763614, 0.876845, 0.938575, 1)
-roughness = 0.0
+[sub_resource type="PlaneMesh" id="PlaneMesh_nxy0g"]
+material = SubResource("ShaderMaterial_eq22w")
+size = Vector2(128, 128)
+subdivide_width = 50
+subdivide_depth = 50
 
 [node name="Mapa_01" type="Node3D"]
 
@@ -252,6 +275,5 @@ transform = Transform3D(0.452548, 0, 0.452548, 0, 0.64, 0, -0.452548, 0, 0.45254
 mesh = ExtResource("23_nxy0g")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(500, 0, 0, 0, 1, 0, 0, 0, 500, 0, -0.35, 0)
-mesh = SubResource("BoxMesh_p4ohj")
-surface_material_override/0 = SubResource("StandardMaterial3D_p4ohj")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.302698, 0)
+mesh = SubResource("PlaneMesh_nxy0g")

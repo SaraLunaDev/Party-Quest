@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://cj3f644um1a0t"]
+[gd_scene load_steps=13 format=3 uid="uid://cj3f644um1a0t"]
 
 [ext_resource type="Script" uid="uid://cxqv6join2muh" path="res://Scripts/game_manager.gd" id="1_l0xde"]
 [ext_resource type="PackedScene" uid="uid://cns8ts8ffh68i" path="res://Scenes/Jugadores/jugador.tscn" id="2_hvtsq"]
@@ -26,33 +26,27 @@ top_radius = 0.475
 height = 0.1
 radial_segments = 32
 
-[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_mrbu5"]
-rayleigh_coefficient = 1.0
-energy_multiplier = 2.0
-
-[sub_resource type="Sky" id="Sky_w7rbt"]
-sky_material = SubResource("PhysicalSkyMaterial_mrbu5")
-
-[sub_resource type="Environment" id="Environment_6fgja"]
-background_mode = 2
-background_energy_multiplier = 1.6
-sky = SubResource("Sky_w7rbt")
+[sub_resource type="Environment" id="Environment_hvtsq"]
+background_energy_multiplier = 5.06
 
 [node name="Mapa_Prueba" type="Node"]
 
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("tablero", "camara_manager", "nodo_inicio")]
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("tablero", "camera_manager", "nodo_inicio")]
 script = ExtResource("1_l0xde")
 tablero = NodePath("../Tablero_01")
 jugador_escena = ExtResource("2_hvtsq")
-camara_manager = NodePath("../CameraManager")
+camera_manager = NodePath("../CameraManager")
 nodo_inicio = NodePath("../Tablero_01/Inicio")
 tipo_victoria = 1
-limite_coronas = 2
+limite_rondas = null
+limite_coronas = 1
 
 [node name="CameraManager" type="Node" parent="." node_paths=PackedStringArray("camara", "game_manager")]
 script = ExtResource("3_hvtsq")
 camara = NodePath("../Camera3D")
 game_manager = NodePath("../GameManager")
+offset_posicion = null
+offset_rotacion = null
 
 [node name="Tablero_01" type="Path3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.05288, 0)
@@ -260,7 +254,7 @@ index = 18
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.707107, -0.353553, 0.612373, -1.63913e-07, 0.866025, 0.5, -0.707107, -0.353554, 0.612372, 36, 32, 36)
-environment = SubResource("Environment_6fgja")
+environment = SubResource("Environment_hvtsq")
 fov = 20.0
 size = 20.0
 

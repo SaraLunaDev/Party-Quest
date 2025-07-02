@@ -36,17 +36,17 @@ func actualizar_color():
 # Establecer Monedas
 func establecer_monedas(cantidad: int):
 	monedas = max(0, monedas + cantidad)
-	print("🫢 ", nombre, " ahora tiene ", monedas, " monedas.")
+	print(nombre, " ahora tiene ", monedas, " monedas.")
 
 # Establecer Coronas
 func establecer_corona(cantidad: int):
 	coronas += cantidad
-	print("🫢 ", nombre, " ahora tiene ", coronas, " coronas.")
+	print(nombre, " ahora tiene ", coronas, " coronas.")
 	# TODO: Debe perder 20 monedas para poder obtener la corona
 
 # Debug para mostrar la Info del Jugador
 func obtener_info() -> String:
 	var corona_texto = ""
 	if coronas > 0:
-		corona_texto = " " + str(coronas) + "👑"
-	return "❔" + nombre + corona_texto + " - Casilla: " + str(posicion_tablero) + " - Monedas: " + str(monedas)
+		corona_texto = " " + str(coronas)
+	return nombre + corona_texto + " - Casilla: " + str(posicion_tablero) + " - Monedas: " + str(monedas)
