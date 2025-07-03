@@ -10,6 +10,7 @@ enum tipo_casilla {NORMAL, ROJA, MINIJUEGO, CORONA}
 
 # Numero que Representa la casilla en el Tablero
 @export var index: int = -1
+@export var light: OmniLight3D
 
 # Selector de Tipo
 @export var tipo: tipo_casilla = tipo_casilla.NORMAL:
@@ -41,3 +42,15 @@ func set_casillas_destino(destinos: Array[Casilla]) -> void:
 
 func get_casillas_destino() -> Array[Casilla]:
 	return casillas_destino
+
+func enable_emission():
+	if light:
+		var mat: Material = get_surface_override_material(0)
+		if mat is StandardMaterial3D:
+			light.light_color = mat.albedo_color
+			light.light_energy = 1.0
+			light.visible = true
+
+func disable_emission():
+	if light:
+		light.visible = false

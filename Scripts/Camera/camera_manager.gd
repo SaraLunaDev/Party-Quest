@@ -7,7 +7,7 @@ class_name CameraManager
 
 # Referencias principales
 @export var camara: Camera3D
-@export var game_manager: NewGameManager
+@export var game_manager: GameManager
 
 # Control de seguimiento
 @export var jugador_actual_seguido: Node3D = null

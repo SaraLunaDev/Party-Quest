@@ -3,19 +3,19 @@
 [ext_resource type="Script" uid="uid://cxqv6join2muh" path="res://Scripts/game_manager.gd" id="1_l0xde"]
 [ext_resource type="PackedScene" uid="uid://cns8ts8ffh68i" path="res://Scenes/Jugadores/jugador.tscn" id="2_hvtsq"]
 [ext_resource type="Script" uid="uid://drxcit0hvg1nc" path="res://Scripts/Camera/camera_manager.gd" id="3_hvtsq"]
-[ext_resource type="Script" uid="uid://bwpixmepy22dx" path="res://Scripts/Tablero/crear_tablero.gd" id="4_6fgja"]
 [ext_resource type="PackedScene" uid="uid://c5yfos5ayxjkn" path="res://Scenes/Mapas/mapa_01.tscn" id="4_hvtsq"]
+[ext_resource type="Script" uid="uid://dxs1ae606mcct" path="res://Scripts/Tablero/tablero.gd" id="5_i3cu2"]
 [ext_resource type="PackedScene" uid="uid://dofhnfr83kg16" path="res://Scenes/Tablero/casilla.tscn" id="5_q40er"]
-[ext_resource type="Material" uid="uid://d1wficj4y7wb7" path="res://Materials/Tablero/Casillas/roja.tres" id="8_yrbv3"]
-[ext_resource type="Material" uid="uid://ch8cnsn1ua3c8" path="res://Materials/Tablero/Casillas/minijuego.tres" id="9_n6v7b"]
+[ext_resource type="Material" uid="uid://2gip4h3mnccq" path="res://Materials/Tablero/Casillas/normal.tres" id="7_mrbu5"]
+[ext_resource type="Script" uid="uid://cg8asbjn6f8h" path="res://Scripts/Tablero/casilla.gd" id="8_w7rbt"]
 
-[sub_resource type="Curve3D" id="Curve3D_hvtsq"]
+[sub_resource type="Curve3D" id="Curve3D_m7ngy"]
 closed = true
 _data = {
-"points": PackedVector3Array(0, 0, -0.5, 0, 0.5, 0.5, 4, -4, -11, 0, 1.25, -0.75, 0, 1, 1.5, 4, -4.5, -8.5, 0, 0.19295, -0.140062, 0, 1.5, 1.25, 4, -5, -6, 0, 0.153059, -0.173938, 0, 1.5, 1.5, 4, -4.5, -3.5, 0, 0, -0.75, 0, 0, 0.75, 4, -4, -0.75, 0, 0, -0.75, 0, 0, 0.75, 3, -4, 1, 0, 0, 0, 0, 0, 0, 3, -4, 1.99854, 0, 0, 0, 0, 0, 0, 3, -5.00221, 3.995, 0, 0, 0, 0, 0, 0, 3, -5, 5, -0.503576, 1.58591, -1.45078, -1.18314, 2.74475, 1.73105, 4, -3.5, 8, 0.0583191, 0.126623, 0, -1.75346, 2.45189, 0.459841, 2, -2.5, 11, 0.168948, 0.21238, 0, -1.70766, 2.6544, -1.4086, -1, -1.5, 12, 0, 0.174768, 0.0983515, -0.33, 2.04156, -1.27169, -4, -0.5, 10, 0, 0, 0, 0, 0, -1.5, -5, 0, 7, 0, 0, 1.5, 0, 0, 0, -4, 0, 4, 0, 0, 0, 0, 0, 0, -4, 0, 2, 0, 0, 0, 0, 0, 0, -4, -2, -2, 0, 0, 0, 0, 0, 0, -4, -2, -5.25, 0, 0, 0.25, 0, 0, -1, -4, -2.05288, -11, 0, 0, 0, 0, 0, 0, -2.75, -2, -12, 0, 0, 0, 0, 0, 0, -2, -2, -12, 0, 0, 0, 0, 0, 0, 2, -4, -12, -0.5, 0, 0, 0.5, 0, 0, 3, -4, -12),
-"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 4, -4, -11, 0, 0, 0, 0, 0, 0, 4, -4.5, -8.5, 0, 0, 0, 0, 0, 0, 4, -5, -6, 0, 0, 0, 0, 0, 0, 4, -4.5, -3.5, 0, 0, 0, 0, 0, 0, 4, -4, -1, 0, 0, 0, 0, 0, 0, 3, -4, 1, 0, 0, 0, 0, 0, 0, 3, -4.5, 3, 0, 0, 0, 0, 0, 0, 3, -5, 5, 0, 0, 0, 0, 0, 0, 4, -3.5, 8, 0, 0, 0, 0, 0, 0, 2, -2.5, 11, 0, 0, 0, 0, 0, 0, -1, -1.5, 12, 0, 0, 0, 0, 0, 0, -4, -0.5, 10, 0, 0, 0, 0, 0, 0, -5, 0, 7, 0, 0, 0, 0, 0, 0, -5, 0, 5, 0, 0, 0, 0, 0, 0, -4, 0, 3, 0, 0, 0, 0, 0, 0, -4, -0.5, 1, 0, 0, 0, 0, 0, 0, -4, -1.5, -1, 0, 0, 0, 0, 0, 0, -4, -2, -3, 0, 0, 0, 0, 0, 0, -4, -2, -4.75, 0, 0, 0, 0, 0, 0, -4, -2, -7.75, 0, 0, 0, 0, 0, 0, -4, -2, -11, 0, 0, 0, 0, 0, 0, -3, -2, -12.75, 0, 0, 0, 0, 0, 0, -0.5, -2.75, -12.75, 0, 0, 0, 0, 0, 0, 1, -3.5, -12.75, 0, 0, 0, 0, 0, 0, 3, -4, -12.75),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 }
-point_count = 23
+point_count = 25
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mdxdp"]
 albedo_color = Color(0.209322, 0.473466, 0.698275, 1)
@@ -40,223 +40,256 @@ sky = SubResource("Sky_mrbu5")
 
 [node name="Mapa_Prueba" type="Node"]
 
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("tablero", "camara_manager", "nodo_inicio")]
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("nodo_inicio")]
 script = ExtResource("1_l0xde")
-tablero = NodePath("../Tablero_01")
 jugador_escena = ExtResource("2_hvtsq")
-camara_manager = NodePath("../CameraManager")
-nodo_inicio = NodePath("../Tablero_01/Inicio")
-tipo_victoria = 1
-limite_coronas = 2
+nodo_inicio = NodePath("../Inicio")
 
 [node name="CameraManager" type="Node" parent="." node_paths=PackedStringArray("camara", "game_manager")]
 script = ExtResource("3_hvtsq")
 camara = NodePath("../Camera3D")
 game_manager = NodePath("../GameManager")
 
-[node name="Tablero_01" type="Path3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.05288, 0)
-curve = SubResource("Curve3D_hvtsq")
-script = ExtResource("4_6fgja")
-num_casillas = 19
-casilla_escena = ExtResource("5_q40er")
-
-[node name="Inicio" type="Node3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, -4.0518, -12)
-
-[node name="PF3D_Casilla_0" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -4, -11)
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_0" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("8_yrbv3")
-index = 0
-tipo = 1
-
-[node name="PF3D_Casilla_1" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -4.50015, -8.49464)
-progress = 2.9563
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_1" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-index = 1
-
-[node name="PF3D_Casilla_2" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -5.00001, -6.00011)
-progress = 5.84236
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_2" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-index = 2
-
-[node name="PF3D_Casilla_3" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -4.49969, -3.49861)
-progress = 8.72843
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_3" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("8_yrbv3")
-index = 3
-tipo = 1
-
-[node name="PF3D_Casilla_4" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.99485, -4.00046, -0.663393)
-progress = 11.8699
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_4" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-index = 4
-
-[node name="PF3D_Casilla_5" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.99924, -4, 1.06137)
-progress = 13.9195
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_5" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("8_yrbv3")
-index = 5
-tipo = 1
-
-[node name="PF3D_Casilla_6" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.99953, -5.00272, 4.99462)
-progress = 18.089
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_6" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("8_yrbv3")
-index = 6
-tipo = 1
-
-[node name="PF3D_Casilla_7" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.99228, -3.48431, 8.02613)
-progress = 22.2906
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_7" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("9_n6v7b")
-index = 7
-tipo = 2
-
-[node name="PF3D_Casilla_8" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.98788, -2.49378, 11.0057)
-progress = 26.6405
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_8" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-index = 8
-
-[node name="PF3D_Casilla_9" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.02652, -1.48005, 11.9864)
-progress = 30.5494
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_9" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-index = 9
-
-[node name="PF3D_Casilla_10" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.00899, -0.480488, 9.97799)
-progress = 34.8859
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_10" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("8_yrbv3")
-index = 10
-tipo = 1
-
-[node name="PF3D_Casilla_11" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.00161, -0.0046046, 6.95664)
-progress = 38.581
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_11" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("8_yrbv3")
-index = 11
-tipo = 1
-
-[node name="PF3D_Casilla_12" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.9998, 0, 3.97681)
-progress = 41.7749
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_12" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("9_n6v7b")
-index = 12
-tipo = 2
-
-[node name="PF3D_Casilla_13" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, -2.71112e-08, 5.42223e-08, 0, 0.894425, 0.447213, -6.06226e-08, -0.447213, 0.894425, -4, -0.485711, 1.02858)
-progress = 44.8419
-rotation_mode = 2
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_13" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("8_yrbv3")
-index = 13
-tipo = 1
-
-[node name="PF3D_Casilla_14" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, -2.71112e-08, 5.42225e-08, 0, 0.894427, 0.447214, -6.06226e-08, -0.447214, 0.894427, -4, -1.48463, -0.969258)
-progress = 47.0736
-rotation_mode = 2
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_14" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-index = 14
-
-[node name="PF3D_Casilla_15" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -2, -3.94711)
-progress = 50.174
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_15" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("8_yrbv3")
-index = 15
-tipo = 1
-
-[node name="PF3D_Casilla_16" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.73463, -2.04165, -11.6526)
-progress = 57.9517
-rotation_mode = 0
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_16" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("8_yrbv3")
-index = 16
-tipo = 1
-
-[node name="PF3D_Casilla_17" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(-4.37111e-08, 0.4472, -0.89442, 0, 0.894399, 0.44721, 0.999994, 1.95477e-08, -3.90963e-08, -0.990228, -2.50489, -12)
-progress = 60.8984
-rotation_mode = 2
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_17" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-index = 17
-
-[node name="PF3D_Casilla_18" type="PathFollow3D" parent="Tablero_01"]
-transform = Transform3D(-4.37114e-08, 0.447213, -0.894427, 0, 0.894427, 0.447213, 1, 1.95483e-08, -3.90966e-08, 1.09096, -3.54548, -12)
-progress = 63.2236
-rotation_mode = 2
-
-[node name="Casilla" parent="Tablero_01/PF3D_Casilla_18" instance=ExtResource("5_q40er")]
-mesh = SubResource("CylinderMesh_gd3qw")
-index = 18
+[node name="Inicio" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 2.00108, -12)
 
 [node name="Mapa_01" parent="." instance=ExtResource("4_hvtsq")]
+
+[node name="Tablero" type="Node3D" parent="." node_paths=PackedStringArray("caminos")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055, 0)
+script = ExtResource("5_i3cu2")
+caminos = [NodePath("Path3D")]
+casilla_escena = ExtResource("5_q40er")
+numero_casillas = 25
+
+[node name="Path3D" type="Path3D" parent="Tablero"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
+curve = SubResource("Curve3D_m7ngy")
+
+[node name="Casilla_0" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -4, -11)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_1")]
+index = 0
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_1" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -4.5, -8.5)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_2")]
+index = 1
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_2" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -5, -6)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_3")]
+index = 2
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_3" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -4.5, -3.5)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_4")]
+index = 3
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_4" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -4, -1)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_5")]
+index = 4
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_5" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -4, 1)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_6")]
+index = 5
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_6" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -4.5, 3)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_7")]
+index = 6
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_7" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -5, 5)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_8")]
+index = 7
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_8" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -3.5, 8)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_9")]
+index = 8
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_9" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -2.5, 11)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_10")]
+index = 9
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_10" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1.5, 12)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_11")]
+index = 10
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_11" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -0.5, 10)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_12")]
+index = 11
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_12" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 7)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_13")]
+index = 12
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_13" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 5)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_14")]
+index = 13
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_14" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 3)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_15")]
+index = 14
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_15" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -0.5, 1)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_16")]
+index = 15
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_16" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -1.5, -1)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_17")]
+index = 16
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_17" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -2, -3)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_18")]
+index = 17
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_18" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -2, -4.75)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_19")]
+index = 18
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_19" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -2, -7.75)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_20")]
+index = 19
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_20" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -2, -11)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_21")]
+index = 20
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_21" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, -2, -12.75)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_22")]
+index = 21
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_22" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, -2.75, -12.75)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_23")]
+index = 22
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_23" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -3.5, -12.75)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_24")]
+index = 23
+light = NodePath("OmniLight3D")
+
+[node name="Casilla_24" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -4, -12.75)
+mesh = SubResource("CylinderMesh_gd3qw")
+surface_material_override/0 = ExtResource("7_mrbu5")
+script = ExtResource("8_w7rbt")
+casillas_destino = [NodePath("../Casilla_0")]
+index = 24
+light = NodePath("OmniLight3D")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.707107, -0.353553, 0.612373, -1.63913e-07, 0.866025, 0.5, -0.707107, -0.353554, 0.612372, 36, 32, 36)

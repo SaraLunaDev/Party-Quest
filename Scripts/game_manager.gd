@@ -14,7 +14,6 @@ signal partida_finalizada(ganador)
 # Referencias principales
 @export var tablero: Path3D
 @export var jugador_escena: PackedScene
-@export var camara_manager: CameraManager
 @export var nodo_inicio: Node3D
 
 # Arrays y estado del juego
@@ -41,9 +40,6 @@ enum TipoVictoria {RONDAS, CORONAS}
 func _ready() -> void:
 	if tablero == null:
 		push_error("No hay tablero asignado")
-		return
-	if camara_manager == null:
-		push_error("No hay CameraManager asignado")
 		return
 	print("GameManager iniciado correctamente")
 
@@ -281,8 +277,6 @@ func posicionar_corona_inicial():
 	var mejor_casilla = encontrar_casilla_mas_alejada_inicio(casillas_disponibles)
 	if mejor_casilla:
 		establecer_corona_en_casilla(mejor_casilla)
-		if camara_manager:
-			await camara_manager.zoom_temporal_a_coordenada(mejor_casilla.posicion, 3, 0.95)
 
 func procesar_llegada_corona(jugador: Node3D):
 	print(jugador.nombre, " llego a la corona")
@@ -302,8 +296,6 @@ func reposicionar_corona():
 	var mejor_casilla = encontrar_casilla_mas_alejada_jugadores(casillas_disponibles)
 	if mejor_casilla:
 		establecer_corona_en_casilla(mejor_casilla)
-		if camara_manager:
-			await camara_manager.zoom_temporal_a_coordenada(mejor_casilla.posicion, 3, 0.95)
 
 func restaurar_casilla_corona():
 	var casilla_corona = obtener_casilla_por_indice(posicion_corona)
