@@ -1,12 +1,8 @@
 @tool
 extends MeshInstance3D
-class_name Casilla
 
 # Tipos de Casilla
-enum tipo_casilla {NORMAL, ROJA, MINIJUEGO, CORONA}
-
-# Casillas destino
-@export var casillas_destino: Array[Casilla] = []
+enum tipo_casilla {NORMAL,ROJA,MINIJUEGO,CORONA}
 
 # Numero que Representa la casilla en el Tablero
 @export var index: int = -1
@@ -36,6 +32,7 @@ func set_index(value: int):
 # Establece el tipo de la Casilla en el Tablero
 func set_tipo(value: tipo_casilla):
 	tipo = value
+<<<<<<< HEAD
 
 func set_casillas_destino(destinos: Array[Casilla]) -> void:
 	casillas_destino = destinos
@@ -54,3 +51,5 @@ func enable_emission():
 func disable_emission():
 	if light:
 		light.visible = false
+=======
+>>>>>>> parent of 3e2fa94 (Commit antes de Cambiar el GameManager)
