@@ -1,0 +1,448 @@
+[gd_scene load_steps=13 format=3 uid="uid://dh2j4t30lf3rc"]
+
+[ext_resource type="Script" uid="uid://dxs1ae606mcct" path="res://Scripts/Tablero/tablero.gd" id="1_by2oq"]
+[ext_resource type="Script" uid="uid://dprpqatfl382j" path="res://Scripts/new_game_manager.gd" id="1_ktn72"]
+[ext_resource type="Script" uid="uid://drxcit0hvg1nc" path="res://Scripts/Camera/camera_manager.gd" id="2_0v1yj"]
+[ext_resource type="PackedScene" uid="uid://cns8ts8ffh68i" path="res://Scenes/Jugadores/jugador.tscn" id="2_12pq1"]
+[ext_resource type="PackedScene" uid="uid://dofhnfr83kg16" path="res://Scenes/Tablero/casilla.tscn" id="2_hlhsp"]
+[ext_resource type="Script" uid="uid://cxqv6join2muh" path="res://Scripts/game_manager.gd" id="3_12pq1"]
+[ext_resource type="PackedScene" uid="uid://1cxbg0dq2j4y" path="res://Scenes/Mapas/mapa_02.tscn" id="3_uvtl1"]
+
+[sub_resource type="Curve3D" id="Curve3D_by2oq"]
+closed = true
+_data = {
+"points": PackedVector3Array(0, 0, -1, 0, 1.5, 1.5, 4, 2, -11, 0, 0.5, 0, 0, 2, 1.5, 4, 1.5, -8.5, 0, 0.5, 0, 0, 2.5, 1.5, 4, 1, -6, 0, 0.5, 0, 0, 2, 1, 4, 1.5, -3.5, 0, 0.5, 0, 0, 0, 2, 4, 2, -1, 0, 0, -1, 0, 0, 1, 3, 2, 1, 0, 0.5, -1, 0, -0.5, 1, 3, 1.5, 3, 0, 0, -1, 0.5, 4.5, 1.5, 3, 1, 5, 0, 0.5, 0, -1, 3.5, 1.5, 4, 2.5, 8, 0, 0.5, 0, -1.5, 3.25, 0.5, 2, 3.48452, 11, 0, 0.5, 0, -1.5, 3.5, -1, -1, 4.5, 12, 0, 0.25, 0, -0.5, 2.75, -1.5, -4, 5.5, 10, 0, 0.25, 0, 0, 0, -0.5, -5, 6, 7, 0, 0, 0.25, 0, 0, -1, -5, 6, 5, 0, 0, 1.25, 0, 0, -1, -4, 6, 3, 0, 0.5, 1, 0, 0, 0, -4, 5.5, 1, 0, 0.5, 1, 0, -0.5, -1, -4, 4.5, -1, 0, 0, 1, 0, 0, 0, -4, 4, -3, 0, 0, 0, 0, 0, 0, -4, 4, -5, 0, 0, 0, 0, 0, 0, -4, 4, -11, -1, 0, 0, 1, 0, 0, -3, 4, -12, -1, 0.5, 0, 0, 0, 0, -1, 3.5, -12, -1, 0.5, 0, 1, -0.5, 0, 1, 2.5, -12, -1, 0, 0, 0, 0, 0, 3, 2, -12),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 24
+
+[sub_resource type="Curve3D" id="Curve3D_hlhsp"]
+bake_interval = 0.01
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -5, 6, 5, 0, 0, 0, 0, 0, 0, -7, 6, 5, 0, 0, 0, 0, 0, 0, -9, 6, 5, 0, 0, 0, 0, 0, 0, -11, 6, 5, 0, 0, 0, 0, 0, 0, -11, 6, 3, 0, 0, 0, 0, 0, 0, -11, 6, 1, 0, 0, 0, 0, 0, 0, -11, 6, -1, 0, 0, 0, 0, 0, 0, -11, 6, -3, 0, 0, 0, 0, 0, 0, -11, 6, -5, 0, 0, 0, 0, 0, 0, -11, 6, -7, 0, 0, 0, 0, 0, 0, -11, 6, -9, 0, 0, 0.5, 1, 0, 0, -11, 6, -11, -1, 0.5, 0, 0, 0, 0, -9, 5.5, -11, -1, 0.5, 0, 1, -0.5, 0, -7, 4.5, -11, -1, 0, 0, 0, 0, 0, -4, 4, -11),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 15
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_ktn72"]
+rayleigh_coefficient = 1.0
+energy_multiplier = 2.0
+
+[sub_resource type="Sky" id="Sky_w7rbt"]
+sky_material = SubResource("PhysicalSkyMaterial_ktn72")
+
+[sub_resource type="Environment" id="Environment_0v1yj"]
+background_mode = 2
+background_energy_multiplier = 1.6
+sky = SubResource("Sky_w7rbt")
+
+[node name="MapaPruebaBifurcaciones" type="Node" node_paths=PackedStringArray("tablero", "camara_manager")]
+script = ExtResource("1_ktn72")
+tablero = NodePath("Tablero")
+jugador_escena = ExtResource("2_12pq1")
+camara_manager = NodePath("CameraManager")
+
+[node name="GameManager" type="Node" parent="."]
+script = ExtResource("3_12pq1")
+
+[node name="CameraManager" type="Node" parent="." node_paths=PackedStringArray("camara", "game_manager")]
+script = ExtResource("2_0v1yj")
+camara = NodePath("../Camera3D")
+game_manager = NodePath("../GameManager")
+
+[node name="Mapa_01" parent="." instance=ExtResource("3_uvtl1")]
+
+[node name="Inicio" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 2.059, -12)
+
+[node name="Tablero" type="Node3D" parent="." node_paths=PackedStringArray("caminos")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.059, 0)
+script = ExtResource("1_by2oq")
+caminos = [NodePath("Path3D"), NodePath("Path3D2")]
+casilla_escena = ExtResource("2_hlhsp")
+
+[node name="Path3D" type="Path3D" parent="Tablero"]
+curve = SubResource("Curve3D_by2oq")
+
+[node name="PathFollow_0" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 2, -11)
+rotation_mode = 0
+
+[node name="Casilla_0" parent="Tablero/Path3D/PathFollow_0" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_1/Casilla_1")]
+index = 0
+
+[node name="PathFollow_1" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1.5, -8.5)
+progress = 3.28839
+rotation_mode = 0
+
+[node name="Casilla_1" parent="Tablero/Path3D/PathFollow_1" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_2/Casilla_2")]
+index = 1
+
+[node name="PathFollow_2" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, -6)
+progress = 6.87218
+rotation_mode = 0
+
+[node name="Casilla_2" parent="Tablero/Path3D/PathFollow_2" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_3/Casilla_3")]
+index = 2
+
+[node name="PathFollow_3" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1.5, -3.5)
+progress = 10.4725
+rotation_mode = 0
+
+[node name="Casilla_3" parent="Tablero/Path3D/PathFollow_3" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_4/Casilla_4")]
+index = 3
+
+[node name="PathFollow_4" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 2, -1)
+progress = 13.81
+rotation_mode = 0
+
+[node name="Casilla_4" parent="Tablero/Path3D/PathFollow_4" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_5/Casilla_5")]
+index = 4
+
+[node name="PathFollow_5" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 3, 2, 1)
+progress = 16.23
+rotation_mode = 2
+
+[node name="Casilla_5" parent="Tablero/Path3D/PathFollow_5" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_6/Casilla_6")]
+index = 5
+
+[node name="PathFollow_6" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(-1, 3.90967e-08, -7.81933e-08, 0, 0.894427, 0.447214, 8.74228e-08, 0.447214, -0.894427, 3, 1.5, 3)
+progress = 18.3278
+rotation_mode = 2
+
+[node name="Casilla_6" parent="Tablero/Path3D/PathFollow_6" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_7/Casilla_7")]
+index = 6
+
+[node name="PathFollow_7" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, 5)
+progress = 20.4256
+rotation_mode = 0
+
+[node name="Casilla_7" parent="Tablero/Path3D/PathFollow_7" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_8/Casilla_8")]
+index = 7
+
+[node name="PathFollow_8" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 2.5, 8)
+progress = 25.6568
+rotation_mode = 0
+
+[node name="Casilla_8" parent="Tablero/Path3D/PathFollow_8" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_9/Casilla_9")]
+index = 8
+
+[node name="PathFollow_9" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 3.48452, 11)
+progress = 30.6488
+rotation_mode = 0
+
+[node name="Casilla_9" parent="Tablero/Path3D/PathFollow_9" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_10/Casilla_10")]
+index = 9
+
+[node name="PathFollow_10" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 4.5, 12)
+progress = 35.15
+rotation_mode = 0
+
+[node name="Casilla_10" parent="Tablero/Path3D/PathFollow_10" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_11/Casilla_11")]
+index = 10
+
+[node name="PathFollow_11" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 5.5, 10)
+progress = 40.01
+rotation_mode = 0
+
+[node name="Casilla_11" parent="Tablero/Path3D/PathFollow_11" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_12/Casilla_12")]
+index = 11
+
+[node name="PathFollow_12" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 6, 7)
+progress = 44.1612
+rotation_mode = 0
+
+[node name="Casilla_12" parent="Tablero/Path3D/PathFollow_12" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_13/Casilla_13")]
+index = 12
+
+[node name="PathFollow_13" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(0.999993, 0, 0, 0, 1, 0, 0, 0, 0.999993, -5, 6, 5)
+progress = 46.1612
+rotation_mode = 2
+
+[node name="Casilla_13" parent="Tablero/Path3D/PathFollow_13" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_14/Casilla_14"), NodePath("../../../Path3D2/PathFollow_24/Casilla_24")]
+index = 13
+
+[node name="PathFollow_14" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(0.999991, 0, 0, 0, 0.999997, 0, 0, 0, 0.999988, -4, 6, 3)
+progress = 48.4902
+rotation_mode = 2
+
+[node name="Casilla_14" parent="Tablero/Path3D/PathFollow_14" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_15/Casilla_15")]
+index = 14
+
+[node name="PathFollow_15" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 2.1844e-09, -4.3688e-09, 0, 0.894426, 0.447213, 4.88447e-09, -0.447213, 0.894426, -4, 5.5, 1)
+progress = 50.588
+rotation_mode = 2
+
+[node name="Casilla_15" parent="Tablero/Path3D/PathFollow_15" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_16/Casilla_16")]
+index = 15
+
+[node name="PathFollow_16" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 2.1844e-09, -4.3688e-09, 0, 0.894427, 0.447213, 4.88447e-09, -0.447213, 0.894427, -4, 4.5, -1)
+progress = 52.8241
+rotation_mode = 2
+
+[node name="Casilla_16" parent="Tablero/Path3D/PathFollow_16" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_17/Casilla_17")]
+index = 16
+
+[node name="PathFollow_17" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 0.999993, 0, 0, 0, 0.999993, -4, 4, -3)
+progress = 54.9219
+rotation_mode = 2
+
+[node name="Casilla_17" parent="Tablero/Path3D/PathFollow_17" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_18/Casilla_18")]
+index = 17
+
+[node name="PathFollow_18" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 4, -5)
+progress = 56.9219
+rotation_mode = 2
+
+[node name="Casilla_18" parent="Tablero/Path3D/PathFollow_18" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_19/Casilla_19")]
+index = 18
+
+[node name="PathFollow_19" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(0.999992, 0, 0, 0, 1, 0, 0, 0, 0.999992, -4, 4, -11)
+progress = 62.9219
+rotation_mode = 2
+
+[node name="Casilla_19" parent="Tablero/Path3D/PathFollow_19" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_20/Casilla_20")]
+index = 19
+
+[node name="PathFollow_20" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(-4.37111e-08, 2.4893e-08, -0.99999, 0, 0.999997, 2.48928e-08, 0.999994, 1.08811e-15, -4.37109e-08, -3, 4, -12)
+progress = 64.5069
+rotation_mode = 2
+
+[node name="Casilla_20" parent="Tablero/Path3D/PathFollow_20" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_21/Casilla_21")]
+index = 20
+
+[node name="PathFollow_21" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1.94707e-07, 0.447213, -0.894426, 0, 0.894426, 0.447213, 1, -8.70756e-08, 1.74151e-07, -1, 3.5, -12)
+progress = 66.6047
+rotation_mode = 2
+
+[node name="Casilla_21" parent="Tablero/Path3D/PathFollow_21" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_22/Casilla_22")]
+index = 21
+
+[node name="PathFollow_22" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(1.94707e-07, 0.447214, -0.894427, 0, 0.894427, 0.447214, 1, -8.70757e-08, 1.74151e-07, 1, 2.5, -12)
+progress = 68.8408
+rotation_mode = 2
+
+[node name="Casilla_22" parent="Tablero/Path3D/PathFollow_22" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_23/Casilla_23")]
+index = 22
+
+[node name="PathFollow_23" type="PathFollow3D" parent="Tablero/Path3D"]
+process_mode = 4
+transform = Transform3D(-4.3711e-08, 2.48928e-08, -0.999982, 0, 0.99999, 2.48926e-08, 0.999991, 1.0881e-15, -4.37106e-08, 3, 2, -12)
+progress = 70.9386
+rotation_mode = 2
+
+[node name="Casilla_23" parent="Tablero/Path3D/PathFollow_23" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../../Path3D2/PathFollow_24/Casilla_24")]
+index = 23
+
+[node name="Path3D2" type="Path3D" parent="Tablero"]
+curve = SubResource("Curve3D_hlhsp")
+
+[node name="PathFollow_24" type="PathFollow3D" parent="Tablero/Path3D2"]
+process_mode = 4
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -7, 6, 5)
+progress = 2.0
+rotation_mode = 2
+
+[node name="Casilla_24" parent="Tablero/Path3D2/PathFollow_24" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_25/Casilla_25")]
+index = 24
+
+[node name="PathFollow_25" type="PathFollow3D" parent="Tablero/Path3D2"]
+process_mode = 4
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -9, 6, 5)
+progress = 4.0
+rotation_mode = 2
+
+[node name="Casilla_25" parent="Tablero/Path3D2/PathFollow_25" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_26/Casilla_26")]
+index = 25
+
+[node name="PathFollow_26" type="PathFollow3D" parent="Tablero/Path3D2"]
+process_mode = 4
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -11, 6, 5)
+progress = 6.0
+rotation_mode = 2
+
+[node name="Casilla_26" parent="Tablero/Path3D2/PathFollow_26" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_27/Casilla_27")]
+index = 26
+
+[node name="PathFollow_27" type="PathFollow3D" parent="Tablero/Path3D2"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 6, 3)
+progress = 8.0
+rotation_mode = 2
+
+[node name="Casilla_27" parent="Tablero/Path3D2/PathFollow_27" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_28/Casilla_28")]
+index = 27
+
+[node name="PathFollow_28" type="PathFollow3D" parent="Tablero/Path3D2"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 6, 1)
+progress = 10.0
+rotation_mode = 2
+
+[node name="Casilla_28" parent="Tablero/Path3D2/PathFollow_28" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_29/Casilla_29")]
+index = 28
+
+[node name="PathFollow_29" type="PathFollow3D" parent="Tablero/Path3D2"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 6, -1)
+progress = 12.0
+rotation_mode = 2
+
+[node name="Casilla_29" parent="Tablero/Path3D2/PathFollow_29" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_30/Casilla_30")]
+index = 29
+
+[node name="PathFollow_30" type="PathFollow3D" parent="Tablero/Path3D2"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 6, -3)
+progress = 14.0
+rotation_mode = 2
+
+[node name="Casilla_30" parent="Tablero/Path3D2/PathFollow_30" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_31/Casilla_31")]
+index = 30
+
+[node name="PathFollow_31" type="PathFollow3D" parent="Tablero/Path3D2"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 6, -5)
+progress = 16.0
+rotation_mode = 2
+
+[node name="Casilla_31" parent="Tablero/Path3D2/PathFollow_31" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_32/Casilla_32")]
+index = 31
+
+[node name="PathFollow_32" type="PathFollow3D" parent="Tablero/Path3D2"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 6, -7)
+progress = 18.0
+rotation_mode = 2
+
+[node name="Casilla_32" parent="Tablero/Path3D2/PathFollow_32" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_33/Casilla_33")]
+index = 32
+
+[node name="PathFollow_33" type="PathFollow3D" parent="Tablero/Path3D2"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 6, -9)
+progress = 20.0
+rotation_mode = 2
+
+[node name="Casilla_33" parent="Tablero/Path3D2/PathFollow_33" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_34/Casilla_34")]
+index = 33
+
+[node name="PathFollow_34" type="PathFollow3D" parent="Tablero/Path3D2"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 6, -11)
+progress = 22.0
+rotation_mode = 2
+
+[node name="Casilla_34" parent="Tablero/Path3D2/PathFollow_34" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_35/Casilla_35")]
+index = 34
+
+[node name="PathFollow_35" type="PathFollow3D" parent="Tablero/Path3D2"]
+process_mode = 4
+transform = Transform3D(-4.37114e-08, 0.447214, -0.894427, 0, 0.894427, 0.447214, 1, 1.95483e-08, -3.90967e-08, -9, 5.5, -11)
+progress = 24.098
+rotation_mode = 2
+
+[node name="Casilla_35" parent="Tablero/Path3D2/PathFollow_35" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../PathFollow_36/Casilla_36")]
+index = 35
+
+[node name="PathFollow_36" type="PathFollow3D" parent="Tablero/Path3D2"]
+process_mode = 4
+transform = Transform3D(-4.37114e-08, 0.447214, -0.894427, 0, 0.894427, 0.447214, 1, 1.95483e-08, -3.90967e-08, -7, 4.5, -11)
+progress = 26.334
+rotation_mode = 2
+
+[node name="Casilla_36" parent="Tablero/Path3D2/PathFollow_36" node_paths=PackedStringArray("casillas_destino") instance=ExtResource("2_hlhsp")]
+casillas_destino = [NodePath("../../../Path3D/PathFollow_0/Casilla_0")]
+index = 36
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.707107, -0.353554, 0.612372, -1.63913e-07, 0.866025, 0.5, -0.707107, -0.353554, 0.612372, 36, 33, 36)
+environment = SubResource("Environment_0v1yj")
+fov = 20.0
+size = 20.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.728849, 0.578404, 0.366373, -0.0822096, -0.457303, 0.885503, 0.679722, -0.675517, -0.285754, 15, 32.9384, -19)
+light_color = Color(1, 0.97956, 0.952488, 1)
+shadow_enabled = true

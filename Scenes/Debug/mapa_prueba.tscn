@@ -30,13 +30,13 @@ radial_segments = 32
 rayleigh_coefficient = 1.0
 energy_multiplier = 2.0
 
-[sub_resource type="Sky" id="Sky_w7rbt"]
+[sub_resource type="Sky" id="Sky_mrbu5"]
 sky_material = SubResource("PhysicalSkyMaterial_mrbu5")
 
 [sub_resource type="Environment" id="Environment_6fgja"]
 background_mode = 2
 background_energy_multiplier = 1.6
-sky = SubResource("Sky_w7rbt")
+sky = SubResource("Sky_mrbu5")
 
 [node name="Mapa_Prueba" type="Node"]
 

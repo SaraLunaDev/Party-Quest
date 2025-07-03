@@ -1,8 +1,12 @@
 @tool
 extends MeshInstance3D
+class_name Casilla
 
 # Tipos de Casilla
-enum tipo_casilla {NORMAL,ROJA,MINIJUEGO,CORONA}
+enum tipo_casilla {NORMAL, ROJA, MINIJUEGO, CORONA}
+
+# Casillas destino
+@export var casillas_destino: Array[Casilla] = []
 
 # Numero que Representa la casilla en el Tablero
 @export var index: int = -1
@@ -31,3 +35,9 @@ func set_index(value: int):
 # Establece el tipo de la Casilla en el Tablero
 func set_tipo(value: tipo_casilla):
 	tipo = value
+
+func set_casillas_destino(destinos: Array[Casilla]) -> void:
+	casillas_destino = destinos
+
+func get_casillas_destino() -> Array[Casilla]:
+	return casillas_destino

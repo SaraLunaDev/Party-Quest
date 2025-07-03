@@ -8,6 +8,7 @@ var coronas: int = 0
 var posicion_tablero: int = 0
 @onready var mesh_instance_3d: MeshInstance3D = $MeshInstance3D
 var pf: PathFollow3D
+var casilla_actual: Casilla = null
 
 # Iniciar Jugador con nombre y color
 func _init(p_nombre: String = "", p_color: Color = Color.WHITE) -> void:
