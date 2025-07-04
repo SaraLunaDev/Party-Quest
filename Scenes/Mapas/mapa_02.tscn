@@ -1,0 +1,394 @@
+[gd_scene load_steps=33 format=3 uid="uid://1cxbg0dq2j4y"]
+
+[ext_resource type="ArrayMesh" uid="uid://cefjc7ce5i2wn" path="res://Assets/obj/blue/platform_4x4x4_blue.obj" id="1_p7pfi"]
+[ext_resource type="ArrayMesh" uid="uid://bjyesyrhd6phw" path="res://Assets/obj/blue/platform_slope_4x4x4_blue.obj" id="2_e2f1x"]
+[ext_resource type="ArrayMesh" uid="uid://drts1gd3808u5" path="res://Assets/obj/blue/platform_4x4x2_blue.obj" id="3_u4hkr"]
+[ext_resource type="ArrayMesh" uid="uid://csksg5wwqk4fp" path="res://Assets/obj/blue/platform_2x2x2_blue.obj" id="4_eaaog"]
+[ext_resource type="ArrayMesh" uid="uid://drn781jn1t1iw" path="res://Assets/obj/neutral/cone.obj" id="5_2peg2"]
+[ext_resource type="ArrayMesh" uid="uid://dduxdwavi756f" path="res://Assets/obj/blue/platform_2x2x1_blue.obj" id="6_ueasv"]
+[ext_resource type="ArrayMesh" uid="uid://chtekui64lbww" path="res://Assets/obj/blue/platform_1x1x1_blue.obj" id="7_rl6ae"]
+[ext_resource type="ArrayMesh" uid="uid://xvnrpwp3w7op" path="res://Assets/obj/neutral/pillar_1x1x4.obj" id="8_83wbg"]
+[ext_resource type="ArrayMesh" uid="uid://n44psb8bouoc" path="res://Assets/obj/neutral/pillar_1x1x2.obj" id="9_roejd"]
+[ext_resource type="ArrayMesh" uid="uid://dy8hn3bagqbpx" path="res://Assets/obj/blue/platform_slope_2x2x2_blue.obj" id="10_fa54d"]
+[ext_resource type="ArrayMesh" uid="uid://bcxiad8ixyv0o" path="res://Assets/obj/yellow/barrier_2x1x1_yellow.obj" id="11_xcbxm"]
+[ext_resource type="ArrayMesh" uid="uid://bgxmxgmt3y0hr" path="res://Assets/obj/neutral/floor_wood_2x2.obj" id="12_mr6ma"]
+[ext_resource type="ArrayMesh" uid="uid://cm6gcxn15vlle" path="res://Assets/obj/neutral/pillar_1x1x1.obj" id="13_vcrom"]
+[ext_resource type="ArrayMesh" uid="uid://boim8h6yqwuxf" path="res://Assets/obj/green/pipe_90_A_green.obj" id="14_c4jrh"]
+[ext_resource type="ArrayMesh" uid="uid://dubxiwumneacg" path="res://Assets/obj/yellow/signage_arrow_stand_yellow.obj" id="15_dk10m"]
+[ext_resource type="ArrayMesh" uid="uid://k7sr5063y667" path="res://Assets/obj/red/pipe_straight_B_red.obj" id="16_mna5b"]
+[ext_resource type="ArrayMesh" uid="uid://c7uvml0638hqt" path="res://Assets/obj/red/arch_red.obj" id="17_ov8nm"]
+[ext_resource type="ArrayMesh" uid="uid://bs6w0ygnrwbh" path="res://Assets/obj/blue/platform_4x2x1_blue.obj" id="18_hfaqs"]
+[ext_resource type="ArrayMesh" uid="uid://bblgkukf2sbek" path="res://Assets/obj/neutral/structure_B.obj" id="19_vbjil"]
+[ext_resource type="ArrayMesh" uid="uid://c16ru7n16cnko" path="res://Assets/obj/green/pipe_90_B_green.obj" id="20_c6hch"]
+[ext_resource type="ArrayMesh" uid="uid://bv66t5holdg5g" path="res://Assets/obj/green/pipe_end_green.obj" id="21_rw1p4"]
+[ext_resource type="ArrayMesh" uid="uid://4k6w8jgqfqum" path="res://Assets/obj/neutral/sign.obj" id="22_oco8x"]
+[ext_resource type="Shader" uid="uid://b30be74kowse1" path="res://Shaders/Water/water.gdshader" id="23_58uyq"]
+[ext_resource type="ArrayMesh" uid="uid://cdtmljmqreyok" path="res://Assets/obj/blue/platform_4x2x4_blue.obj" id="24_e2f1x"]
+[ext_resource type="ArrayMesh" uid="uid://siidllkj7hip" path="res://Assets/obj/neutral/floor_wood_2x6.obj" id="24_ueasv"]
+[ext_resource type="ArrayMesh" uid="uid://2v8qebeyuwr3" path="res://Assets/obj/neutral/structure_C.obj" id="25_rl6ae"]
+[ext_resource type="ArrayMesh" uid="uid://f3wxoimisg47" path="res://Assets/obj/blue/platform_6x2x4_blue.obj" id="25_u4hkr"]
+[ext_resource type="ArrayMesh" uid="uid://b8fef8fjfcn5r" path="res://Assets/obj/blue/platform_slope_2x4x4_blue.obj" id="26_eaaog"]
+[ext_resource type="ArrayMesh" uid="uid://bsmyhy03t0o2e" path="res://Assets/obj/blue/platform_6x2x2_blue.obj" id="27_2peg2"]
+[ext_resource type="ArrayMesh" uid="uid://lx7ehmertwx0" path="res://Assets/obj/blue/platform_4x2x2_blue.obj" id="28_ueasv"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_eq22w"]
+render_priority = 0
+shader = ExtResource("23_58uyq")
+shader_parameter/WATER_COL = Color(0.269168, 0.418495, 0.589985, 1)
+shader_parameter/WATER2_COL = Color(0.27597, 0.390509, 0.553583, 1)
+shader_parameter/FOAM_COL = Color(0.35088, 0.491592, 0.638119, 1)
+shader_parameter/FOAM_COL_HIT = Color(0.8125, 0.9609, 0.9648, 1)
+shader_parameter/distortion_speed = 2.0
+shader_parameter/tile = Vector2(128, 128)
+shader_parameter/wave_speed = 1.0
+shader_parameter/wave_amplitude = 0.25
+shader_parameter/wave_frequency = 1.5
+shader_parameter/time_offset = 0.0
+shader_parameter/water_size = Vector2(128, 128)
+shader_parameter/water_transparency = 0.95
+shader_parameter/water_depth_factor = 4.0
+shader_parameter/foam_width = 1.0
+shader_parameter/foam_edge_softness = 0.05
+shader_parameter/foam_smoothness = 0.03
+shader_parameter/foam_distortion_speed = 0.5
+shader_parameter/foam_distortion_amount = 0.1
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_nxy0g"]
+material = SubResource("ShaderMaterial_eq22w")
+size = Vector2(128, 128)
+subdivide_width = 100
+subdivide_depth = 100
+
+[node name="Mapa_01" type="Node3D"]
+
+[node name="Platform4x4x4Blue" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -12)
+mesh = ExtResource("1_p7pfi")
+
+[node name="Platform4x4x4Blue2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -12)
+mesh = ExtResource("1_p7pfi")
+
+[node name="Platform4x4x4Blue3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 2, 4)
+mesh = ExtResource("1_p7pfi")
+
+[node name="Platform4x4x4Blue4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -4)
+mesh = ExtResource("1_p7pfi")
+
+[node name="PlatformSlope4x4x4Blue" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, -12)
+mesh = ExtResource("2_e2f1x")
+
+[node name="PlatformSlope4x4x4Blue2" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -4, 2, 0)
+mesh = ExtResource("2_e2f1x")
+
+[node name="Platform4x4x2Blue" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -12)
+mesh = ExtResource("3_u4hkr")
+
+[node name="Platform4x4x2Blue2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 0)
+mesh = ExtResource("3_u4hkr")
+
+[node name="Platform4x4x2Blue4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 4)
+mesh = ExtResource("3_u4hkr")
+
+[node name="Platform4x4x4Blue5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 2, 4)
+mesh = ExtResource("1_p7pfi")
+
+[node name="Platform4x4x2Blue5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 4)
+mesh = ExtResource("3_u4hkr")
+
+[node name="Platform4x4x2Blue3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
+mesh = ExtResource("3_u4hkr")
+
+[node name="Platform2x2x2Blue2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 4, 7)
+mesh = ExtResource("4_eaaog")
+
+[node name="Cone" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 2, -1.5)
+mesh = ExtResource("5_2peg2")
+
+[node name="Cone2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 2, -0.75)
+mesh = ExtResource("5_2peg2")
+
+[node name="Cone3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 2, 0)
+mesh = ExtResource("5_2peg2")
+
+[node name="Platform2x2x1Blue" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 1, -12)
+mesh = ExtResource("6_ueasv")
+
+[node name="Platform2x2x1Blue2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 3)
+mesh = ExtResource("6_ueasv")
+
+[node name="Platform2x2x1Blue4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 10)
+mesh = ExtResource("6_ueasv")
+
+[node name="Platform2x2x1Blue5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 12)
+mesh = ExtResource("6_ueasv")
+
+[node name="Platform2x2x1Blue6" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 11)
+mesh = ExtResource("6_ueasv")
+
+[node name="Platform2x2x1Blue8" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 8)
+mesh = ExtResource("6_ueasv")
+
+[node name="Platform2x2x1Blue3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 5)
+mesh = ExtResource("6_ueasv")
+
+[node name="Platform1x1x1Blue" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 4.5)
+mesh = ExtResource("7_rl6ae")
+
+[node name="Platform2x2x1Blue7" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 7)
+mesh = ExtResource("6_ueasv")
+
+[node name="Platform1x1x1Blue3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, 6.5)
+mesh = ExtResource("7_rl6ae")
+
+[node name="Platform1x1x1Blue2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 1, -10.5)
+mesh = ExtResource("7_rl6ae")
+
+[node name="Platform1x1x1Blue4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 3, -14.5)
+mesh = ExtResource("7_rl6ae")
+
+[node name="Pillar1x1x4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -4, 1, 10)
+mesh = ExtResource("8_83wbg")
+
+[node name="Pillar1x1x2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 2, 1, 11)
+mesh = ExtResource("9_roejd")
+
+[node name="Pillar1x1x3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1, 12)
+mesh = ExtResource("9_roejd")
+
+[node name="PlatformSlope2x2x2Blue" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 3)
+mesh = ExtResource("10_fa54d")
+
+[node name="Barrier2x1x1Yellow" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 4.5, 1, 3)
+mesh = ExtResource("11_xcbxm")
+
+[node name="Barrier2x1x1Yellow2" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 2.5, 2, -1)
+mesh = ExtResource("11_xcbxm")
+
+[node name="Barrier2x1x1Yellow3" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1, 0, -8.74226e-08, 0, 1, 0, 8.74226e-08, 0, -1, -5, 4, -13.5)
+mesh = ExtResource("11_xcbxm")
+
+[node name="FloorWood2x2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -4, 5, 10)
+mesh = ExtResource("12_mr6ma")
+
+[node name="FloorWood2x3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 4, 12)
+mesh = ExtResource("12_mr6ma")
+
+[node name="FloorWood2x4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 2, 3, 11)
+mesh = ExtResource("12_mr6ma")
+
+[node name="FloorWood2x5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 2, 8)
+mesh = ExtResource("12_mr6ma")
+
+[node name="Pillar1x1x1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 3, 12)
+mesh = ExtResource("13_vcrom")
+
+[node name="Pillar1x1x5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, 7)
+mesh = ExtResource("9_roejd")
+
+[node name="Pillar1x1x7" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 3, 7)
+mesh = ExtResource("13_vcrom")
+
+[node name="Platform2x2x1Blue9" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 7)
+mesh = ExtResource("6_ueasv")
+
+[node name="Pillar1x1x8" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1, 7)
+mesh = ExtResource("9_roejd")
+
+[node name="Pillar1x1x9" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 3, 7)
+mesh = ExtResource("13_vcrom")
+
+[node name="Pillar1x1x6" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, 8)
+mesh = ExtResource("13_vcrom")
+
+[node name="Pipe90AGreen" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+mesh = ExtResource("14_c4jrh")
+
+[node name="SignageArrowStandYellow" type="MeshInstance3D" parent="."]
+transform = Transform3D(5.65108e-08, -6.41627e-09, 0.745, 0.19282, 0.719615, -8.42844e-09, 0.719615, -0.19282, -5.62459e-08, -5.75, 3.75, -5.25)
+mesh = ExtResource("15_dk10m")
+
+[node name="PipeStraightBRed" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -4, 3, -10)
+mesh = ExtResource("16_mna5b")
+
+[node name="PipeStraightBRed2" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1, 8.9407e-08, -2.66454e-15, 0, -4.37114e-08, -1, -8.9407e-08, -1, 4.37114e-08, -4, 3, -6)
+mesh = ExtResource("16_mna5b")
+
+[node name="ArchRed" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, -6)
+mesh = ExtResource("17_ov8nm")
+
+[node name="Platform4x2x1Blue" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -6)
+mesh = ExtResource("18_hfaqs")
+
+[node name="FloorWood2x6" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, -3.5)
+mesh = ExtResource("12_mr6ma")
+
+[node name="FloorWood2x7" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1, -8.5)
+mesh = ExtResource("12_mr6ma")
+
+[node name="StructureB" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -3.5)
+mesh = ExtResource("19_vbjil")
+
+[node name="StructureB2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -8.5)
+mesh = ExtResource("19_vbjil")
+
+[node name="Pipe90BGreen" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 4, 0, -13.5)
+mesh = ExtResource("20_c6hch")
+
+[node name="PipeEndGreen" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 2, -15.5)
+mesh = ExtResource("21_rw1p4")
+
+[node name="Pipe90BGreen2" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, -4.37114e-08, 0, -4.37114e-08, 1, -1, 4.37114e-08, 1.91069e-15, -5.5, 3, 0)
+mesh = ExtResource("20_c6hch")
+
+[node name="PipeEndGreen2" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -7.5, 5, 0)
+mesh = ExtResource("21_rw1p4")
+
+[node name="Sign" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.452548, 0, 0.452548, 0, 0.64, 0, -0.452548, 0, 0.452548, -2.5, 4, -14.5)
+mesh = ExtResource("22_oco8x")
+
+[node name="Water" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.302698, 0)
+mesh = SubResource("PlaneMesh_nxy0g")
+
+[node name="Platform4x2x4Blue" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 2, 5)
+mesh = ExtResource("24_e2f1x")
+
+[node name="Platform6x2x4Blue" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -11, 2, 3)
+mesh = ExtResource("25_u4hkr")
+
+[node name="Platform6x2x4Blue3" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -11, 2, -9)
+mesh = ExtResource("25_u4hkr")
+
+[node name="PlatformSlope2x4x4Blue" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -8, 2, -11)
+mesh = ExtResource("26_eaaog")
+
+[node name="Platform6x2x2Blue" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -11, 0, -9)
+mesh = ExtResource("27_2peg2")
+
+[node name="Platform6x2x2Blue3" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -11, 0, 3)
+mesh = ExtResource("27_2peg2")
+
+[node name="Platform4x2x2Blue" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 5)
+mesh = ExtResource("28_ueasv")
+
+[node name="Platform4x2x2Blue2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -11)
+mesh = ExtResource("28_ueasv")
+
+[node name="FloorWood2x8" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -11, 5.5, -3)
+mesh = ExtResource("24_ueasv")
+
+[node name="StructureC" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, -3)
+mesh = ExtResource("25_rl6ae")
+
+[node name="StructureC2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 1.5, -3)
+mesh = ExtResource("25_rl6ae")
+
+[node name="StructureC3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 3, -3)
+mesh = ExtResource("25_rl6ae")
+
+[node name="StructureB3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 4.5, -3)
+mesh = ExtResource("19_vbjil")
+
+[node name="StructureC4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, -5)
+mesh = ExtResource("25_rl6ae")
+
+[node name="StructureC5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 1.5, -5)
+mesh = ExtResource("25_rl6ae")
+
+[node name="StructureC6" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 3, -5)
+mesh = ExtResource("25_rl6ae")
+
+[node name="StructureB4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 4.5, -5)
+mesh = ExtResource("19_vbjil")
+
+[node name="StructureC7" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0, -1)
+mesh = ExtResource("25_rl6ae")
+
+[node name="StructureC8" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 1.5, -1)
+mesh = ExtResource("25_rl6ae")
+
+[node name="StructureC9" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 3, -1)
+mesh = ExtResource("25_rl6ae")
+
+[node name="StructureB5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 4.5, -1)
+mesh = ExtResource("19_vbjil")

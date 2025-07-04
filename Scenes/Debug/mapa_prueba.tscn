@@ -1,21 +1,339 @@
-[gd_scene load_steps=15 format=3 uid="uid://cj3f644um1a0t"]
+[gd_scene load_steps=15 format=3 uid="uid://d0qjcacc1j33m"]
 
-[ext_resource type="Script" uid="uid://cxqv6join2muh" path="res://Scripts/game_manager.gd" id="1_l0xde"]
-[ext_resource type="PackedScene" uid="uid://cns8ts8ffh68i" path="res://Scenes/Jugadores/jugador.tscn" id="2_hvtsq"]
-[ext_resource type="Script" uid="uid://drxcit0hvg1nc" path="res://Scripts/Camera/camera_manager.gd" id="3_hvtsq"]
-[ext_resource type="PackedScene" uid="uid://c5yfos5ayxjkn" path="res://Scenes/Mapas/mapa_01.tscn" id="4_hvtsq"]
-[ext_resource type="Script" uid="uid://dxs1ae606mcct" path="res://Scripts/Tablero/tablero.gd" id="5_i3cu2"]
-[ext_resource type="PackedScene" uid="uid://dofhnfr83kg16" path="res://Scenes/Tablero/casilla.tscn" id="5_q40er"]
-[ext_resource type="Material" uid="uid://2gip4h3mnccq" path="res://Materials/Tablero/Casillas/normal.tres" id="7_mrbu5"]
-[ext_resource type="Script" uid="uid://cg8asbjn6f8h" path="res://Scripts/Tablero/casilla.gd" id="8_w7rbt"]
+[ext_resource type="Script" uid="uid://cxqv6join2muh" path="res://Scripts/Managers/game_manager.gd" id="1_nxwjx"]
+[ext_resource type="PackedScene" uid="uid://cns8ts8ffh68i" path="res://Scenes/Jugadores/jugador.tscn" id="2_mrbu5"]
+[ext_resource type="Script" uid="uid://bwpixmepy22dx" path="res://Scripts/Tablero/old_tablero.gd" id="3_w7rbt"]
+[ext_resource type="PackedScene" uid="uid://dofhnfr83kg16" path="res://Scenes/Tablero/casilla.tscn" id="4_6fgja"]
+[ext_resource type="Material" uid="uid://d1wficj4y7wb7" path="res://Materials/Tablero/Casillas/roja.tres" id="5_q40er"]
+[ext_resource type="Material" uid="uid://ch8cnsn1ua3c8" path="res://Materials/Tablero/Casillas/minijuego.tres" id="6_pwf0s"]
+[ext_resource type="PackedScene" uid="uid://c5yfos5ayxjkn" path="res://Scenes/Mapas/mapa_01.tscn" id="7_tyugb"]
 
-[sub_resource type="Curve3D" id="Curve3D_m7ngy"]
+[sub_resource type="GDScript" id="GDScript_nxwjx"]
+script/source = "extends Node
+class_name CameraManager
+
+# ============================================================================
+# CONFIGURACION Y VARIABLES PRINCIPALES
+# ============================================================================
+
+# Referencias principales
+@export var camara: Camera3D
+@export var game_manager: GameManager
+
+# Control de seguimiento
+@export var jugador_actual_seguido: Node3D = null
+var pathfollow_camara: PathFollow3D = null
+
+# Configuracion de offset
+@export var offset_posicion: Vector3 = Vector3(10, 12, 20)
+@export var offset_rotacion: Vector3 = Vector3(-30, 30, 0)
+
+# Estados de la camara
+enum EstadoCamara {
+	SIGUIENDO_JUGADOR,
+	VISTA_GENERAL,
+	TRANSICION,
+	ZOOM_TEMPORAL
+}
+
+var estado_actual: EstadoCamara = EstadoCamara.VISTA_GENERAL
+
+# Control de sincronizacion
+var sincronizando_posicion: bool = false
+
+# Variables para zoom temporal
+var posicion_antes_zoom: Vector3
+var rotacion_antes_zoom: Vector3
+var posicion_global_antes_zoom: Vector3
+var rotacion_global_antes_zoom: Vector3
+var padre_antes_zoom: Node
+var coordenada_zoom_objetivo: Vector3
+var duracion_zoom: float
+var zoom_activo: bool = false
+
+# ============================================================================
+# INICIALIZACION Y CONFIGURACION
+# ============================================================================
+
+func _ready() -> void:
+	if game_manager:
+		conectar_senales_game_manager()
+	else:
+		print(\"No hay GameManager asignado al CameraManager\")
+
+func conectar_senales_game_manager():
+	game_manager.connect(\"turno_cambiado\", _on_turno_cambiado)
+	game_manager.connect(\"partida_iniciada\", _on_partida_iniciada)
+	game_manager.connect(\"partida_finalizada\", _on_partida_finalizada)
+
+func _exit_tree() -> void:
+	limpiar_pathfollow_camara()
+	sincronizando_posicion = false
+
+# ============================================================================
+# SISTEMA DE SEGUIMIENTO DE JUGADORES
+# ============================================================================
+
+func _process(_delta: float) -> void:
+	if not sincronizando_posicion or not jugador_actual_seguido or not pathfollow_camara:
+		return
+	
+	# Sincronizar progress_ratio de la camara con el jugador actual
+	if jugador_actual_seguido.pf:
+		pathfollow_camara.progress_ratio = jugador_actual_seguido.pf.progress_ratio
+
+func seguir_jugador(jugador: Node3D) -> void:
+	if not jugador:
+		print(\"Jugador sin PathFollow3D valido\")
+		return
+	
+	print(\"Camara siguiendo a \", jugador.nombre)
+	if jugador_actual_seguido and jugador_actual_seguido.pf:
+		desconectar_camara_jugador()
+	
+	conectar_camara_jugador(jugador)
+	jugador_actual_seguido = jugador
+	estado_actual = EstadoCamara.SIGUIENDO_JUGADOR
+
+func cambiar_jugador(jugador: Node3D) -> void:
+	if not jugador or not jugador.pf:
+		return
+	
+	print(\"Cambio instantaneo al jugador \", jugador.nombre)
+	seguir_jugador(jugador)
+
+# ============================================================================
+# GESTION DE PATHFOLLOW PARA CAMARA
+# ============================================================================
+
+func conectar_camara_jugador(jugador: Node3D) -> void:
+	if not jugador or not jugador.pf:
+		return
+	
+	print(\"Conectando camara a \", jugador.nombre)
+	limpiar_pathfollow_camara()
+	crear_pathfollow_camara(jugador)
+	configurar_camara_en_pathfollow()
+	sincronizando_posicion = true
+
+func crear_pathfollow_camara(jugador: Node3D):
+	pathfollow_camara = PathFollow3D.new()
+	pathfollow_camara.name = \"PF3D_Camara_\" + jugador.nombre
+	pathfollow_camara.rotation_mode = PathFollow3D.ROTATION_NONE
+	
+	var tablero = jugador.pf.get_parent()
+	tablero.add_child(pathfollow_camara)
+	pathfollow_camara.progress_ratio = jugador.pf.progress_ratio
+
+func configurar_camara_en_pathfollow():
+	if camara.get_parent():
+		camara.get_parent().remove_child(camara)
+	
+	pathfollow_camara.add_child(camara)
+	camara.position = offset_posicion
+	camara.rotation_degrees = offset_rotacion
+
+func desconectar_camara_jugador() -> void:
+	if not camara or not camara.get_parent():
+		return
+	
+	print(\"Desconectando camara de \", jugador_actual_seguido.nombre)
+	
+	# Preservar posicion global
+	var posicion_global = camara.global_position
+	var rotacion_global = camara.global_rotation
+	
+	# Remover camara del pathfollow
+	if camara.get_parent():
+		camara.get_parent().remove_child(camara)
+	
+	limpiar_pathfollow_camara()
+	
+	# Añadir temporalmente a escena principal
+	get_tree().current_scene.add_child(camara)
+	camara.global_position = posicion_global
+	camara.global_rotation = rotacion_global
+
+func limpiar_pathfollow_camara():
+	if pathfollow_camara:
+		pathfollow_camara.queue_free()
+		pathfollow_camara = null
+
+# ============================================================================
+# SISTEMA DE ZOOM TEMPORAL
+# ============================================================================
+
+func zoom_temporal_a_coordenada(coordenada: Vector3, duracion: float, factor_zoom: float):
+	if estado_actual == EstadoCamara.ZOOM_TEMPORAL:
+		print(\"Ya hay un zoom temporal activo\")
+		return
+	
+	print(\"Iniciando zoom temporal\")
+	await ejecutar_zoom_temporal(coordenada, duracion, factor_zoom)
+
+func ejecutar_zoom_temporal(coordenada_global: Vector3, duracion: float, factor_zoom: float):
+	print(\"Zoom a coordenada: \", coordenada_global)
+	
+	guardar_estado_actual()
+	configurar_zoom_temporal(coordenada_global, duracion)
+	extraer_camara_de_pathfollow()
+	
+	await animar_zoom_hacia_coordenada(coordenada_global, factor_zoom)
+	await restaurar_estado_anterior()
+
+func guardar_estado_actual():
+	var parent_actual = camara.get_parent()
+	if parent_actual != null and parent_actual is PathFollow3D:
+		padre_antes_zoom = camara.get_parent()
+		posicion_antes_zoom = camara.position
+		rotacion_antes_zoom = camara.rotation
+		posicion_global_antes_zoom = camara.global_position
+		rotacion_global_antes_zoom = camara.global_rotation
+	else:
+		posicion_antes_zoom = camara.global_position
+		rotacion_antes_zoom = camara.global_rotation
+		posicion_global_antes_zoom = camara.global_position
+		rotacion_global_antes_zoom = camara.global_rotation
+		padre_antes_zoom = camara.get_parent()
+
+func configurar_zoom_temporal(coordenada: Vector3, duracion: float):
+	coordenada_zoom_objetivo = coordenada
+	duracion_zoom = duracion
+	zoom_activo = true
+	estado_actual = EstadoCamara.ZOOM_TEMPORAL
+
+func extraer_camara_de_pathfollow():
+	var parent_actual = camara.get_parent()
+	if parent_actual != null and parent_actual is PathFollow3D:
+		var posicion_global_actual = camara.global_position
+		var rotacion_global_actual = camara.global_rotation
+		
+		camara.get_parent().remove_child(camara)
+		get_tree().current_scene.add_child(camara)
+		
+		camara.global_position = posicion_global_actual
+		camara.global_rotation = rotacion_global_actual
+
+# ============================================================================
+# ANIMACIONES DE ZOOM
+# ============================================================================
+
+func animar_zoom_hacia_coordenada(coordenada: Vector3, factor_zoom: float):
+	print(\"Animando zoom hacia coordenada\")
+	
+	var posicion_objetivo = calcular_posicion_objetivo(coordenada)
+	var rotacion_objetivo = calcular_rotacion_objetivo(coordenada, posicion_objetivo)
+	
+	var tween_movimiento = crear_tween_zoom()
+	ejecutar_animacion_posicion_rotacion(tween_movimiento, posicion_objetivo, rotacion_objetivo)
+	await tween_movimiento.finished
+	var tween_fov = crear_tween_zoom()
+	aplicar_zoom_fov(tween_fov, factor_zoom)
+	await tween_fov.finished
+	print(\"Animacion de zoom completada\")
+
+func calcular_posicion_objetivo(coordenada: Vector3) -> Vector3:
+	var posicion_objetivo = coordenada + offset_posicion
+	return posicion_objetivo
+
+func calcular_rotacion_objetivo(coordenada: Vector3, posicion_objetivo: Vector3) -> Vector3:
+	var look_transform = Transform3D().looking_at(coordenada - posicion_objetivo, Vector3.UP)
+	return look_transform.basis.get_euler()
+
+func crear_tween_zoom() -> Tween:
+	var tween = create_tween()
+	tween.set_parallel(true)
+	return tween
+
+func ejecutar_animacion_posicion_rotacion(tween: Tween, posicion: Vector3, rotacion: Vector3):
+	tween.tween_property(camara, \"global_position\", posicion, 0.5).set_ease(Tween.EASE_OUT)
+	tween.tween_property(camara, \"global_rotation\", rotacion, 0.5).set_ease(Tween.EASE_OUT)
+
+func aplicar_zoom_fov(tween: Tween, factor_zoom: float):
+	if camara.projection == Camera3D.PROJECTION_PERSPECTIVE:
+		var fov_original = camara.fov
+		var fov_zoom = fov_original * factor_zoom
+		tween.tween_property(camara, \"fov\", fov_zoom, duracion_zoom).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+
+# ============================================================================
+# RESTAURACION DESPUES DEL ZOOM
+# ============================================================================
+
+func restaurar_estado_anterior():
+	print(\"Regresando de zoom temporal\")
+	
+	if not zoom_activo:
+		return
+	
+	zoom_activo = false
+	
+	if padre_antes_zoom != null and padre_antes_zoom is PathFollow3D:
+		await restaurar_a_pathfollow()
+	else:
+		await restaurar_posicion_fija()
+	
+	actualizar_estado_final()
+
+func restaurar_a_pathfollow():
+	await animar_regreso(posicion_global_antes_zoom, rotacion_global_antes_zoom)
+	reconectar_a_pathfollow()
+
+func calcular_posicion_pathfollow() -> Vector3:
+	var posicion_objetivo = padre_antes_zoom.global_position
+	return posicion_objetivo + padre_antes_zoom.global_transform.basis * posicion_antes_zoom
+
+func reconectar_a_pathfollow():
+	if camara.get_parent():
+		camara.get_parent().remove_child(camara)
+	padre_antes_zoom.add_child(camara)
+	camara.position = posicion_antes_zoom
+	camara.rotation = rotacion_antes_zoom
+
+func restaurar_posicion_fija():
+	await animar_regreso(posicion_antes_zoom, rotacion_antes_zoom)
+
+func animar_regreso(posicion: Vector3, rotacion: Vector3):
+	#var tween = create_tween()
+	#tween.set_parallel(true)
+	#tween.tween_property(camara, \"global_position\", posicion, 1.0)
+	#tween.tween_property(camara, \"global_rotation\", rotacion, 1.0)
+	#await tween.finished
+	camara.global_position = posicion
+	camara.global_rotation = rotacion
+	await get_tree().process_frame
+
+func actualizar_estado_final():
+	if jugador_actual_seguido != null:
+		estado_actual = EstadoCamara.SIGUIENDO_JUGADOR
+		print(\"Camara regreso a seguir jugador: \", jugador_actual_seguido.nombre)
+	else:
+		estado_actual = EstadoCamara.VISTA_GENERAL
+		print(\"Camara regreso a vista general\")
+
+# ============================================================================
+# RESPUESTA A EVENTOS DEL JUEGO
+# ============================================================================
+
+func _on_turno_cambiado(jugador_actual: Node3D):
+	print(\"Camara: Nuevo turno - \", jugador_actual.nombre)
+	cambiar_jugador(jugador_actual)
+
+func _on_partida_iniciada():
+	print(\"Camara: Partida iniciada\")
+
+func _on_partida_finalizada(ganador: Node3D):
+	print(\"Camara: Mostrando ganador - \", ganador.nombre)
+	if ganador != jugador_actual_seguido:
+		cambiar_jugador(ganador)
+"
+
+[sub_resource type="Curve3D" id="Curve3D_hvtsq"]
 closed = true
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 4, -4, -11, 0, 0, 0, 0, 0, 0, 4, -4.5, -8.5, 0, 0, 0, 0, 0, 0, 4, -5, -6, 0, 0, 0, 0, 0, 0, 4, -4.5, -3.5, 0, 0, 0, 0, 0, 0, 4, -4, -1, 0, 0, 0, 0, 0, 0, 3, -4, 1, 0, 0, 0, 0, 0, 0, 3, -4.5, 3, 0, 0, 0, 0, 0, 0, 3, -5, 5, 0, 0, 0, 0, 0, 0, 4, -3.5, 8, 0, 0, 0, 0, 0, 0, 2, -2.5, 11, 0, 0, 0, 0, 0, 0, -1, -1.5, 12, 0, 0, 0, 0, 0, 0, -4, -0.5, 10, 0, 0, 0, 0, 0, 0, -5, 0, 7, 0, 0, 0, 0, 0, 0, -5, 0, 5, 0, 0, 0, 0, 0, 0, -4, 0, 3, 0, 0, 0, 0, 0, 0, -4, -0.5, 1, 0, 0, 0, 0, 0, 0, -4, -1.5, -1, 0, 0, 0, 0, 0, 0, -4, -2, -3, 0, 0, 0, 0, 0, 0, -4, -2, -4.75, 0, 0, 0, 0, 0, 0, -4, -2, -7.75, 0, 0, 0, 0, 0, 0, -4, -2, -11, 0, 0, 0, 0, 0, 0, -3, -2, -12.75, 0, 0, 0, 0, 0, 0, -0.5, -2.75, -12.75, 0, 0, 0, 0, 0, 0, 1, -3.5, -12.75, 0, 0, 0, 0, 0, 0, 3, -4, -12.75),
-"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+"points": PackedVector3Array(0, 0, -0.5, 0, 0.5, 0.5, 4, -4, -11, 0, 1.25, -0.75, 0, 1, 1.5, 4, -4.5, -8.5, 0, 0.19295, -0.140062, 0, 1.5, 1.25, 4, -5, -6, 0, 0.153059, -0.173938, 0, 1.5, 1.5, 4, -4.5, -3.5, 0, 0, -0.75, 0, 0, 0.75, 4, -4, -0.75, 0, 0, -0.75, 0, 0, 0.75, 3, -4, 1, 0, 0, 0, 0, 0, 0, 3, -4, 1.99854, 0, 0, 0, 0, 0, 0, 3, -5.00221, 3.995, 0, 0, 0, 0, 0, 0, 3, -5, 5, -0.503576, 1.58591, -1.45078, -1.18314, 2.74475, 1.73105, 4, -3.5, 8, 0.0583191, 0.126623, 0, -1.75346, 2.45189, 0.459841, 2, -2.5, 11, 0.168948, 0.21238, 0, -1.70766, 2.6544, -1.4086, -1, -1.5, 12, 0, 0.174768, 0.0983515, -0.33, 2.04156, -1.27169, -4, -0.5, 10, 0, 0, 0, 0, 0, -1.5, -5, 0, 7, 0, 0, 1.5, 0, 0, 0, -4, 0, 4, 0, 0, 0, 0, 0, 0, -4, 0, 2, 0, 0, 0, 0, 0, 0, -4, -2, -2, 0, 0, 0, 0, 0, 0, -4, -2, -5.25, 0, 0, 0.25, 0, 0, -1, -4, -2.05288, -11, 0, 0, 0, 0, 0, 0, -2.75, -2, -12, 0, 0, 0, 0, 0, 0, -2, -2, -12, 0, 0, 0, 0, 0, 0, 2, -4, -12, -0.5, 0, 0, 0.5, 0, 0, 3, -4, -12),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 }
-point_count = 25
+point_count = 23
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mdxdp"]
 albedo_color = Color(0.209322, 0.473466, 0.698275, 1)
@@ -30,266 +348,232 @@ radial_segments = 32
 rayleigh_coefficient = 1.0
 energy_multiplier = 2.0
 
-[sub_resource type="Sky" id="Sky_w7rbt"]
+[sub_resource type="Sky" id="Sky_mrbu5"]
 sky_material = SubResource("PhysicalSkyMaterial_mrbu5")
 
 [sub_resource type="Environment" id="Environment_6fgja"]
 background_mode = 2
 background_energy_multiplier = 1.6
-sky = SubResource("Sky_w7rbt")
+sky = SubResource("Sky_mrbu5")
 
 [node name="Mapa_Prueba" type="Node"]
 
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("nodo_inicio")]
-script = ExtResource("1_l0xde")
-jugador_escena = ExtResource("2_hvtsq")
-nodo_inicio = NodePath("../Inicio")
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("tablero", "nodo_inicio")]
+script = ExtResource("1_nxwjx")
+tablero = NodePath("../Tablero_01")
+jugador_escena = ExtResource("2_mrbu5")
+nodo_inicio = NodePath("../Tablero_01/Inicio")
+tipo_victoria = 1
+limite_coronas = 2
 
 [node name="CameraManager" type="Node" parent="." node_paths=PackedStringArray("camara", "game_manager")]
-script = ExtResource("3_hvtsq")
+script = SubResource("GDScript_nxwjx")
 camara = NodePath("../Camera3D")
 game_manager = NodePath("../GameManager")
 
-[node name="Inicio" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 2.00108, -12)
+[node name="Tablero_01" type="Path3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.05288, 0)
+curve = SubResource("Curve3D_hvtsq")
+script = ExtResource("3_w7rbt")
+num_casillas = 19
+casilla_escena = ExtResource("4_6fgja")
 
-[node name="Mapa_01" parent="." instance=ExtResource("4_hvtsq")]
+[node name="Inicio" type="Node3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, -4.0518, -12)
 
-[node name="Tablero" type="Node3D" parent="." node_paths=PackedStringArray("caminos")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055, 0)
-script = ExtResource("5_i3cu2")
-caminos = [NodePath("Path3D")]
-casilla_escena = ExtResource("5_q40er")
-numero_casillas = 25
-
-[node name="Path3D" type="Path3D" parent="Tablero"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
-curve = SubResource("Curve3D_m7ngy")
-
-[node name="Casilla_0" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
+[node name="PF3D_Casilla_0" type="PathFollow3D" parent="Tablero_01"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -4, -11)
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_0" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_1")]
+surface_material_override/0 = ExtResource("5_q40er")
 index = 0
-light = NodePath("OmniLight3D")
+tipo = 1
 
-[node name="Casilla_1" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -4.5, -8.5)
+[node name="PF3D_Casilla_1" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -4.50015, -8.49464)
+progress = 2.9563
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_1" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_2")]
 index = 1
-light = NodePath("OmniLight3D")
 
-[node name="Casilla_2" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -5, -6)
+[node name="PF3D_Casilla_2" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -5.00001, -6.00011)
+progress = 5.84236
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_2" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_3")]
 index = 2
-light = NodePath("OmniLight3D")
 
-[node name="Casilla_3" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -4.5, -3.5)
+[node name="PF3D_Casilla_3" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -4.49969, -3.49861)
+progress = 8.72843
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_3" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_4")]
+surface_material_override/0 = ExtResource("5_q40er")
 index = 3
-light = NodePath("OmniLight3D")
+tipo = 1
 
-[node name="Casilla_4" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -4, -1)
+[node name="PF3D_Casilla_4" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.99485, -4.00046, -0.663393)
+progress = 11.8699
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_4" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_5")]
 index = 4
-light = NodePath("OmniLight3D")
 
-[node name="Casilla_5" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -4, 1)
+[node name="PF3D_Casilla_5" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.99924, -4, 1.06137)
+progress = 13.9195
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_5" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_6")]
+surface_material_override/0 = ExtResource("5_q40er")
 index = 5
-light = NodePath("OmniLight3D")
+tipo = 1
 
-[node name="Casilla_6" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -4.5, 3)
+[node name="PF3D_Casilla_6" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.99953, -5.00272, 4.99462)
+progress = 18.089
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_6" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_7")]
+surface_material_override/0 = ExtResource("5_q40er")
 index = 6
-light = NodePath("OmniLight3D")
+tipo = 1
 
-[node name="Casilla_7" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -5, 5)
+[node name="PF3D_Casilla_7" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.99228, -3.48431, 8.02613)
+progress = 22.2906
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_7" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_8")]
+surface_material_override/0 = ExtResource("6_pwf0s")
 index = 7
-light = NodePath("OmniLight3D")
+tipo = 2
 
-[node name="Casilla_8" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -3.5, 8)
+[node name="PF3D_Casilla_8" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.98788, -2.49378, 11.0057)
+progress = 26.6405
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_8" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_9")]
 index = 8
-light = NodePath("OmniLight3D")
 
-[node name="Casilla_9" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -2.5, 11)
+[node name="PF3D_Casilla_9" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.02652, -1.48005, 11.9864)
+progress = 30.5494
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_9" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_10")]
 index = 9
-light = NodePath("OmniLight3D")
 
-[node name="Casilla_10" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -1.5, 12)
+[node name="PF3D_Casilla_10" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.00899, -0.480488, 9.97799)
+progress = 34.8859
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_10" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_11")]
+surface_material_override/0 = ExtResource("5_q40er")
 index = 10
-light = NodePath("OmniLight3D")
+tipo = 1
 
-[node name="Casilla_11" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -0.5, 10)
+[node name="PF3D_Casilla_11" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.00161, -0.0046046, 6.95664)
+progress = 38.581
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_11" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_12")]
+surface_material_override/0 = ExtResource("5_q40er")
 index = 11
-light = NodePath("OmniLight3D")
+tipo = 1
 
-[node name="Casilla_12" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 7)
+[node name="PF3D_Casilla_12" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.9998, 0, 3.97681)
+progress = 41.7749
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_12" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_13")]
+surface_material_override/0 = ExtResource("6_pwf0s")
 index = 12
-light = NodePath("OmniLight3D")
+tipo = 2
 
-[node name="Casilla_13" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 5)
+[node name="PF3D_Casilla_13" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, -2.71112e-08, 5.42223e-08, 0, 0.894425, 0.447213, -6.06226e-08, -0.447213, 0.894425, -4, -0.485711, 1.02858)
+progress = 44.8419
+rotation_mode = 2
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_13" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_14")]
+surface_material_override/0 = ExtResource("5_q40er")
 index = 13
-light = NodePath("OmniLight3D")
+tipo = 1
 
-[node name="Casilla_14" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 3)
+[node name="PF3D_Casilla_14" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, -2.71112e-08, 5.42225e-08, 0, 0.894427, 0.447214, -6.06226e-08, -0.447214, 0.894427, -4, -1.48463, -0.969258)
+progress = 47.0736
+rotation_mode = 2
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_14" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_15")]
 index = 14
-light = NodePath("OmniLight3D")
 
-[node name="Casilla_15" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -0.5, 1)
+[node name="PF3D_Casilla_15" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -2, -3.94711)
+progress = 50.174
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_15" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_16")]
+surface_material_override/0 = ExtResource("5_q40er")
 index = 15
-light = NodePath("OmniLight3D")
+tipo = 1
 
-[node name="Casilla_16" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -1.5, -1)
+[node name="PF3D_Casilla_16" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.73463, -2.04165, -11.6526)
+progress = 57.9517
+rotation_mode = 0
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_16" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_17")]
+surface_material_override/0 = ExtResource("5_q40er")
 index = 16
-light = NodePath("OmniLight3D")
+tipo = 1
 
-[node name="Casilla_17" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -2, -3)
+[node name="PF3D_Casilla_17" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(-4.37111e-08, 0.4472, -0.89442, 0, 0.894399, 0.44721, 0.999994, 1.95477e-08, -3.90963e-08, -0.990228, -2.50489, -12)
+progress = 60.8984
+rotation_mode = 2
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_17" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_18")]
 index = 17
-light = NodePath("OmniLight3D")
 
-[node name="Casilla_18" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -2, -4.75)
+[node name="PF3D_Casilla_18" type="PathFollow3D" parent="Tablero_01"]
+transform = Transform3D(-4.37114e-08, 0.447213, -0.894427, 0, 0.894427, 0.447213, 1, 1.95483e-08, -3.90966e-08, 1.09096, -3.54548, -12)
+progress = 63.2236
+rotation_mode = 2
+
+[node name="Casilla" parent="Tablero_01/PF3D_Casilla_18" instance=ExtResource("4_6fgja")]
 mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_19")]
 index = 18
-light = NodePath("OmniLight3D")
 
-[node name="Casilla_19" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -2, -7.75)
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_20")]
-index = 19
-light = NodePath("OmniLight3D")
-
-[node name="Casilla_20" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -2, -11)
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_21")]
-index = 20
-light = NodePath("OmniLight3D")
-
-[node name="Casilla_21" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, -2, -12.75)
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_22")]
-index = 21
-light = NodePath("OmniLight3D")
-
-[node name="Casilla_22" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, -2.75, -12.75)
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_23")]
-index = 22
-light = NodePath("OmniLight3D")
-
-[node name="Casilla_23" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -3.5, -12.75)
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_24")]
-index = 23
-light = NodePath("OmniLight3D")
-
-[node name="Casilla_24" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "light") instance=ExtResource("5_q40er")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -4, -12.75)
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("7_mrbu5")
-script = ExtResource("8_w7rbt")
-casillas_destino = [NodePath("../Casilla_0")]
-index = 24
-light = NodePath("OmniLight3D")
+[node name="Mapa_01" parent="." instance=ExtResource("7_tyugb")]
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.707107, -0.353553, 0.612373, -1.63913e-07, 0.866025, 0.5, -0.707107, -0.353554, 0.612372, 36, 32, 36)
