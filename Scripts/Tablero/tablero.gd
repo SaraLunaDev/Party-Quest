@@ -1,6 +1,10 @@
 @tool
 extends Node3D
 
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# Variables
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦	
+
 @export var caminos: Array[Path3D]
 @export var casilla_escena: PackedScene
 
@@ -31,9 +35,9 @@ func _ready():
 		camino.connect("curve_changed", Callable(self, "_sincronizar_puntos_de_union"))
 	_asignar_puntos_de_union()
 
-# ====================================================================
-# SECCION: GESTION DE CASILLAS
-# ====================================================================
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# Gestion de Casillas
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
 
 func _limpiar_casillas() -> void:
 	for camino in caminos:
@@ -66,6 +70,8 @@ func _instanciar_casillas() -> Array[Vector3]:
 			camino.add_child(casilla)
 			casilla.owner = get_tree().edited_scene_root
 			casilla.set_index(numero_casillas)
+			casilla.set_punto_camino(i)
+			casilla.set_camino(camino)
 			
 			# Posicionar la casilla en el punto de la curva
 			casilla.global_position = camino.global_position + punto
@@ -96,31 +102,43 @@ func _instanciar_casillas() -> Array[Vector3]:
 	return puntos
 
 func _configurar_conexiones_casillas(casillas: Array[Casilla]) -> void:
-	for i in range(casillas.size()):
-		var casilla_actual = casillas[i]
+	# Primero: Crear mapas de casillas por camino para mejor organizacion
+	var casillas_por_camino: Dictionary = {}
+	for casilla in casillas:
+		var camino = casilla.get_camino()
+		if camino != null:
+			if not casillas_por_camino.has(camino):
+				casillas_por_camino[camino] = []
+			casillas_por_camino[camino].append(casilla)
+	
+	# Segundo: Configurar conexiones para cada casilla
+	for casilla_actual in casillas:
 		var casillas_destino: Array[Casilla] = []
 		
-		# Logica especial para ultima casilla del camino abierto
+		# Caso 1: Ultima casilla de camino abierto
 		if _es_ultima_casilla_camino_abierto(casilla_actual):
-			var casilla_destino_final = _encontrar_casilla_punto_final(casilla_actual, casillas)
-			if casilla_destino_final != null:
-				casillas_destino.append(casilla_destino_final)
+			var destino_final = _encontrar_casilla_destino_final(casilla_actual, casillas)
+			if destino_final != null:
+				casillas_destino.append(destino_final)
+		
+		# Caso 2: Casilla normal (incluye casillas de camino cerrado)
 		else:
-			# Conexion normal: siguiente casilla
-			var siguiente_indice = (i + 1) % casillas.size()
-			casillas_destino.append(casillas[siguiente_indice])
+			# Conexion principal: siguiente casilla en el mismo camino
+			var siguiente_casilla = _encontrar_siguiente_casilla_en_camino(casilla_actual, casillas_por_camino)
+			if siguiente_casilla != null:
+				casillas_destino.append(siguiente_casilla)
 			
-			# Conexiones adicionales para puntos de union
-			var conexiones_union = _encontrar_conexiones_union(casilla_actual, casillas)
-			for conexion in conexiones_union:
+			# Conexiones adicionales: bifurcaciones que salen desde esta casilla
+			var conexiones_bifurcacion = _encontrar_conexiones_bifurcacion(casilla_actual, casillas)
+			for conexion in conexiones_bifurcacion:
 				casillas_destino.append(conexion)
 		
-		# Asignar conexiones
+		# Asignar todas las conexiones a la casilla
 		casilla_actual.set_casillas_destino(casillas_destino)
 
-# ====================================================================
-# SECCION: DETECCION DE CASILLAS ESPECIALES
-# ====================================================================
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# Detectar casillas especiales
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
 
 func _es_casilla_de_camino_abierto(casilla: Casilla) -> bool:
 	var padre = casilla.get_parent()
@@ -137,36 +155,88 @@ func _es_ultima_casilla_camino_abierto(casilla: Casilla) -> bool:
 	
 	return casilla.global_position.distance_to(punto_penultimo_global) <= 0.1
 
-# ====================================================================
-# SECCION: BUSQUEDA DE CONEXIONES
-# ====================================================================
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# Buscar conexiones
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
 
 func _encontrar_casilla_punto_final(casilla_ultima_abierto: Casilla, todas_casillas: Array[Casilla]) -> Casilla:
+	return _encontrar_casilla_destino_final(casilla_ultima_abierto, todas_casillas)
+
+func _encontrar_casilla_destino_final(casilla_ultima_abierto: Casilla, todas_casillas: Array[Casilla]) -> Casilla:
 	var camino_padre = casilla_ultima_abierto.get_parent() as Path3D
 	var curva = camino_padre.get_curve()
 	var punto_final = curva.get_point_position(curva.get_point_count() - 1)
 	var punto_final_global = camino_padre.global_position + punto_final
 	
+	# Buscar cualquier casilla que este en la posicion del punto final
+	var casillas_candidatas: Array[Casilla] = []
+	
 	for casilla in todas_casillas:
-		if casilla == casilla_ultima_abierto or _es_casilla_de_camino_abierto(casilla):
+		# Saltar la casilla actual (no puede conectar consigo misma)
+		if casilla == casilla_ultima_abierto:
 			continue
+		
+		# Verificar si esta en la posicion del punto final
 		if punto_final_global.distance_to(casilla.global_position) <= 0.1:
-			return casilla
+			casillas_candidatas.append(casilla)
+	
+	# Si encontramos casillas candidatas, elegir la mejor
+	if casillas_candidatas.size() > 0:
+		# Priorizar por tipo de camino: cerrado > abierto
+		var casillas_cerradas = casillas_candidatas.filter(func(c): return c.get_camino() != null and c.get_camino().curve.is_closed())
+		var casillas_abiertas = casillas_candidatas.filter(func(c): return c.get_camino() != null and not c.get_camino().curve.is_closed())
+		
+		# Si hay casillas de caminos cerrados, elegir la primera
+		if casillas_cerradas.size() > 0:
+			return casillas_cerradas[0]
+		
+		# Si no hay casillas de caminos cerrados, elegir la primera de caminos abiertos
+		if casillas_abiertas.size() > 0:
+			return casillas_abiertas[0]
 	
 	return null
 
-func _encontrar_conexiones_union(casilla_objetivo: Casilla, todas_casillas: Array[Casilla]) -> Array[Casilla]:
+func _encontrar_siguiente_casilla_en_camino(casilla_actual: Casilla, casillas_por_camino: Dictionary) -> Casilla:
+	var camino_actual = casilla_actual.get_camino()
+	if camino_actual == null or not casillas_por_camino.has(camino_actual):
+		return null
+	
+	var casillas_del_camino = casillas_por_camino[camino_actual]
+	var curva = camino_actual.get_curve()
+	var punto_actual = casilla_actual.get_punto_camino()
+	
+	# Para caminos cerrados: buscar la siguiente casilla por punto de camino
+	if curva.is_closed():
+		var siguiente_punto = punto_actual + 1
+		if siguiente_punto >= curva.get_point_count():
+			siguiente_punto = 0 # Volver al principio en caminos cerrados
+		
+		for casilla in casillas_del_camino:
+			if casilla.get_punto_camino() == siguiente_punto:
+				return casilla
+	
+	# Para caminos abiertos: buscar siguiente punto (si existe)
+	else:
+		var siguiente_punto = punto_actual + 1
+		for casilla in casillas_del_camino:
+			if casilla.get_punto_camino() == siguiente_punto:
+				return casilla
+	
+	return null
+
+func _encontrar_conexiones_bifurcacion(casilla_objetivo: Casilla, todas_casillas: Array[Casilla]) -> Array[Casilla]:
 	var conexiones: Array[Casilla] = []
 	var posicion_objetivo = casilla_objetivo.global_position
 	
-	# Verificar si la casilla esta en punto inicial de camino abierto
+	# Buscar caminos abiertos que comienzan en la posicion de esta casilla
 	var abiertos = caminos.filter(func(c): return not c.curve.is_closed())
 	for camino_abierto in abiertos:
 		var punto_inicial = camino_abierto.get_curve().get_point_position(0)
 		var punto_inicial_global = camino_abierto.global_position + punto_inicial
+		
 		if posicion_objetivo.distance_to(punto_inicial_global) <= 0.1:
 			var primera_casilla = _encontrar_primera_casilla_camino_abierto(camino_abierto, todas_casillas)
-			if primera_casilla != null:
+			if primera_casilla != null and primera_casilla != casilla_objetivo:
 				conexiones.append(primera_casilla)
 	
 	return conexiones
@@ -184,9 +254,9 @@ func _encontrar_primera_casilla_camino_abierto(camino_abierto: Path3D, todas_cas
 	
 	return null
 
-# ====================================================================
-# SECCION: SINCRONIZACION DE PUNTOS
-# ====================================================================
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# Sincronizar puntos de union
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
 
 var ignorar_sincronizacion := false
 
@@ -195,9 +265,9 @@ func _asignar_puntos_de_union() -> void:
 	posiciones_anteriores.clear()
 	
 	var abiertos = caminos.filter(func(c): return not c.curve.is_closed())
-	var cerrados = caminos.filter(func(c): return c.curve.is_closed())
+	var todos_caminos = caminos.duplicate() # Usar todos los caminos, no solo cerrados
 	
-	if cerrados.is_empty():
+	if todos_caminos.is_empty():
 		return
 	
 	for camino_abierto in abiertos:
@@ -207,43 +277,45 @@ func _asignar_puntos_de_union() -> void:
 		
 		asociaciones_puntos[camino_abierto.name] = {}
 		
-		# Asociar punto inicial
+		# Asociar punto inicial - buscar en todos los caminos excepto el actual
 		var punto_inicial = curva_abierta.get_point_position(0)
-		var asociacion_inicial = _encontrar_punto_mas_cercano(punto_inicial, cerrados)
+		var caminos_para_inicial = todos_caminos.filter(func(c): return c != camino_abierto)
+		var asociacion_inicial = _encontrar_punto_mas_cercano(punto_inicial, caminos_para_inicial)
 		if asociacion_inicial != null:
 			asociaciones_puntos[camino_abierto.name]["inicial"] = asociacion_inicial
 			curva_abierta.set_point_position(0, asociacion_inicial.posicion)
 		
-		# Asociar punto final
+		# Asociar punto final - buscar en todos los caminos excepto el actual
 		var ultimo_idx = curva_abierta.get_point_count() - 1
 		var punto_final = curva_abierta.get_point_position(ultimo_idx)
-		var asociacion_final = _encontrar_punto_mas_cercano(punto_final, cerrados)
+		var caminos_para_final = todos_caminos.filter(func(c): return c != camino_abierto)
+		var asociacion_final = _encontrar_punto_mas_cercano(punto_final, caminos_para_final)
 		if asociacion_final != null:
 			asociaciones_puntos[camino_abierto.name]["final"] = asociacion_final
 			curva_abierta.set_point_position(ultimo_idx, asociacion_final.posicion)
 	
 	_guardar_posiciones_actuales()
 
-func _encontrar_punto_mas_cercano(punto_objetivo: Vector3, caminos_cerrados: Array):
+func _encontrar_punto_mas_cercano(punto_objetivo: Vector3, caminos_candidatos: Array):
 	var mejor_resultado = null
 	var distancia_minima = 999999.0
 	
-	for camino_cerrado in caminos_cerrados:
-		if camino_cerrado == null:
+	for camino_candidato in caminos_candidatos:
+		if camino_candidato == null:
 			continue
 		
-		var curva_cerrada = camino_cerrado.get_curve()
-		if curva_cerrada == null:
+		var curva_candidata = camino_candidato.get_curve()
+		if curva_candidata == null:
 			continue
 		
-		for i in range(curva_cerrada.get_point_count()):
-			var punto_candidato = curva_cerrada.get_point_position(i)
+		for i in range(curva_candidata.get_point_count()):
+			var punto_candidato = curva_candidata.get_point_position(i)
 			var distancia = punto_objetivo.distance_to(punto_candidato)
 			
 			if distancia < distancia_minima:
 				distancia_minima = distancia
 				mejor_resultado = {
-					"camino": camino_cerrado,
+					"camino": camino_candidato,
 					"indice": i,
 					"posicion": punto_candidato,
 					"distancia": distancia
@@ -259,18 +331,16 @@ func _guardar_posiciones_actuales() -> void:
 	posiciones_anteriores.clear()
 	
 	for camino in caminos:
-		if camino.curve.is_closed():
-			var posiciones_camino = []
-			var curva = camino.get_curve()
-			
-			for i in range(curva.get_point_count()):
-				posiciones_camino.append(curva.get_point_position(i))
-			
-			posiciones_anteriores[camino.name] = posiciones_camino
+		var posiciones_camino = []
+		var curva = camino.get_curve()
+		
+		for i in range(curva.get_point_count()):
+			posiciones_camino.append(curva.get_point_position(i))
+		
+		posiciones_anteriores[camino.name] = posiciones_camino
 
 func _actualizar_posicion_casillas() -> void:
-	var casilla_global_idx = 0
-	
+	# Actualizar posiciones de todas las casillas basado en sus caminos
 	for camino in caminos:
 		var curva = camino.get_curve()
 		var point_count = curva.get_point_count()
@@ -280,9 +350,10 @@ func _actualizar_posicion_casillas() -> void:
 		
 		for i in range(start_idx, end_idx):
 			var punto = curva.get_point_position(i)
+			# Buscar la casilla correspondiente a este punto
 			for child in camino.get_children():
-				if child.name == "Casilla_" + str(casilla_global_idx):
-					# Actualizar posicion directamente
+				if child is Casilla and child.get_punto_camino() == i:
+					# Actualizar posicion de la casilla
 					child.global_position = camino.global_position + punto
 					
 					# Actualizar rotacion si no es un salto
@@ -301,7 +372,6 @@ func _actualizar_posicion_casillas() -> void:
 						if direccion.length() > 0.01:
 							child.look_at(child.global_position + direccion, Vector3.UP)
 					break
-			casilla_global_idx += 1
 
 func _sincronizar_puntos_de_union() -> void:
 	if ignorar_sincronizacion:
@@ -328,9 +398,6 @@ func _detectar_puntos_cambiados() -> Array:
 	var cambios = []
 	
 	for camino in caminos:
-		if not camino.curve.is_closed():
-			continue
-		
 		var nombre_camino = camino.name
 		if not posiciones_anteriores.has(nombre_camino):
 			continue
@@ -360,6 +427,7 @@ func _sincronizar_extremos_asociados(cambio: Dictionary) -> void:
 	var indice_cambiado = cambio.indice
 	var nueva_posicion = cambio.posicion_nueva
 	
+	# Caso 1: Un camino base cambio, actualizar caminos abiertos asociados
 	for nombre_camino_abierto in asociaciones_puntos.keys():
 		var asociaciones = asociaciones_puntos[nombre_camino_abierto]
 		var camino_abierto = _encontrar_camino_por_nombre(nombre_camino_abierto)
@@ -381,6 +449,25 @@ func _sincronizar_extremos_asociados(cambio: Dictionary) -> void:
 				var ultimo_idx = camino_abierto.curve.get_point_count() - 1
 				camino_abierto.curve.set_point_position(ultimo_idx, nueva_posicion)
 				asociaciones.final.posicion = nueva_posicion
+	
+	# Caso 2: Un camino abierto cambio, actualizar otros caminos enlazados
+	if not camino_cambiado.curve.is_closed():
+		var nombre_camino_cambiado = camino_cambiado.name
+		if asociaciones_puntos.has(nombre_camino_cambiado):
+			var asociaciones_actuales = asociaciones_puntos[nombre_camino_cambiado]
+			var curva_cambiada = camino_cambiado.get_curve()
+			
+			# Si cambio el punto inicial (indice 0)
+			if indice_cambiado == 0 and asociaciones_actuales.has("inicial"):
+				var asoc = asociaciones_actuales.inicial
+				asoc.camino.curve.set_point_position(asoc.indice, nueva_posicion)
+				asoc.posicion = nueva_posicion
+			
+			# Si cambio el punto final (ultimo indice)
+			elif indice_cambiado == curva_cambiada.get_point_count() - 1 and asociaciones_actuales.has("final"):
+				var asoc = asociaciones_actuales.final
+				asoc.camino.curve.set_point_position(asoc.indice, nueva_posicion)
+				asoc.posicion = nueva_posicion
 
 func _encontrar_camino_por_nombre(nombre: String) -> Path3D:
 	for camino in caminos:

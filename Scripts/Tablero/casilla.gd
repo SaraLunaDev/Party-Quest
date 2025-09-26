@@ -2,37 +2,53 @@
 extends MeshInstance3D
 class_name Casilla
 
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# Variables
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦	
+
 # Tipos de Casilla
 enum tipo_casilla {NORMAL, ROJA, MINIJUEGO, CORONA}
 
 # Casillas destino
 @export var casillas_destino: Array[Casilla] = []
 
-# Numero que Representa la casilla en el Tablero
+# Variables de la Casilla
 @export var index: int = -1
-
-# Selector de Tipo
+@export var camino: Path3D
+@export var punto_camino: float
+@onready var luz: OmniLight3D = $OmniLight3D
 @export var tipo: tipo_casilla = tipo_casilla.NORMAL:
 	set(value):
 		tipo = value
 		actualizar_apariencia()
 
-# Actualiza el Material de la Casilla en base a su Tipo
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# Apariencia Casilla
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦		
+
 func actualizar_apariencia():
-	# Pillo el nombre en base al enum
 	var nombre_tipo: String = tipo_casilla.keys()[tipo].to_lower()
-	# Obtengo el material usando el nombre de antes
 	var ruta = "res://Materials/Tablero/Casillas/%s.tres" % nombre_tipo
-	# Lo creo en base a la ruta de antes
 	var mat: Material = load(ruta)
-	# Lo aplico en la parte Override Material
 	set_surface_override_material(0, mat)
 
-# Establece el idex de la Casilla en el Tablero
+func encender_luz():
+	if luz:
+		luz.visible = true
+		var material: Material = get_surface_override_material(0)
+		luz.light_color = material.albedo_color
+
+func apagar_luz():
+	if luz:
+		luz.visible = false
+		
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# Setters y Getters
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+
 func set_index(value: int):
 	index = value
 
-# Establece el tipo de la Casilla en el Tablero
 func set_tipo(value: tipo_casilla):
 	tipo = value
 
@@ -41,3 +57,15 @@ func set_casillas_destino(destinos: Array[Casilla]) -> void:
 
 func get_casillas_destino() -> Array[Casilla]:
 	return casillas_destino
+
+func set_camino(value: Path3D) -> void:
+	camino = value
+
+func get_camino() -> Path3D:
+	return camino
+
+func set_punto_camino(value: float) -> void:
+	punto_camino = value
+
+func get_punto_camino() -> float:
+	return punto_camino

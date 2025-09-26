@@ -6,10 +6,9 @@ var nombre: String
 var color: Color
 var monedas: int = 10
 var coronas: int = 0
-var posicion_tablero: int = 0
+var posicion_casilla: int = 0
 @onready var mesh_instance_3d: MeshInstance3D = $MeshInstance3D
 var pf: PathFollow3D
-var casilla_actual: Casilla = null
 
 # Iniciar Jugador con nombre y color
 func _init(p_nombre: String = "", p_color: Color = Color.WHITE) -> void:
@@ -51,4 +50,4 @@ func obtener_info() -> String:
 	var corona_texto = ""
 	if coronas > 0:
 		corona_texto = " " + str(coronas)
-	return nombre + corona_texto + " - Casilla: " + str(posicion_tablero) + " - Monedas: " + str(monedas)
+	return nombre + corona_texto + " - Casilla: " + str(posicion_casilla) + " - Monedas: " + str(monedas)
