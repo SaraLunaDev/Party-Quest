@@ -1,25 +1,25 @@
 {
-    "godotTools.editorPath.godot4": "c:\\Users\\black\\Documents\\Godot\\Godot_v4.4.1-stable_win64.exe\\Godot_v4.4.1-stable_win64.exe",
-    "files.exclude": {
-        "**/.godot/**": true,
-        "**/.import/**": true,
-        "**/*.tmp": true,
-        "**/Thumbs.db": true,
-        "**/.DS_Store": true,
-        "**/*.meta": true,
-        "**/.vs/**": true,
-        "**/bin/**": true,
-        "**/obj/**": true,
-        "**/.vscode/**": true,
-        "**/*.uid": true,
-        "**/.gitignore": true,
-        "**/.gitattributes": true,
-        "**/.editorconfig": true,
-        "**/*.import": true,
-        "**/project.godot": true
-    },
-    "files.watcherExclude": {
-        "**/.godot/**": true,
-        "**/.import/**": true
-    }
+	"godotTools.editorPath.godot4": "c:\\Users\\Sara\\Documents\\Godot\\Engine\\Godot_v4.4.1-stable_win64.exe\\Godot_v4.4.1-stable_win64.exe",
+	"files.exclude": {
+		"**/.godot/**": true,
+		"**/.import/**": true,
+		"**/*.tmp": true,
+		"**/Thumbs.db": true,
+		"**/.DS_Store": true,
+		"**/*.meta": true,
+		"**/.vs/**": true,
+		"**/bin/**": true,
+		"**/obj/**": true,
+		"**/.vscode/**": true,
+		"**/*.uid": true,
+		"**/.gitignore": true,
+		"**/.gitattributes": true,
+		"**/.editorconfig": true,
+		"**/*.import": true,
+		"**/project.godot": true
+	},
+	"files.watcherExclude": {
+		"**/.godot/**": true,
+		"**/.import/**": true
+	}
 }

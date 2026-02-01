@@ -1,553 +1,314 @@
 extends Node
-class_name GameManager
+class_name MainGameManager
 
-# ============================================================================
-# SEÑALES Y CONFIGURACION INICIAL
-# ============================================================================
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# Variables
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
 
-# Señales del juego
-signal turno_cambiado(jugador_actual)
-signal jugador_movido(jugador, casilla_index)
+# Señales
 signal partida_iniciada()
-signal partida_finalizada(ganador)
+signal partida_finalizada()
+signal turno_iniciado(jugador_actual)
 
-# Referencias principales
-@export var tablero: Path3D
+# Variables Exportadas
+@export var tablero: Node3D
 @export var jugador_escena: PackedScene
-@export var nodo_inicio: Node3D
+@export var limite_rondas: int = 5
 
-# Arrays y estado del juego
+# Variables Privadas
 var jugadores: Array = []
-var tipos_originales_casillas: Array = []
-
-# Variables de control de turno
 var jugador_actual_index: int = 0
 var rondas_completadas: int = 0
 var partida_activa: bool = false
 var esperando_dado: bool = false
-var posicion_corona: int = -1
+var tirada_maxima: int = 6
+var en_bifurcacion: bool = false
 
-# Configuracion de victoria
-enum TipoVictoria {RONDAS, CORONAS}
-@export var tipo_victoria: TipoVictoria = TipoVictoria.RONDAS
-@export var limite_rondas: int = 10
-@export var limite_coronas: int = 3
+# Variables para bifurcaciones
+var casillas_destino_disponibles: Array[Casilla] = []
+var indice_destino_seleccionado: int = 0
+var jugador_en_bifurcacion: Node3D = null
+# Último destino confirmado por el jugador
+var ultimo_destino_confirmado: Casilla = null
 
-# ============================================================================
-# INICIALIZACION Y CONFIGURACION
-# ============================================================================
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# Configuracion Inicial
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
 
 func _ready() -> void:
 	if tablero == null:
-		push_error("No hay tablero asignado")
-		return
-	print("GameManager iniciado correctamente")
+		print("❌ Error: El nodo 'tablero' no esta asignado.")
 
-func configurar_jugadores(datos_jugadores: Array):
+	print("💚 Game Manager Listo")
+
+func instanciar_jugadores(datos_jugadores: Array):
+	if jugador_escena == null:
+		print("❌ Error: La escena del jugador no esta asignada.")
+		return
+
 	jugadores.clear()
-	for dato in datos_jugadores:
+
+	for datos in datos_jugadores:
 		var jugador = jugador_escena.instantiate()
-		jugador.configurar(dato.nombre, dato.color)
+		jugador.configurar(datos.nombre, datos.color)
 		jugadores.append(jugador)
+
+	var casilla_actual = buscar_casilla(0)
+
 	for jugador in jugadores:
-		instanciar_jugador_inicial(jugador)
-	print("Jugadores configurados: ", jugadores.size())
+		tablero.add_child(jugador)
+		jugador.position = casilla_actual.global_position
+		jugador.rotation_degrees = Vector3.ZERO
+		jugador.pf = null
+		jugador.posicion_casilla = 0
 
-func instanciar_jugador_inicial(jugador: Node3D):
-	if nodo_inicio == null:
-		push_error("No hay nodo de inicio establecido")
-		return
-	nodo_inicio.add_child(jugador)
-	var posicion_distribuida = calcular_posicion_spawn_jugador(jugador)
-	jugador.position = posicion_distribuida
-	jugador.rotation_degrees = Vector3(0, -90, 0)
-	jugador.pf = null
-	jugador.posicion_tablero = -1
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# Gestion de Partida
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
 
-# ============================================================================
-# GESTION DE PARTIDA
-# ============================================================================
-
-func iniciar_partida():
+func comenzar_partida():
 	if jugadores.size() < 2:
-		push_error("Se necesitan al menos 2 jugadores")
-		return
-	
-	print("Iniciando partida con ", jugadores.size(), " jugadores")
-	guardar_tipos_originales()
-	
-	# Posicionar corona inicial
-	posicion_corona = -1
-	await posicionar_corona_inicial()
-	
-	# Determinar orden y comenzar
-	await determinar_orden_inicial()
+		print("❌ Error: No hay suficientes jugadores para comenzar la partida.")
+
+	print("\n🎉 Partida iniciada con ", jugadores.size(), " jugadores.")
+	# TODO: Instanciar Corona
+	await determinar_orden()
 	partida_activa = true
-	jugador_actual_index = 0
 	emit_signal("partida_iniciada")
 	iniciar_turno()
 
 func finalizar_partida():
 	partida_activa = false
-	var ganador = determinar_ganador()
-	mostrar_resultados_finales(ganador)
-	emit_signal("partida_finalizada", ganador)
+	# TODO: Elegir Ganador
+	emit_signal("partida_finalizada")
 
-func siguiente_turno():
-	jugador_actual_index = (jugador_actual_index + 1) % jugadores.size()
+	print("\n🏁 Partida finalizada.")
 	
-	if jugador_actual_index == 0:
-		rondas_completadas += 1
-		print("Ronda ", rondas_completadas, " completada")
-		verificar_condiciones_victoria()
-		return
-	
-	if verificar_condiciones_victoria():
-		return
-	
-	iniciar_turno()
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# Gestion de Turnos
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
 
-func verificar_condiciones_victoria() -> bool:
-	# Victoria por rondas
-	if tipo_victoria == TipoVictoria.RONDAS and rondas_completadas >= limite_rondas:
-		finalizar_partida()
-		return true
-	
-	# Victoria por coronas
-	if tipo_victoria == TipoVictoria.CORONAS:
-		for jugador in jugadores:
-			if jugador.coronas >= limite_coronas:
-				finalizar_partida()
-				return true
-	
-	if jugador_actual_index == 0 and rondas_completadas > 0:
-		iniciar_turno()
-	
-	return false
-
-# ============================================================================
-# GESTION DE TURNOS
-# ============================================================================
-
-func iniciar_turno():
-	if not partida_activa:
-		return
-	
-	var jugador_actual = jugadores[jugador_actual_index]
-	
-	# Primer turno - mover al tablero
-	if jugador_actual.posicion_tablero == -1:
-		print("Primer turno de ", jugador_actual.nombre)
-		await mover_jugador_al_tablero(jugador_actual)
-		await get_tree().create_timer(1.0).timeout
-		emit_signal("turno_cambiado", jugador_actual)
-		esperando_dado = true
-		return
-	
-	# Turno normal
-	print("Turno de ", jugador_actual.nombre, " - Casilla ", jugador_actual.posicion_tablero)
-	esperando_dado = true
-	emit_signal("turno_cambiado", jugador_actual)
-
-func procesar_tirada_dado():
-	if not esperando_dado or not partida_activa:
-		return
-	
-	var jugador_actual = jugadores[jugador_actual_index]
-	esperando_dado = false
-	var resultado = tirar_dado()
-	
-	print(jugador_actual.nombre, " tiro: ", resultado)
-	await mover_jugador_en_tablero(jugador_actual, resultado)
-	
-	await get_tree().create_timer(2.0).timeout
-	siguiente_turno()
-
-func tirar_dado() -> int:
-	return randi_range(1, 6)
-
-func determinar_orden_inicial():
+func determinar_orden():
+	print("\n🤔 Determinando el orden")
 	var resultados = []
 	for jugador in jugadores:
-		var dado = tirar_dado()
-		resultados.append({"jugador": jugador, "dado": dado})
-		print(jugador.nombre, " tiro: ", dado)
-	
-	resultados.sort_custom(func(a, b): return a.dado > b.dado)
-	
+		var resultado_dado = randi() % tirada_maxima + 1
+		resultados.append({"jugador": jugador, "resultado": resultado_dado})
+		print("   ", "🎲 ", jugador.nombre, " ha tirado: ", resultado_dado)
+	resultados.sort_custom(func(a, b): return a.resultado > b.resultado)
 	var jugadores_ordenados = []
-	print("Orden determinado:")
+	
+	print("\n😯 Orden de Jugadores:")
 	for i in resultados.size():
 		jugadores_ordenados.append(resultados[i].jugador)
-		print(i + 1, ". ", resultados[i].jugador.nombre)
-	
+		print("   ", i + 1, ".- ", resultados[i].jugador.nombre)
 	jugadores = jugadores_ordenados
+	print()
 
-# ============================================================================
-# MOVIMIENTO DE JUGADORES
-# ============================================================================
+func iniciar_turno():
+	if !partida_activa:
+		return
+	if jugador_actual_index == 0:
+		rondas_completadas += 1
+		if rondas_completadas > limite_rondas:
+			finalizar_partida()
+			return
+		else:
+			print("🔄 Comenzando ronda ", rondas_completadas)
+			print("----------------------")
+	var jugador_actual = jugadores[jugador_actual_index]
+	esperando_dado = true
+	emit_signal("turno_iniciado", jugador_actual)
+	
+	print("🎮 Turno de ", jugador_actual.nombre)
 
-func mover_jugador_al_tablero(jugador: Node3D):
-	print("Moviendo ", jugador.nombre, " al tablero")
-	await mover_a_casilla_inicio(jugador)
-	crear_pathfollow_para_jugador(jugador)
+func tirar_dado():
+	if !esperando_dado or !partida_activa:
+		return
 
-func mover_a_casilla_inicio(jugador: Node3D):
-	var posicion_destino = obtener_posicion_casilla_0()
-	var tween = create_tween()
-	tween.tween_property(jugador, "global_position", posicion_destino, 1.0)
-	await tween.finished
+	var jugador_actual = jugadores[jugador_actual_index]
+	esperando_dado = false
+	var resultado_dado = randi() % tirada_maxima + 1
+	print("   ", "🎲 ", jugador_actual.nombre, " ha tirado: ", resultado_dado)
+	
+	await mover_jugador(jugador_actual, resultado_dado)
+	
+	jugador_actual_index = (jugador_actual_index + 1) % jugadores.size()
+	iniciar_turno()
 
-func crear_pathfollow_para_jugador(jugador: Node3D):
-	var pf = PathFollow3D.new()
-	pf.name = "PF_" + jugador.nombre
-	pf.rotation_mode = PathFollow3D.ROTATION_Y
-	
-	# Buscar progress_ratio de casilla 0
-	var progress_casilla_0 = obtener_progress_ratio_casilla(0)
-	
-	tablero.add_child(pf)
-	pf.progress_ratio = progress_casilla_0
-	
-	# Transferir jugador al PathFollow
-	nodo_inicio.remove_child(jugador)
-	pf.add_child(jugador)
-	jugador.position = Vector3.ZERO
-	jugador.rotation_degrees = Vector3(0, 0, 0)
-	
-	# Configurar referencias
-	jugador.pf = pf
-	jugador.posicion_tablero = 0
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# Movimiento de Jugador
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
 
-func mover_jugador_en_tablero(jugador: Node3D, espacios: int):
-	print("Moviendo ", jugador.nombre, " ", espacios, " espacios")
-	var tween = create_tween()
-	
+func mover_jugador(jugador: Node3D, espacios: int):
+	print("   ", "🚶‍♂️ ", jugador.nombre, " se mueve ", espacios, " espacios.")
+
 	for i in espacios:
-		var posicion_anterior = jugador.posicion_tablero
-		var nueva_posicion = (jugador.posicion_tablero + 1) % tablero.num_casillas
-		var progress_destino = obtener_progress_ratio_casilla(nueva_posicion)
+		var posicion = jugador.posicion_casilla
+		# Obtener casilla actual
+		var casilla_actual = buscar_casilla(posicion)
+		if casilla_actual == null:
+			print("   ", "❌ No se encontro la casilla ", posicion)
+			return
+			
+		# Ver destinos de la casilla actual
+		var destinos = casilla_actual.get_casillas_destino()
+		if destinos.size() == 0:
+			print("   ", "⚠️ Casilla ", posicion, " sin destinos. Reconfigurando tablero...")
+			var todas_casillas_nodes = get_tree().get_nodes_in_group("casilla")
+			var casillas_typed: Array[Casilla] = []
+			for n in todas_casillas_nodes:
+				if n is Casilla:
+					casillas_typed.append(n)
+			if tablero and tablero.has_method("_configurar_conexiones_casillas"):
+				tablero._configurar_conexiones_casillas(casillas_typed)
+				# Re-obtener destinos
+				destinos = casilla_actual.get_casillas_destino()
+				print("   ", "🔁 Reconfiguración: destinos=", destinos.size())
+			# Si sigue vacío, detener movimiento
+			if destinos.size() == 0:
+				print("   ", "❌ Casilla ", posicion, " sigue sin destinos.")
+				return
 		
-		jugador.posicion_tablero = nueva_posicion
+		var destino: Casilla
 		
-		# Detectar vuelta completa
-		if posicion_anterior == (tablero.num_casillas - 1) and nueva_posicion == 0:
-			tween.tween_property(jugador.pf, "progress_ratio", 1.0, 0.5)
-			tween.tween_callback(func(): jugador.pf.progress_ratio = 0.0)
-			if progress_destino > 0:
-				tween.tween_property(jugador.pf, "progress_ratio", progress_destino, 0.5)
+		# Si hay mas de un destino, manejar bifurcacion
+		if destinos.size() > 1:
+			print("   ", "🔀 Bifurcacion detectada en casilla ", posicion)
+			destino = await manejar_bifurcacion(jugador, destinos)
 		else:
-			tween.tween_property(jugador.pf, "progress_ratio", progress_destino, 0.5)
+			# Solo un destino, continuar normalmente
+			destino = destinos[0]
 		
-		if jugador.posicion_tablero == posicion_corona:
-			tween.tween_callback(procesar_corona_durante_tween.bind(jugador, i + 1, espacios))
+		print("      ", "➡️ ", jugador.nombre, " se mueve a la casilla ", destino.index)
+		
+		# Mover al jugador a la nueva casilla
+		jugador.posicion_casilla = destino.index
+		jugador.position = destino.global_position
+
+		await get_tree().create_timer(0.5).timeout
 	
-	await tween.finished
-	
-	emit_signal("jugador_movido", jugador, jugador.posicion_tablero)
+	print("   ", "✅ ", jugador.nombre, " ha llegado a la casilla ", jugador.posicion_casilla, "\n")
 
-func procesar_corona_durante_tween(jugador: Node3D, _paso_actual: int, _pasos_totales: int):
-	print(jugador.nombre, " obtuvo una corona!")
-	jugador.establecer_corona(1)
+func manejar_bifurcacion(_jugador: Node3D, destinos: Array[Casilla]) -> Casilla:
+	# Iniciar seleccion manual por el jugador y esperar confirmacion
+	iniciar_seleccion_bifurcacion(_jugador, destinos)
+	# Esperar hasta que el jugador confirme una opcion
+	while en_bifurcacion:
+		await get_tree().process_frame
+	# Recuperar la opcion confirmada
+	var destino_confirmado = ultimo_destino_confirmado
+	ultimo_destino_confirmado = null
+	if destino_confirmado == null:
+		# Fallback por si acaso: elegir aleatoriamente
+		destino_confirmado = destinos[randi() % destinos.size()]
+		print("      ", "⚠️ Fallback: casilla ", destino_confirmado.index)
+	else:
+		print("      ", "🎯 Confirmada: casilla ", destino_confirmado.index)
+	return destino_confirmado
 
-	restaurar_casilla_corona()
-	await get_tree().create_timer(1.0).timeout
-	await reposicionar_corona()
-
-func obtener_pathfollow_por_casilla(casilla: Node3D):
-	if casilla == null:
-		return null
-
-	var parent = casilla.get_parent()
-	if parent is PathFollow3D:
-		return parent
+func buscar_casilla(indice: int) -> Casilla:
+	var todas_casillas = get_tree().get_nodes_in_group("casilla")
+	for casilla in todas_casillas:
+		if casilla.index == indice:
+			return casilla
 	return null
 
-# ============================================================================
-# SISTEMA DE CORONA
-# ============================================================================
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# Bifurcaciones
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
 
-func posicionar_corona_inicial():
-	print("Posicionando corona inicial")
-	var casillas_disponibles = obtener_casillas_disponibles()
-	if casillas_disponibles.is_empty():
-		print("No hay casillas disponibles para corona")
-		return
+func iniciar_seleccion_bifurcacion(jugador: Node3D, destinos: Array[Casilla]):
+	en_bifurcacion = true
+	jugador_en_bifurcacion = jugador
+	casillas_destino_disponibles = destinos
+	indice_destino_seleccionado = 0
 	
-	var mejor_casilla = encontrar_casilla_mas_alejada_inicio(casillas_disponibles)
-	if mejor_casilla:
-		establecer_corona_en_casilla(mejor_casilla)
-
-func procesar_llegada_corona(jugador: Node3D):
-	print(jugador.nombre, " llego a la corona")
+	print("🔀 ", jugador.nombre, " en bifurcacion (", destinos.size(), " opciones). Usa ← → y SPACE.")
 	
-	jugador.establecer_corona(1)
-	restaurar_casilla_corona()
-	
-	await get_tree().create_timer(1.0).timeout
-	await reposicionar_corona()
+	# Encender luz de la opcion seleccionada
+	actualizar_indicadores_visuales()
 
-func reposicionar_corona():
-	print("Reposicionando corona")
-	var casillas_disponibles = obtener_casillas_disponibles()
-	if casillas_disponibles.is_empty():
-		return
-	
-	var mejor_casilla = encontrar_casilla_mas_alejada_jugadores(casillas_disponibles)
-	if mejor_casilla:
-		establecer_corona_en_casilla(mejor_casilla)
-
-func restaurar_casilla_corona():
-	var casilla_corona = obtener_casilla_por_indice(posicion_corona)
-	if casilla_corona and posicion_corona < tipos_originales_casillas.size():
-		var tipo_original = tipos_originales_casillas[posicion_corona]
-		casilla_corona.set_tipo(tipo_original)
-
-func establecer_corona_en_casilla(info_casilla):
-	info_casilla.casilla.set_tipo(info_casilla.casilla.tipo_casilla.CORONA)
-	posicion_corona = info_casilla.index
-	print("Corona establecida en casilla ", posicion_corona)
-
-# ============================================================================
-# BUSQUEDA Y CALCULOS
-# ============================================================================
-
-func calcular_posicion_spawn_jugador(jugador_actual: Node3D) -> Vector3:
-	var indice_jugador = -1
-	for i in jugadores.size():
-		if jugadores[i] == jugador_actual:
-			indice_jugador = i
-			break
-
-	if indice_jugador == -1:
-		print("⚠️ Jugador no encontrado en la lista, usando posicion por defecto")
-		return Vector3.ZERO
-
-	var separacion_desde_centro = 0.75
-
-	match jugadores.size():
-		1: # Un jugador, spawn en el centro
-			return Vector3.ZERO
-		2: # Dos jugadores, spawn en extremos opuestos
-			if indice_jugador == 0:
-				return Vector3(0, 0, -separacion_desde_centro)
-			else:
-				return Vector3(0, 0, separacion_desde_centro)
-		3: # Tres jugadores, spawn en triangulo equilatero
-			var angulo = indice_jugador * (2.0 * PI / 3.0)
-			return Vector3(separacion_desde_centro * cos(angulo), 0, separacion_desde_centro * sin(angulo))
-		4: # Cuatro jugadores, spawn en cuadrado
-			if indice_jugador == 0:
-				return Vector3(-separacion_desde_centro, 0, -separacion_desde_centro)
-			elif indice_jugador == 1:
-				return Vector3(separacion_desde_centro, 0, -separacion_desde_centro)
-			elif indice_jugador == 2:
-				return Vector3(separacion_desde_centro, 0, separacion_desde_centro)
-			else:
-				return Vector3(-separacion_desde_centro, 0, separacion_desde_centro)
-		_: # Mas de 4 jugadores, distribucion circular
-			var angulo = indice_jugador * (2.0 * PI / float(jugadores.size()))
-			# 🎯 USAR separacion_desde_centro como limite maximo
-			var radio = min(calcular_radio_optimo(jugadores.size()), separacion_desde_centro)
-			return Vector3(radio * cos(angulo), 0, radio * sin(angulo))
-
-func calcular_radio_optimo(num_jugadores: int) -> float:
-	if num_jugadores <= 1:
-		return 0.0
-
-	var diferencia_minima_entre_jugadores = 2.0
-	var angulo_central = PI / float(num_jugadores)
-	var radio_calculado = diferencia_minima_entre_jugadores / (2.0 * sin(angulo_central))
-
-	var radio_minimo = 2.0
-	var radio_final = max(radio_calculado, radio_minimo)
-
-	return radio_final
-
-func obtener_casillas_disponibles() -> Array:
-	var disponibles = []
-	for child in tablero.get_children():
-		if child is PathFollow3D and child.get_child_count() > 0:
-			for casilla in child.get_children():
-				if casilla.has_method("set_tipo"):
-					if casilla.tipo == casilla.tipo_casilla.ROJA or casilla.tipo == casilla.tipo_casilla.NORMAL:
-						disponibles.append({
-							"index": casilla.index,
-							"casilla": casilla,
-							"posicion": child.global_position,
-							"pathfollow": child
-						})
-	return disponibles
-
-func encontrar_casilla_mas_alejada_inicio(casillas: Array):
-	var posicion_inicio = obtener_posicion_casilla_0()
-	var mejor_casilla = null
-	var max_distancia = -1
-	
-	for info in casillas:
-		var distancia = info.posicion.distance_to(posicion_inicio)
-		if distancia > max_distancia:
-			max_distancia = distancia
-			mejor_casilla = info
-	
-	return mejor_casilla
-
-func encontrar_casilla_mas_alejada_jugadores(casillas: Array):
-	var posiciones_jugadores = obtener_posiciones_jugadores()
-	if posiciones_jugadores.is_empty():
-		return encontrar_casilla_mas_alejada_inicio(casillas)
-	
-	var mejor_casilla = null
-	var max_distancia_minima = -1
-	
-	for info in casillas:
-		var distancia_minima = INF
-		for pos_jugador in posiciones_jugadores:
-			var distancia = info.posicion.distance_to(pos_jugador)
-			if distancia < distancia_minima:
-				distancia_minima = distancia
-		
-		if distancia_minima > max_distancia_minima:
-			max_distancia_minima = distancia_minima
-			mejor_casilla = info
-	
-	return mejor_casilla
-
-func obtener_posiciones_jugadores() -> Array:
-	var posiciones = []
-	for jugador in jugadores:
-		if jugador.posicion_tablero >= 0 and jugador.pf:
-			posiciones.append(jugador.pf.global_position)
-	return posiciones
-
-# ============================================================================
-# UTILIDADES Y HELPERS
-# ============================================================================
-
-func obtener_posicion_casilla_0() -> Vector3:
-	for child in tablero.get_children():
-		if child is PathFollow3D and child.get_child_count() > 0:
-			for casilla in child.get_children():
-				if casilla.has_method("set_tipo") and casilla.index == 0:
-					return child.global_position
-	
-	# Fallback
-	var pf_temp = PathFollow3D.new()
-	tablero.add_child(pf_temp)
-	pf_temp.progress_ratio = 0.0
-	var pos = pf_temp.global_position
-	tablero.remove_child(pf_temp)
-	pf_temp.queue_free()
-	return pos
-
-func obtener_progress_ratio_casilla(indice: int) -> float:
-	for child in tablero.get_children():
-		if child is PathFollow3D and child.get_child_count() > 0:
-			for casilla in child.get_children():
-				if casilla.has_method("set_tipo") and casilla.index == indice:
-					return child.progress_ratio
-	
-	return float(indice) / float(tablero.num_casillas)
-
-func obtener_casilla_por_indice(indice: int):
-	if indice < 0 or indice >= tablero.num_casillas:
+func preseleccionar_destino(incremento: int) -> Casilla:
+	if not en_bifurcacion or casillas_destino_disponibles.is_empty():
 		return null
 	
-	for child in tablero.get_children():
-		if child is PathFollow3D and child.get_child_count() > 0:
-			for casilla in child.get_children():
-				if casilla.has_method("set_tipo") and casilla.index == indice:
-					return casilla
-	return null
-
-func guardar_tipos_originales():
-	tipos_originales_casillas.clear()
-	tipos_originales_casillas.resize(tablero.num_casillas)
+	# Actualizar indice
+	indice_destino_seleccionado = (indice_destino_seleccionado + incremento) % casillas_destino_disponibles.size()
+	if indice_destino_seleccionado < 0:
+		indice_destino_seleccionado = casillas_destino_disponibles.size() - 1
 	
-	for i in tablero.num_casillas:
-		var casilla = obtener_casilla_por_indice(i)
-		if casilla:
-			tipos_originales_casillas[i] = casilla.tipo
-		else:
-			tipos_originales_casillas[i] = 0
+	var casilla_seleccionada = casillas_destino_disponibles[indice_destino_seleccionado]
+	print("🎯 Preseleccion: casilla ", casilla_seleccionada.index)
+	
+	# Actualizar indicadores visuales
+	actualizar_indicadores_visuales()
+	
+	return casilla_seleccionada
 
-# ============================================================================
-# PROCESAMIENTO DE CASILLAS
-# ============================================================================
+func seleccionar_destino() -> Casilla:
+	if not en_bifurcacion or casillas_destino_disponibles.is_empty():
+		return null
+	
+	var casilla_elegida = casillas_destino_disponibles[indice_destino_seleccionado]
+	print("✅ ", jugador_en_bifurcacion.nombre, " eligio casilla ", casilla_elegida.index)
+	
+	# Guardar eleccion y limpiar estado de bifurcacion
+	ultimo_destino_confirmado = casilla_elegida
+	finalizar_seleccion_bifurcacion()
+	
+	return casilla_elegida
 
-func procesar_efectos_casilla(jugador: Node3D):
-	var casilla = obtener_casilla_por_indice(jugador.posicion_tablero)
-	if casilla == null:
+func actualizar_indicadores_visuales():
+	if not en_bifurcacion:
 		return
 	
-	match casilla.tipo:
-		casilla.tipo_casilla.NORMAL:
-			print(jugador.nombre, " gana 3 monedas")
-			jugador.establecer_monedas(3)
-		casilla.tipo_casilla.ROJA:
-			print(jugador.nombre, " pierde 3 monedas")
-			jugador.establecer_monedas(-3)
-		casilla.tipo_casilla.MINIJUEGO:
-			print(jugador.nombre, " activa minijuego")
-		casilla.tipo_casilla.CORONA:
-			print(jugador.nombre, " llego a corona")
-
-# ============================================================================
-# RESULTADOS Y ESTADISTICAS
-# ============================================================================
-
-func determinar_ganador():
-	var mejor = jugadores[0]
+	# Apagar todas las luces primero
+	for casilla in casillas_destino_disponibles:
+		casilla.apagar_luz()
 	
-	match tipo_victoria:
-		TipoVictoria.CORONAS:
-			for jugador in jugadores:
-				if jugador.coronas >= limite_coronas:
-					return jugador
-		TipoVictoria.RONDAS:
-			for jugador in jugadores:
-				if jugador.coronas > mejor.coronas:
-					mejor = jugador
-				elif jugador.coronas == mejor.coronas and jugador.monedas > mejor.monedas:
-					mejor = jugador
-	
-	return mejor
+	# Encender la luz de la opcion seleccionada
+	if indice_destino_seleccionado < casillas_destino_disponibles.size():
+		casillas_destino_disponibles[indice_destino_seleccionado].encender_luz()
 
-func mostrar_resultados_finales(ganador):
-	print("GANADOR: ", ganador.nombre)
-	print("Coronas: ", ganador.coronas, " Monedas: ", ganador.monedas)
+func finalizar_seleccion_bifurcacion():
+	# Apagar todas las luces
+	for casilla in casillas_destino_disponibles:
+		casilla.apagar_luz()
 	
-	var ordenados = jugadores.duplicate()
-	ordenados.sort_custom(func(a, b):
-		if a.coronas != b.coronas:
-			return a.coronas > b.coronas
-		return a.monedas > b.monedas
-	)
-	
-	print("Clasificacion final:")
-	for i in ordenados.size():
-		var j = ordenados[i]
-		print(i + 1, ". ", j.nombre, " - ", j.coronas, " coronas, ", j.monedas, " monedas")
+	en_bifurcacion = false
+	jugador_en_bifurcacion = null
+	casillas_destino_disponibles.clear()
+	indice_destino_seleccionado = 0
 
-# ============================================================================
-# INPUT Y DEBUG
-# ============================================================================
-
-func _input(event):
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# INPUT Y DEVUGS
+# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed:
 		match event.keycode:
-			KEY_SPACE:
-				if esperando_dado:
-					procesar_tirada_dado()
 			KEY_S:
 				if jugadores.size() == 0:
-					var datos = [
+					var datos_jugadores = [
 						{"nombre": "Mario", "color": Color.RED},
-						{"nombre": "Luigi", "color": Color.GREEN},
-						{"nombre": "Peach", "color": Color.YELLOW},
-						{"nombre": "Bowser", "color": Color.ORANGE},
-						{"nombre": "Toad", "color": Color.BLUE}
+						{"nombre": "Luigi", "color": Color.GREEN}
 					]
-					configurar_jugadores(datos)
-					await get_tree().create_timer(1.0).timeout
-					iniciar_partida()
+					instanciar_jugadores(datos_jugadores)
+					comenzar_partida()
+			KEY_SPACE:
+				if en_bifurcacion:
+					# Si estamos en bifurcacion, confirmar seleccion
+					var destino = seleccionar_destino()
+					if destino != null:
+						print("🎯 Destino confirmado: casilla ", destino.index)
+				else:
+					# Si no estamos en bifurcacion, tirar dado
+					tirar_dado()
+			KEY_D, KEY_RIGHT, KEY_UP:
+				# Navegar hacia la derecha/adelante en bifurcaciones
+				if en_bifurcacion:
+					preseleccionar_destino(1)
+			KEY_A, KEY_LEFT, KEY_DOWN:
+				# Navegar hacia la izquierda/atras en bifurcaciones
+				if en_bifurcacion:
+					preseleccionar_destino(-1)
