@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cr584bv5imqrd"
+path="res://.godot/imported/signage_arrow_wall_blue.obj-cf6295f5e63b89b9badf5418fb4126d5.mesh"
+
+[deps]
+
+files=["res://.godot/imported/signage_arrow_wall_blue.obj-cf6295f5e63b89b9badf5418fb4126d5.mesh"]
+
+source_file="res://Assets/Objects/blue/signage_arrow_wall_blue.obj"
+dest_files=["res://.godot/imported/signage_arrow_wall_blue.obj-cf6295f5e63b89b9badf5418fb4126d5.mesh", "res://.godot/imported/signage_arrow_wall_blue.obj-cf6295f5e63b89b9badf5418fb4126d5.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

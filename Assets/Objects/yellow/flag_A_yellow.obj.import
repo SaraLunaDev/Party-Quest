@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bb452d3b8e7hg"
+path="res://.godot/imported/flag_A_yellow.obj-59c02a11cda1a8e24039752e4729e982.mesh"
+
+[deps]
+
+files=["res://.godot/imported/flag_A_yellow.obj-59c02a11cda1a8e24039752e4729e982.mesh"]
+
+source_file="res://Assets/Objects/yellow/flag_A_yellow.obj"
+dest_files=["res://.godot/imported/flag_A_yellow.obj-59c02a11cda1a8e24039752e4729e982.mesh", "res://.godot/imported/flag_A_yellow.obj-59c02a11cda1a8e24039752e4729e982.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

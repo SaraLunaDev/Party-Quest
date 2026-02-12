@@ -1,40 +1,396 @@
-[gd_scene load_steps=7 format=3 uid="uid://cns8ts8ffh68i"]
+[gd_scene load_steps=52 format=4 uid="uid://cns8ts8ffh68i"]
 
 [ext_resource type="Script" uid="uid://dtah23e0654qt" path="res://Scripts/Jugador/jugador.gd" id="1_ddy1a"]
+[ext_resource type="PackedScene" uid="uid://behidg86pj7ii" path="res://Assets/Jugador/Mannequin Character/characters/Mannequin_Medium.glb" id="2_iybht"]
+[ext_resource type="AnimationLibrary" uid="uid://c2nvkg44qi22r" path="res://Assets/Jugador/Animations/gltf/Rig_Medium/Rig_Medium_General.glb" id="3_naboq"]
+[ext_resource type="AnimationLibrary" uid="uid://cx6uyg0msa8s2" path="res://Assets/Jugador/Animations/gltf/Rig_Medium/Rig_Medium_MovementAdvanced.glb" id="4_scrjs"]
+[ext_resource type="AnimationLibrary" uid="uid://ddphar0s5phfx" path="res://Assets/Jugador/Animations/gltf/Rig_Medium/Rig_Medium_MovementBasic.glb" id="5_fb7j1"]
+[ext_resource type="PackedScene" uid="uid://v3alme0gtfj7" path="res://Scenes/Jugadores/dado.tscn" id="6_fb7j1"]
+[ext_resource type="AnimationLibrary" uid="uid://1f0lkkoyyl8c" path="res://Assets/Jugador/Animations/gltf/Rig_Medium/Rig_Medium_Simulation.glb" id="6_ra408"]
+[ext_resource type="FontFile" uid="uid://2jwo7tu1q2r4" path="res://Fonts/Gamtex.ttf" id="7_ra408"]
+[ext_resource type="Script" uid="uid://syoa7qqki7bx" path="res://Scripts/Jugador/number.gd" id="7_y1sa6"]
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_ddy1a"]
-radius = 0.4
-height = 1.5
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_naboq"]
+radius = 0.840457
+height = 2.5535
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_iybht"]
-radius = 0.105
-height = 0.48
-radial_segments = 16
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7hd7s"]
+animation = &"Rig_Medium_General/Hit_A"
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ddy1a"]
-transparency = 1
-blend_mode = 1
-albedo_color = Color(0.760784, 1, 1, 1)
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_naboq"]
+animation = &"Rig_Medium_General/Idle_A"
 
-[sub_resource type="BoxMesh" id="BoxMesh_ddy1a"]
-size = Vector3(0.485, 0.585, 0.27)
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_awjei"]
+animation = &"Rig_Medium_General/Spawn_Ground"
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iybht"]
-albedo_color = Color(0.489045, 0.320584, 0.157421, 1)
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_scrjs"]
+animation = &"Rig_Medium_MovementBasic/Jump_Full_Short"
 
-[node name="Jugador" type="Node3D"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_y1sa6"]
+animation = &"Rig_Medium_MovementBasic/Running_A"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_fb7j1"]
+animation = &"Rig_Medium_MovementBasic/Walking_A"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_mhffp"]
+animation = &"Rig_Medium_Simulation/Cheering"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_8oxxw"]
+animation = &"Rig_Medium_Simulation/Waving"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ra408"]
+xfade_time = 0.2
+advance_mode = 2
+advance_condition = &"running"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_scrjs"]
+xfade_time = 0.2
+advance_mode = 2
+advance_condition = &"idling"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_fb7j1"]
+xfade_time = 0.2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_awjei"]
+xfade_time = 0.2
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_y1sa6"]
+xfade_time = 0.2
+advance_mode = 2
+advance_condition = &"jumping"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_8oxxw"]
+xfade_time = 0.2
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_iysm6"]
+xfade_time = 0.2
+switch_mode = 2
+advance_mode = 2
+advance_condition = &"running"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_mhffp"]
+xfade_time = 0.2
+advance_mode = 2
+advance_condition = &"walking"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_7hd7s"]
+xfade_time = 0.2
+advance_mode = 2
+advance_condition = &"idling"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2ow4q"]
+xfade_time = 0.2
+advance_mode = 2
+advance_condition = &"waving"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_faj28"]
+xfade_time = 0.4
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_qehlc"]
+xfade_time = 0.2
+advance_mode = 2
+advance_condition = &"cheering"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_sqesl"]
+xfade_time = 0.2
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_tfcbh"]
+xfade_time = 0.2
+advance_mode = 2
+advance_condition = &"cheering"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_mip0b"]
+xfade_time = 0.2
+advance_mode = 2
+advance_condition = &"cheering"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_qhuru"]
+xfade_time = 0.2
+advance_mode = 2
+advance_condition = &"hited"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_chcj7"]
+xfade_time = 0.2
+advance_mode = 2
+advance_condition = &"waving"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_8ngw0"]
+xfade_time = 0.2
+advance_mode = 2
+advance_condition = &"hited"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_b3a6w"]
+xfade_time = 0.2
+advance_mode = 2
+advance_condition = &"hited"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_uf2yb"]
+xfade_time = 0.2
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_ax4tb"]
+states/End/position = Vector2(1500, 179)
+states/Rig_Medium_General_Hit_A/node = SubResource("AnimationNodeAnimation_7hd7s")
+states/Rig_Medium_General_Hit_A/position = Vector2(747, 322)
+states/Rig_Medium_General_Idle_A/node = SubResource("AnimationNodeAnimation_naboq")
+states/Rig_Medium_General_Idle_A/position = Vector2(747, 179)
+states/Rig_Medium_General_Spawn_Ground/node = SubResource("AnimationNodeAnimation_awjei")
+states/Rig_Medium_General_Spawn_Ground/position = Vector2(354, 322)
+states/Rig_Medium_MovementBasic_Jump_Full_Short/node = SubResource("AnimationNodeAnimation_scrjs")
+states/Rig_Medium_MovementBasic_Jump_Full_Short/position = Vector2(1154, 179)
+states/Rig_Medium_MovementBasic_Running_A/node = SubResource("AnimationNodeAnimation_y1sa6")
+states/Rig_Medium_MovementBasic_Running_A/position = Vector2(747, 20)
+states/Rig_Medium_MovementBasic_Walking_A/node = SubResource("AnimationNodeAnimation_fb7j1")
+states/Rig_Medium_MovementBasic_Walking_A/position = Vector2(354, -56)
+states/Rig_Medium_Simulation_Cheering/node = SubResource("AnimationNodeAnimation_mhffp")
+states/Rig_Medium_Simulation_Cheering/position = Vector2(1154, 322)
+states/Rig_Medium_Simulation_Waving/node = SubResource("AnimationNodeAnimation_8oxxw")
+states/Rig_Medium_Simulation_Waving/position = Vector2(1154, -56)
+states/Start/position = Vector2(354, 179)
+transitions = ["Rig_Medium_General_Idle_A", "Rig_Medium_MovementBasic_Running_A", SubResource("AnimationNodeStateMachineTransition_ra408"), "Rig_Medium_MovementBasic_Running_A", "Rig_Medium_General_Idle_A", SubResource("AnimationNodeStateMachineTransition_scrjs"), "Start", "Rig_Medium_General_Spawn_Ground", SubResource("AnimationNodeStateMachineTransition_fb7j1"), "Rig_Medium_General_Spawn_Ground", "Rig_Medium_General_Idle_A", SubResource("AnimationNodeStateMachineTransition_awjei"), "Rig_Medium_General_Idle_A", "Rig_Medium_MovementBasic_Jump_Full_Short", SubResource("AnimationNodeStateMachineTransition_y1sa6"), "Rig_Medium_MovementBasic_Jump_Full_Short", "Rig_Medium_General_Idle_A", SubResource("AnimationNodeStateMachineTransition_8oxxw"), "Rig_Medium_MovementBasic_Jump_Full_Short", "Rig_Medium_MovementBasic_Running_A", SubResource("AnimationNodeStateMachineTransition_iysm6"), "Rig_Medium_General_Idle_A", "Rig_Medium_MovementBasic_Walking_A", SubResource("AnimationNodeStateMachineTransition_mhffp"), "Rig_Medium_MovementBasic_Walking_A", "Rig_Medium_General_Idle_A", SubResource("AnimationNodeStateMachineTransition_7hd7s"), "Rig_Medium_General_Idle_A", "Rig_Medium_Simulation_Waving", SubResource("AnimationNodeStateMachineTransition_2ow4q"), "Rig_Medium_Simulation_Waving", "Rig_Medium_General_Idle_A", SubResource("AnimationNodeStateMachineTransition_faj28"), "Rig_Medium_General_Idle_A", "Rig_Medium_Simulation_Cheering", SubResource("AnimationNodeStateMachineTransition_qehlc"), "Rig_Medium_Simulation_Cheering", "Rig_Medium_General_Idle_A", SubResource("AnimationNodeStateMachineTransition_sqesl"), "Rig_Medium_MovementBasic_Walking_A", "Rig_Medium_Simulation_Cheering", SubResource("AnimationNodeStateMachineTransition_tfcbh"), "Rig_Medium_MovementBasic_Running_A", "Rig_Medium_Simulation_Cheering", SubResource("AnimationNodeStateMachineTransition_mip0b"), "Rig_Medium_MovementBasic_Walking_A", "Rig_Medium_General_Hit_A", SubResource("AnimationNodeStateMachineTransition_qhuru"), "Rig_Medium_MovementBasic_Walking_A", "Rig_Medium_Simulation_Waving", SubResource("AnimationNodeStateMachineTransition_chcj7"), "Rig_Medium_General_Idle_A", "Rig_Medium_General_Hit_A", SubResource("AnimationNodeStateMachineTransition_8ngw0"), "Rig_Medium_MovementBasic_Running_A", "Rig_Medium_General_Hit_A", SubResource("AnimationNodeStateMachineTransition_b3a6w"), "Rig_Medium_General_Hit_A", "Rig_Medium_General_Idle_A", SubResource("AnimationNodeStateMachineTransition_uf2yb")]
+graph_offset = Vector2(27, -162)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_8oxxw"]
+height = 2.56641
+radius = 0.841797
+
+[sub_resource type="Curve" id="Curve_y1sa6"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.451807, 1), 0.0, 0.0, 0, 0, Vector2(0.710843, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ra408"]
+curve = SubResource("Curve_y1sa6")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8oxxw"]
+particle_flag_align_y = true
+spread = 180.0
+initial_velocity_min = 12.0
+initial_velocity_max = 14.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.1
+scale_max = 0.6
+scale_curve = SubResource("CurveTexture_ra408")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y1sa6"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ra408"]
+material = SubResource("StandardMaterial3D_y1sa6")
+top_radius = 0.3
+bottom_radius = 0.0
+height = 1.0
+radial_segments = 6
+rings = 3
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_iysm6"]
+direction = Vector3(0, -1, 0)
+spread = 0.0
+initial_velocity_min = 12.0
+initial_velocity_max = 14.0
+scale_min = 0.6
+scale_max = 0.6
+scale_curve = SubResource("CurveTexture_ra408")
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_anlya"]
+load_path = "res://.godot/imported/platformer_texture.png-c3b1016484cab00180cd7d181af308ae.s3tc.ctex"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mhffp"]
+resource_name = "platformer"
+albedo_texture = SubResource("CompressedTexture2D_anlya")
+metallic = 1.0
+emission_enabled = true
+emission = Color(0, 0.880073, 0.880073, 1)
+emission_energy_multiplier = 0.2
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_7hd7s"]
+_surfaces = [{
+"aabb": AABB(-0.538264, -0.492089, -0.470226, 1.07653, 0.852231, 1.02864),
+"format": 34359742465,
+"index_count": 288,
+"index_data": PackedByteArray("AAABAAIAAAACAAMAAQAEAAIAAQAAAAUABQAAAAYAAwAGAAAABQAHAAEAAwACAAgAAgAEAAgAAwAIAAkAAwAJAAoACgAGAAMACQAIAAsACgAJAAwACQALAAwADQAFAAYABQANAAcADgAGAAoABgAPAA0ADgAPAAYAEAAOAAoAEAAKAAwAEQAPAA4AEQAOABAAEgANAA8ADwARABIAEwANABIABwANABMAEgARABQAEAAUABEAEgAVABMAFQASABQAEwAVABYAFgAHABMAFAAXABUAFQAXABYAGAAUABAADAAYABAAGQAXABQAGQAUABgAGgAYAAwAGwAXABkAHAAZABgAHAAYABoAGwAZABwADAALABoAGgAdABwAHQAbABwAGgALAB4AHgAdABoAFwAbAB8AFgAXAB8ACwAgAB4AIQAdAB4AHgAgACEAIgAbAB0AHQAhACIAHwAbACMAIwAbACIAJAAWAB8AJAAfACMAJQAWACQAJAAjACYAJgAjACIAJgAlACQAIgAhACcAJwAmACIAIQAgACcAJQAHABYAKAAlACYAJgAnACgAKQAHACUAJwAgACoAKAAnACoAKAArACUAKwAoACoAJQArACkABwApACwAAQAHACwALAAEAAEALAApAC0ALAAtAAQAKwAuACkAKQAuAC0AKwAqAC4ALQAvAAQALgAvAC0ALgAqADAALwAuADAAKgAgADAAMQAEAC8ALwAwADEAMQAwACAACAAEADEAMQAgAAsACwAIADEA"),
+"name": "platformer",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 50,
+"vertex_data": PackedByteArray("q8sJP3gI4zwLKgo+cyrBPn+kqD7MDPu9sFm2PngI4zwJ4dm+zcwIP1oSILyRtxw++gyoPlbTNT0BTue+/1q+Pn6Orz6Lb6i9/fQHP1bTNT2FsjA+c2WwPohkuD7MQOW9a0mvPloSILzKNuC+c7kBPfXy+76Vmyi8A7QFP1oSILz510I+AAAAAPXy+76uZwi9p1mgPBfz+75fs9w8rz+BPn6Orz7T9JE+O8gDP3gI4zy+MVQ+mMNuPqCkqD4zUaQ+p1mgPFoSILyPNg4/R64bPXgI4zwKug0/G75FPn6Orz7yBqg+RglaPohkuD5nDZY+AAAAAFbTNT1r9A4/G75Fvn6Orz7yBqg+RglavohkuD5nDZY+mMNuvqCkqD4zUaQ+p1mgvFoSILyPNg4/R64bvXgI4zwKug0/p1mgvBfz+75fs9w8O8gDv3gI4zy+MVQ+A7QFv1oSILz510I+zcwIv1oSILyRtxw+c7kBvfXy+76Vmyi8rz+Bvn6Orz7T9JE+GxKfvloSILzB/uu+a0mvvloSILzKNuC+q8sJv3gI4zwLKgo+/fQHv1bTNT2FsjA+/1q+vn6Orz6Lb6i9c2WwvohkuD7MQOW9cyrBvqCkqD7MDPu9sFm2vngI4zwJ4dm+pcCyvn6Orz7Koxu+AAAAAIhkuD7Aebm++gyovlbTNT0BTue+LzEWvZ+Orz6ZDcK+pcCyPn6Orz7Koxu+LzEWPZ+Orz6ZDcK+AAAAAKCkqD69G8u+Bd2WPngI4zx2wfC+Bd2WvngI4zx2wfC+GxKfPloSILzB/uu+")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_2ow4q"]
+_surfaces = [{
+"aabb": AABB(-0.538264, -0.492089, -0.470226, 1.07653, 0.852231, 1.02864),
+"attribute_data": PackedByteArray("eqrDPWaCWT92ba89NZdTP/zFrD1mglk/LnJPPTuoUD9jRpg9O6hQPwAAgD2Qg1Y/KseEPWaCWT+cT509NZdTP3S2wD1mglk/fuOrPTuoUD+mm4Q9O6hQP9VCqT2Qg1Y/qMd2PTuoUD/4Nyg9O6hQP0p5LT2Qg1Y/ZoUiPTuoUD9Eh0A9O6hQP9jw9DyQg1Y/zAqlPWaCWT/0/n89NZdTP1vpNT1mglk//HImPWaCWT8HJCE9NZdTPwBU8Txmglk/GCT9PGaCWT+7X0U9NZdTP6Bwdj1mglk/LC3DPdXpXD/qCas91elcPzf7gz1wYGY/sg6nPdXpXD+P4TE91elcP/T+fz1wYGY/q3WCPdXpXD8mqME91elcP6t1gj1wYGY/IOspPdXpXD8fR/M81elcP4UIeD1wYGY/T135PNXpXD+dE3s91elcP50Tez1wYGY/9P5/PZhRTD8eT6s9mFFMP6tfKT2YUUw/EHZKPZhRTD9yxJo9mFFMP3LEmj1M+0Y/2LufPQBSRz9jRpg9AFJHP5xPnT3VlUc/LnJPPQBSRz8eT6s9XftGP8e8rj0AUkc/EHZKPUz7Rj+7X0U91ZVHP0SHQD0AUkc/ZoUiPQBSRz+rXyk9TPtGP8e8rj0AUkc/Hk+rPV37Rj92ba891ZVHP37jqz0AUkc/9P5/PUz7Rj+mm4Q9AFJHP/T+fz3VlUc/qMd2PQBSRz+rXyk9TPtGP/g3KD0AUkc/ByQhPdWVRz9mhSI9AFJHP3S2wD0GgVE/RMPCPUUtUT8mqME9Tz1SPywtwz1PPVI/eqrDPQaBUT+rdYI9Tz1SP5xPnT3VlUs/2LufPQBSSz8qx4Q9BoFRP5xPnT3VlUs/Y0aYPQBSSz8AAIA9RS1RP50Tez1PPVI/oHB2PQaBUT9PXfk8Tz1SP7tfRT3VlUs/LnJPPQBSSz8YJP08BoFRPx9H8zxPPVI/AFTxPAaBUT/Y8PQ8RS1RP0SHQD0AUks/u19FPdWVSz/8xaw9BoFRP9VCqT1FLVE/6gmrPU89Uj8sLcM9Tz1SP3qqwz0GgVE/dm2vPdWVSz9+46s9AFJLP7IOpz1PPVI/zAqlPQaBUT+mm4Q9AFJLP/T+fz3VlUs/W+k1PQaBUT+P4TE9Tz1SP0p5LT1FLVE/9P5/PdWVSz+ox3Y9AFJLP/xyJj0GgVE/+DcoPQBSSz8HJCE91ZVLPyDrKT1PPVI/AFTxPAaBUT8fR/M8Tz1SPzf7gz0PX14/9P5/PQ9fXj+rdYI9D19eP50Tez0PX14/6gmrPXXoVD+yDqc9dehUP4UIeD0PX14/j+ExPXXoVD8g6yk9dehUP3Ztrz3VlUs/eqrDPQaBUT/HvK49AFJLP0TDwj1FLVE/LC3DPXXoVD83+4M9D19ePyaowT116FQ/q3WCPQ9fXj9mhSI9AFJLP9jw9DxFLVE/ByQhPdWVSz8AVPE8BoFRP50Tez0PX14/nRN7PXXoVD+rdYI9D19eP6t1gj116FQ/hQh4PQ9fXj8fR/M8dehUP50Tez0PX14/T135PHXoVD/Yu589O6hQP8e8rj07qFA/RMPCPZCDVj8="),
+"format": 34359742487,
+"index_count": 288,
+"index_data": PackedByteArray("AAABAAIAAwAEAAUABgAHAAgACQAKAAsADAANAA4ADwAQABEAEgATABQAFQAWABcAGAAZABoAGwAcAB0AHgAfACAAIQAiACMAJAAlACYAJwAoACkAKgArACwALAArAC0ALQArAC4ALwAwADEAMQAwADIAMQAzAC8ANAAwAC8ANQAwADQALwAzADYAMwA3ADYANgA3ADgAOQA2ADgAOgA2ADkAOwA8AD0APQA8AD4APAA/AD4APgA/AEAAPwBBAEAAQgBBAD8AQwBCAD8ARABCAEMARABDAEUARQBDAEYARwBIAEkASQBIAEoASgBIAEsATABHAEkARwBNAEgASABNAE4ATwBHAEwAUABPAFEAUQBPAFIATABSAE8AUwBSAEwAVABSAFMAVQBUAFMAVABWAFIAUgBWAFcAWABUAFUAWQBYAFUAWgBYAFkAWwBYAFoAXABYAFsAXQBYAFwAXgBfAGAAYQBeAGAAYgBeAGEAYwBfAF4AZABfAGMAYABfAGUAZQBfAGYAZwBmAF8AaABmAGcAZgBpAGUAZQBpAGoAawBqAGkAbABrAGkAbQBrAGwAbgBqAGsAbwBuAGsAcABuAG8AcQBqAG4AcgBxAG4AcwBxAHIAdAB1AHYAdgB1AHcAdAB4AHUAdQB4AHkAdwB1AHoAdQB7AHoAegB7AHwAfQB+AH8AfwB+AIAAgQCCAIMAgwCCAIQAhQCGAIcAhwCGAIgAiQCKAIsAiwCKAIwAjQCOAI8AjwCOAJAAkQCSAJMA"),
+"material": SubResource("StandardMaterial3D_mhffp"),
+"name": "platformer",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 148,
+"vertex_data": PackedByteArray("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")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_7hd7s")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mhffp"]
+direction = Vector3(0, 1, 0)
+spread = 180.0
+initial_velocity_min = 20.0
+initial_velocity_max = 20.0
+gravity = Vector3(0, -12, 0)
+scale_min = 0.6
+scale_max = 0.6
+scale_curve = SubResource("CurveTexture_ra408")
+
+[node name="Jugador" type="CharacterBody3D" node_paths=PackedStringArray("animation_tree", "area_3d", "number_label_3d", "particle_get_diamante", "particle_lose_diamante", "player_mesh") groups=["jugador"]]
+collision_mask = 3
 script = ExtResource("1_ddy1a")
+animation_tree = NodePath("AnimationTree")
+area_3d = NodePath("PlayerDetection")
+number_label_3d = NodePath("Number")
+particle_get_diamante = NodePath("GetDiamonds")
+particle_lose_diamante = NodePath("LooseDiamonds")
+player_mesh = NodePath("Mannequin_Medium")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.755951, 0)
-mesh = SubResource("CapsuleMesh_ddy1a")
+[node name="Mannequin_Medium" parent="." instance=ExtResource("2_iybht")]
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(-4.30557e-08, 1.195, -7.05939e-08, 0, -5.22351e-08, -1.615, -0.985, -5.22351e-08, 3.08576e-15, 9.35793e-06, 1.09719, -0.35826)
-mesh = SubResource("CapsuleMesh_iybht")
-surface_material_override/0 = SubResource("StandardMaterial3D_ddy1a")
+[node name="Skeleton3D" parent="Mannequin_Medium/Rig_Medium" index="0"]
+bones/1/position = Vector3(0, 0.389698, 0)
+bones/1/rotation = Quaternion(0.0013766, 0.0431577, 5.94692e-05, 0.999067)
+bones/2/position = Vector3(0.170945, 0.113587, 1.59941e-08)
+bones/2/rotation = Quaternion(0.991483, 0.0579327, 0.0707642, 0.0927294)
+bones/2/scale = Vector3(1, 1, 1)
+bones/3/rotation = Quaternion(0.285106, 6.36615e-08, -1.91876e-07, 0.958496)
+bones/3/scale = Vector3(1, 1, 1)
+bones/4/rotation = Quaternion(-0.542347, -0.113725, 0.0438784, 0.831264)
+bones/4/scale = Vector3(1, 1, 0.999999)
+bones/5/rotation = Quaternion(4.46885e-06, 0.920243, -0.391347, -9.44376e-07)
+bones/5/scale = Vector3(1, 0.999997, 1)
+bones/6/rotation = Quaternion(0.00378617, 3.02853e-09, 0.000327722, 0.999993)
+bones/7/rotation = Quaternion(0.00163936, 1.02608e-09, 0.000141899, 0.999999)
+bones/7/scale = Vector3(1, 1, 1)
+bones/8/position = Vector3(-0.212007, 0.134132, 8.62731e-08)
+bones/8/rotation = Quaternion(-0.562267, 0.0425449, 0.734139, 0.378268)
+bones/8/scale = Vector3(0.999999, 0.999999, 1)
+bones/9/rotation = Quaternion(2.64589e-08, 5.1239e-08, 0.380977, 0.924585)
+bones/9/scale = Vector3(1, 1, 1)
+bones/10/rotation = Quaternion(2.24975e-10, 6.82468e-09, -0.0266581, 0.999645)
+bones/10/scale = Vector3(1, 1, 1)
+bones/11/rotation = Quaternion(-0.211849, 0.382733, -0.137664, 0.888642)
+bones/11/scale = Vector3(1, 1, 1)
+bones/12/rotation = Quaternion(-0.00568892, -0.0313412, -0.000313184, 0.999493)
+bones/13/position = Vector3(0.212007, 0.134132, 8.2165e-08)
+bones/13/rotation = Quaternion(-0.535434, -0.112439, -0.769135, 0.330303)
+bones/13/scale = Vector3(0.999999, 0.999999, 1)
+bones/14/rotation = Quaternion(2.00962e-08, -5.09972e-08, -0.364802, 0.931085)
+bones/14/scale = Vector3(1, 1, 1)
+bones/15/rotation = Quaternion(1.51457e-08, -7.35844e-09, 0.0266581, 0.999645)
+bones/15/scale = Vector3(1, 1, 1)
+bones/16/rotation = Quaternion(-0.221519, -0.345065, 0.182796, 0.893558)
+bones/16/scale = Vector3(1, 1, 1)
+bones/17/position = Vector3(-0.170945, 0.113587, 1.55755e-08)
+bones/17/rotation = Quaternion(0.996708, -0.0299693, 0.0313533, 0.0685021)
+bones/17/scale = Vector3(1, 1, 1)
+bones/18/rotation = Quaternion(0.295934, -6.24253e-08, 2.03496e-07, 0.955208)
+bones/18/scale = Vector3(1, 1, 1)
+bones/19/rotation = Quaternion(-0.571046, 0.114359, -0.010497, 0.812846)
+bones/19/scale = Vector3(1, 1, 0.999999)
+bones/20/rotation = Quaternion(-8.93489e-05, 0.920222, -0.391398, 2.0291e-05)
+bones/20/scale = Vector3(1, 0.999998, 1)
 
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.789925, 0.424125)
-mesh = SubResource("BoxMesh_ddy1a")
-surface_material_override/0 = SubResource("StandardMaterial3D_iybht")
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Mannequin_Medium"]
+libraries = {
+&"Rig_Medium_General": ExtResource("3_naboq"),
+&"Rig_Medium_MovementAdvanced": ExtResource("4_scrjs"),
+&"Rig_Medium_MovementBasic": ExtResource("5_fb7j1"),
+&"Rig_Medium_Simulation": ExtResource("6_ra408")
+}
+autoplay = "Rig_Medium_General/Idle_A"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.28489, 0)
+shape = SubResource("CapsuleShape3D_naboq")
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+root_node = NodePath("../Mannequin_Medium")
+tree_root = SubResource("AnimationNodeStateMachine_ax4tb")
+advance_expression_base_node = NodePath("..")
+anim_player = NodePath("../Mannequin_Medium/AnimationPlayer")
+parameters/conditions/cheering = false
+parameters/conditions/hited = false
+parameters/conditions/idling = false
+parameters/conditions/jumping = false
+parameters/conditions/running = false
+parameters/conditions/walking = false
+parameters/conditions/waving = false
+
+[node name="PlayerDetection" type="Area3D" parent="."]
+collision_mask = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerDetection"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.29051, 0)
+shape = SubResource("CylinderShape3D_8oxxw")
+
+[node name="Number" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.976, 0)
+visible = false
+modulate = Color(1, 0.566667, 0, 1)
+text = "0"
+font = ExtResource("7_ra408")
+font_size = 140
+outline_size = 50
+script = ExtResource("7_y1sa6")
+
+[node name="Dado" parent="." node_paths=PackedStringArray("particle") instance=ExtResource("6_fb7j1")]
+transform = Transform3D(1, 0.000971255, 0.000105499, -0.000971099, 0.999998, -0.00146734, -0.000106924, 0.00146724, 0.999999, 0, 3, 0)
+visible = false
+particle = NodePath("../Debris")
+
+[node name="Debris" type="GPUParticles3D" parent="."]
+transform = Transform3D(0.346886, 0, 0, 0, 0.171972, 0, 0, 0, 0.368728, 0, 3.25352, 0)
+emitting = false
+amount = 16
+lifetime = 0.3
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_8oxxw")
+draw_pass_1 = SubResource("CylinderMesh_ra408")
+
+[node name="GetDiamonds" type="GPUParticles3D" parent="."]
+transform = Transform3D(0.346886, 0, 0, 0, 0.301063, 0, 0, 0, 0.368728, 0, 4.97874, 0)
+emitting = false
+amount = 1
+lifetime = 0.8
+one_shot = true
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_iysm6")
+draw_pass_1 = SubResource("ArrayMesh_2ow4q")
+
+[node name="LooseDiamonds" type="GPUParticles3D" parent="."]
+transform = Transform3D(0.346886, 0, 0, 0, 0.301063, 0, 0, 0, 0.368728, 0, 1.6315, 0)
+emitting = false
+amount = 4
+lifetime = 2.0
+one_shot = true
+explosiveness = 1.0
+use_fixed_seed = true
+seed = 1
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_mhffp")
+draw_pass_1 = SubResource("ArrayMesh_2ow4q")
+
+[editable path="Mannequin_Medium"]

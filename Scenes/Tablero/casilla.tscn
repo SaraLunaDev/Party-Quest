@@ -1,36 +1,62 @@
-[gd_scene load_steps=6 format=3 uid="uid://dofhnfr83kg16"]
+[gd_scene load_steps=10 format=3 uid="uid://dofhnfr83kg16"]
 
-[ext_resource type="Material" uid="uid://2gip4h3mnccq" path="res://Materials/Tablero/Casillas/normal.tres" id="1_6b1di"]
+[ext_resource type="ArrayMesh" uid="uid://djptr8bojngbo" path="res://Assets/Objects/blue/button_base_blue_button_blue.obj" id="1_b7pks"]
 [ext_resource type="Script" uid="uid://cg8asbjn6f8h" path="res://Scripts/Tablero/casilla.gd" id="1_pgg6m"]
+[ext_resource type="ArrayMesh" uid="uid://ctoqv2armm72p" path="res://Assets/Objects/blue/button_base_blue.obj" id="4_8jxmp"]
+[ext_resource type="Material" uid="uid://d1wficj4y7wb7" path="res://Materials/Tablero/Casillas/roja.tres" id="5_vtaqy"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mdxdp"]
-albedo_color = Color(0.209322, 0.473466, 0.698275, 1)
+[sub_resource type="BoxShape3D" id="BoxShape3D_fp3us"]
+size = Vector3(2, 0.498779, 2)
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_gd3qw"]
-material = SubResource("StandardMaterial3D_mdxdp")
-top_radius = 0.475
-height = 0.1
-radial_segments = 32
+[sub_resource type="BoxShape3D" id="BoxShape3D_b7pks"]
+size = Vector3(0.25, 0.5, 3)
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_6b1di"]
-top_radius = 0.55
-bottom_radius = 0.6
-height = 0.075
-radial_segments = 32
+[sub_resource type="BoxShape3D" id="BoxShape3D_8jxmp"]
+size = Vector3(0.25, 0.5, 3)
 
-[node name="Casilla" type="MeshInstance3D" groups=["casilla"]]
-mesh = SubResource("CylinderMesh_gd3qw")
-surface_material_override/0 = ExtResource("1_6b1di")
+[sub_resource type="BoxShape3D" id="BoxShape3D_vtaqy"]
+size = Vector3(0.25, 0.5, 2.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_oe2f1"]
+size = Vector3(0.25, 0.5, 2.5)
+
+[node name="Casilla" type="MeshInstance3D" node_paths=PackedStringArray("boton") groups=["casilla"]]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 0, 0)
+mesh = ExtResource("4_8jxmp")
 script = ExtResource("1_pgg6m")
+boton = NodePath("Boton")
+press_offset = 0.14
 
-[node name="Borde" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.025, 0)
-mesh = SubResource("CylinderMesh_6b1di")
+[node name="Boton" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_b7pks")
+surface_material_override/0 = ExtResource("5_vtaqy")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.327544, 0)
-visible = false
-light_color = Color(0.235294, 0.529412, 0.894118, 1)
-light_energy = 16.0
-omni_range = 1.0
-omni_attenuation = 3.0
+[node name="PlayerEnterDetector" type="Area3D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerEnterDetector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+shape = SubResource("BoxShape3D_fp3us")
+
+[node name="PlayerOutDetector" type="Area3D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerOutDetector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.375, 0.25, 0)
+shape = SubResource("BoxShape3D_b7pks")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="PlayerOutDetector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.375, 0.25, 0)
+shape = SubResource("BoxShape3D_8jxmp")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="PlayerOutDetector"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -4.65661e-08, 0.25, -1.375)
+shape = SubResource("BoxShape3D_vtaqy")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="PlayerOutDetector"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 9.31323e-08, 0.25, 1.375)
+shape = SubResource("BoxShape3D_oe2f1")
+
+[connection signal="body_entered" from="PlayerEnterDetector" to="." method="_on_player_enter_detector_body_entered"]
+[connection signal="body_exited" from="PlayerEnterDetector" to="." method="_on_player_enter_detector_body_exited"]
+[connection signal="body_entered" from="PlayerOutDetector" to="." method="_on_player_out_detector_body_entered"]

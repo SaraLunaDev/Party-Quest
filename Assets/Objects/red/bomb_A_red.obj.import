@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cln3wxb5jwaww"
+path="res://.godot/imported/bomb_A_red.obj-68b6deea601dfb59176f9f02c70d8a1d.mesh"
+
+[deps]
+
+files=["res://.godot/imported/bomb_A_red.obj-68b6deea601dfb59176f9f02c70d8a1d.mesh"]
+
+source_file="res://Assets/Objects/red/bomb_A_red.obj"
+dest_files=["res://.godot/imported/bomb_A_red.obj-68b6deea601dfb59176f9f02c70d8a1d.mesh", "res://.godot/imported/bomb_A_red.obj-68b6deea601dfb59176f9f02c70d8a1d.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

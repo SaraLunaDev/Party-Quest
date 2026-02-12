@@ -1,0 +1,1 @@
+- Comentarios minimos, unicamente cuando sea necesario, en castellano, sin tildes ni caracteres especiales o parentesis.

@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bknciy3oat882"
+path="res://.godot/imported/arch_wide_blue.obj-7feb52fea5a9c8597e0639198eee71ea.mesh"
+
+[deps]
+
+files=["res://.godot/imported/arch_wide_blue.obj-7feb52fea5a9c8597e0639198eee71ea.mesh"]
+
+source_file="res://Assets/Objects/blue/arch_wide_blue.obj"
+dest_files=["res://.godot/imported/arch_wide_blue.obj-7feb52fea5a9c8597e0639198eee71ea.mesh", "res://.godot/imported/arch_wide_blue.obj-7feb52fea5a9c8597e0639198eee71ea.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

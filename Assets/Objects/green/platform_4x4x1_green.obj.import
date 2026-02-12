@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bls053d18bkc5"
+path="res://.godot/imported/platform_4x4x1_green.obj-948b4bdf3189b1ddf2dee76b6386c9f6.mesh"
+
+[deps]
+
+files=["res://.godot/imported/platform_4x4x1_green.obj-948b4bdf3189b1ddf2dee76b6386c9f6.mesh"]
+
+source_file="res://Assets/Objects/green/platform_4x4x1_green.obj"
+dest_files=["res://.godot/imported/platform_4x4x1_green.obj-948b4bdf3189b1ddf2dee76b6386c9f6.mesh", "res://.godot/imported/platform_4x4x1_green.obj-948b4bdf3189b1ddf2dee76b6386c9f6.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

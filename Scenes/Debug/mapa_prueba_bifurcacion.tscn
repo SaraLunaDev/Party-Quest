@@ -1,9 +1,31 @@
-[gd_scene load_steps=15 format=3 uid="uid://cj3f644um1a0t"]
+[gd_scene load_steps=22 format=3 uid="uid://cj3f644um1a0t"]
 
 [ext_resource type="Script" uid="uid://j2ohedw75h8s" path="res://Scripts/Managers/game_manager.gd" id="1_54qhx"]
 [ext_resource type="Script" uid="uid://dxs1ae606mcct" path="res://Scripts/Tablero/tablero.gd" id="1_lldb4"]
-[ext_resource type="PackedScene" uid="uid://cns8ts8ffh68i" path="res://Scenes/Jugadores/jugador.tscn" id="2_54qhx"]
+[ext_resource type="PackedScene" uid="uid://cns8ts8ffh68i" path="res://Scenes/Jugadores/jugador.tscn" id="2_mh750"]
 [ext_resource type="PackedScene" uid="uid://dofhnfr83kg16" path="res://Scenes/Tablero/casilla.tscn" id="2_yc70j"]
+[ext_resource type="PackedScene" uid="uid://cjkq7nkq2fjai" path="res://Scenes/Tablero/flechita.tscn" id="3_qljf6"]
+[ext_resource type="Script" uid="uid://cyc3vafdujx74" path="res://Scripts/Managers/input_manager.gd" id="4_g7747"]
+[ext_resource type="Script" uid="uid://b6213butcd200" path="res://Scripts/Managers/camera_manager.gd" id="4_nu5t8"]
+[ext_resource type="ArrayMesh" uid="uid://ctoqv2armm72p" path="res://Assets/Objects/blue/button_base_blue.obj" id="7_mhckf"]
+[ext_resource type="Script" uid="uid://cg8asbjn6f8h" path="res://Scripts/Tablero/casilla.gd" id="8_df52p"]
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_mrbu5"]
+rayleigh_coefficient = 1.0
+energy_multiplier = 2.0
+
+[sub_resource type="Sky" id="Sky_mrbu5"]
+sky_material = SubResource("PhysicalSkyMaterial_mrbu5")
+
+[sub_resource type="Environment" id="Environment_6fgja"]
+background_mode = 2
+background_energy_multiplier = 1.6
+sky = SubResource("Sky_mrbu5")
+fog_density = 0.1
+volumetric_fog_density = 0.1836
+volumetric_fog_albedo = Color(0.476341, 0.518161, 0.606403, 1)
+volumetric_fog_length = 45.0
+volumetric_fog_detail_spread = 5.65685
 
 [sub_resource type="Curve3D" id="Curve3D_yc70j"]
 closed = true
@@ -12,15 +34,6 @@ _data = {
 "tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 }
 point_count = 12
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mdxdp"]
-albedo_color = Color(0.209322, 0.473466, 0.698275, 1)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_gd3qw"]
-material = SubResource("StandardMaterial3D_mdxdp")
-top_radius = 0.475
-height = 0.1
-radial_segments = 32
 
 [sub_resource type="Curve3D" id="Curve3D_mh750"]
 _data = {
@@ -50,306 +63,469 @@ _data = {
 }
 point_count = 5
 
-[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_mrbu5"]
-rayleigh_coefficient = 1.0
-energy_multiplier = 2.0
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_df52p"]
+albedo_color = Color(0.19552, 0.180406, 0.208811, 1)
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.1
 
-[sub_resource type="Sky" id="Sky_mrbu5"]
-sky_material = SubResource("PhysicalSkyMaterial_mrbu5")
+[sub_resource type="PlaneMesh" id="PlaneMesh_df52p"]
+material = SubResource("StandardMaterial3D_df52p")
+size = Vector2(2000, 200)
+center_offset = Vector3(0, -0.07, 0)
 
-[sub_resource type="Environment" id="Environment_6fgja"]
-background_mode = 2
-background_energy_multiplier = 1.6
-sky = SubResource("Sky_mrbu5")
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_df52p"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_df52p"]
+size = Vector3(199.565, 0.069458, 199.399)
 
 [node name="Mapa_Prueba" type="Node"]
 
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("tablero")]
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("tablero", "camera", "spawn_point", "camera_manager")]
 script = ExtResource("1_54qhx")
 tablero = NodePath("../Tablero")
-jugador_escena = ExtResource("2_54qhx")
+jugador_escena = ExtResource("2_mh750")
+limite_rondas = 10
+camera = NodePath("../Camera3D")
+flecha_escena = ExtResource("3_qljf6")
+spawn_point = NodePath("../Tablero/StartPoint")
+camera_manager = NodePath("../CameraManager")
+
+[node name="InputManager" type="Node" parent="."]
+script = ExtResource("4_g7747")
+
+[node name="CameraManager" type="Node" parent="." node_paths=PackedStringArray("camera")]
+script = ExtResource("4_nu5t8")
+camera = NodePath("../Camera3D")
+follow_offset = Vector3(0, 4, -5)
+overview_use_position = true
+overview_position = Vector3(18, 10, 0)
+look_at_position_offset = Vector3(0, 3, -4)
+look_at_rotation_deg_offset = Vector3(10, 0, 0)
+look_at_from_sky_position_offset = Vector3(0, 8, -2)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-1.18521e-07, -0.59007, 0.807352, -1.27959e-08, 0.807352, 0.59007, -1, 5.96047e-08, -1.03238e-07, 17.2435, 9.3916, 0)
+environment = SubResource("Environment_6fgja")
+fov = 70.0
+size = 20.0
 
 [node name="Tablero" type="Node3D" parent="." node_paths=PackedStringArray("caminos")]
 script = ExtResource("1_lldb4")
 caminos = [NodePath("Path3D"), NodePath("Path3D2"), NodePath("Path3D3"), NodePath("Path3D4"), NodePath("Path3D5")]
 casilla_escena = ExtResource("2_yc70j")
+rotar_seguir_trayectoria = true
 numero_casillas = 32
+cantidad_casillas_roja_juntas = 1
+porcentaje_casillas_minijuego = 0.2
+
+[node name="StartPoint" type="Node3D" parent="Tablero"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0512903, -11)
 
 [node name="Path3D" type="Path3D" parent="Tablero"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -0.0512903, 0)
 curve = SubResource("Curve3D_yc70j")
 
-[node name="Casilla_0" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, -8)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_0" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-3.49691e-08, 0, 0.8, 0, 0.8, 0, -0.8, 0, -3.49691e-08, 0, 0, -8)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_1")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 0
 camino = NodePath("..")
+tipo = 1
 
-[node name="Casilla_1" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-0.447214, 0, 0.894427, 0, 1, 0, -0.894427, 0, -0.447214, -4, 0, -7)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_1" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-0.396911, 0, 0.694595, 0, 0.8, 0, -0.694595, 0, -0.396911, -4, 0, -7)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_2")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 1
 camino = NodePath("..")
 punto_camino = 1.0
 
-[node name="Casilla_2" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-0.894427, 0, 0.447214, 0, 1, 0, -0.447214, 0, -0.894427, -7, 0, -4)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_2" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-0.694595, 0, 0.396911, 0, 0.8, 0, -0.396911, 0, -0.694595, -7, 0, -4)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_3")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 2
 camino = NodePath("..")
 punto_camino = 2.0
 
-[node name="Casilla_3" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -8, 0, 0)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_3" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-0.8, 0, -6.99382e-08, 0, 0.8, 0, 6.99382e-08, 0, -0.8, -8, 0, 0)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_4")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 3
 camino = NodePath("..")
 punto_camino = 3.0
+tipo = 1
 
-[node name="Casilla_4" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-0.894427, 0, -0.447214, 0, 1, 0, 0.447214, 0, -0.894427, -7, 0, 4)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_4" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-0.694595, 0, -0.396911, 0, 0.8, 0, 0.396911, 0, -0.694595, -7, 0, 4)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_5")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 4
 camino = NodePath("..")
 punto_camino = 4.0
 
-[node name="Casilla_5" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-0.447214, 0, -0.894427, 0, 1, 0, 0.894427, 0, -0.447214, -4, 0, 7)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_5" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-0.396911, 0, -0.694595, 0, 0.8, 0, 0.694595, 0, -0.396911, -4, 0, 7)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_6"), NodePath("../../Path3D4/Casilla_24")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 5
 camino = NodePath("..")
 punto_camino = 5.0
 
-[node name="Casilla_6" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 8)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_6" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-3.49691e-08, 0, -0.8, 0, 0.8, 0, 0.8, 0, -3.49691e-08, 0, 0, 8)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_7")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 6
 camino = NodePath("..")
 punto_camino = 6.0
+tipo = 1
 
-[node name="Casilla_7" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(0.447214, 0, -0.894427, 0, 1, 0, 0.894427, 0, 0.447214, 4, 0, 7)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_7" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(0.396911, 0, -0.694595, 0, 0.8, 0, 0.694595, 0, 0.396911, 4, 0, 7)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_8"), NodePath("../../Path3D2/Casilla_12")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 7
 camino = NodePath("..")
 punto_camino = 7.0
 
-[node name="Casilla_8" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(0.894427, 0, -0.447214, 0, 1, 0, 0.447214, 0, 0.894427, 7, 0, 4)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_8" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(0.694595, 0, -0.396911, 0, 0.8, 0, 0.396911, 0, 0.694595, 7, 0, 4)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_9")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 8
 camino = NodePath("..")
 punto_camino = 8.0
+tipo = 2
 
-[node name="Casilla_9" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_9" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 8, 0, 0)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_10")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 9
 camino = NodePath("..")
 punto_camino = 9.0
+tipo = 1
 
-[node name="Casilla_10" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(0.894427, 0, 0.447214, 0, 1, 0, -0.447214, 0, 0.894427, 7, 0, -4)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_10" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(0.694595, 0, 0.396911, 0, 0.8, 0, -0.396911, 0, 0.694595, 7, 0, -4)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_11")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 10
 camino = NodePath("..")
 punto_camino = 10.0
 
-[node name="Casilla_11" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(0.447214, 0, 0.894427, 0, 1, 0, -0.894427, 0, 0.447214, 4, 0, -7)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_11" type="MeshInstance3D" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(0.396911, 0, 0.694595, 0, 0.8, 0, -0.694595, 0, 0.396911, 4, 0, -7)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_0"), NodePath("../../Path3D5/Casilla_29")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 11
 camino = NodePath("..")
 punto_camino = 11.0
 
 [node name="Path3D2" type="Path3D" parent="Tablero"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -0.0512903, 0)
 curve = SubResource("Curve3D_mh750")
 
-[node name="Casilla_12" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 8, 0, 8)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_12" type="MeshInstance3D" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-3.49691e-08, 0, -0.8, 0, 0.8, 0, 0.8, 0, -3.49691e-08, 8, 0, 8)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_13")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 12
 camino = NodePath("..")
 punto_camino = 1.0
+tipo = 1
 
-[node name="Casilla_13" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(0.447214, 0, -0.894427, 0, 1, 0, 0.894427, 0, 0.447214, 12, 0, 7)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_13" type="MeshInstance3D" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(0.396911, 0, -0.694595, 0, 0.8, 0, 0.694595, 0, 0.396911, 12, 0, 7)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_14")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 13
 camino = NodePath("..")
 punto_camino = 2.0
+tipo = 2
 
-[node name="Casilla_14" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(0.894427, 0, -0.447213, 0, 1, 0, 0.447213, 0, 0.894427, 15, 0, 4)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_14" type="MeshInstance3D" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(0.694595, 0, -0.396911, 0, 0.8, 0, 0.396911, 0, 0.694595, 15, 0, 4)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_15")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 14
 camino = NodePath("..")
 punto_camino = 3.0
 
-[node name="Casilla_15" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 0)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_15" type="MeshInstance3D" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 16, 0, 0)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_16")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 15
 camino = NodePath("..")
 punto_camino = 4.0
+tipo = 1
 
-[node name="Casilla_16" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(0.894427, 0, 0.447213, 0, 1, 0, -0.447213, 0, 0.894427, 15, 0, -4)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_16" type="MeshInstance3D" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(0.694595, 0, 0.396911, 0, 0.8, 0, -0.396911, 0, 0.694595, 15, 0, -4)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_17")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 16
 camino = NodePath("..")
 punto_camino = 5.0
 
-[node name="Casilla_17" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(0.447214, 0, 0.894427, 0, 1, 0, -0.894427, 0, 0.447214, 12, 0, -7)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_17" type="MeshInstance3D" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(0.396911, 0, 0.694595, 0, 0.8, 0, -0.694595, 0, 0.396911, 12, 0, -7)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_18"), NodePath("../../Path3D3/Casilla_19")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 17
 camino = NodePath("..")
 punto_camino = 6.0
+tipo = 2
 
-[node name="Casilla_18" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 8, 0, -8)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_18" type="MeshInstance3D" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-3.49691e-08, 0, 0.8, 0, 0.8, 0, -0.8, 0, -3.49691e-08, 8, 0, -8)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../../Path3D/Casilla_11")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 18
 camino = NodePath("..")
 punto_camino = 7.0
+tipo = 1
 
 [node name="Path3D3" type="Path3D" parent="Tablero"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -0.0512903, 0)
 curve = SubResource("Curve3D_54qhx")
 
-[node name="Casilla_19" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(0.894427, 0, 0.447213, 0, 1, 0, -0.447213, 0, 0.894427, 11, 0, -11)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_19" type="MeshInstance3D" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(0.694595, 0, 0.396911, 0, 0.8, 0, -0.396911, 0, 0.694595, 11, 0, -11)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_20")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 19
 camino = NodePath("..")
 punto_camino = 1.0
 
-[node name="Casilla_20" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(0.447213, 0, 0.894427, 0, 1, 0, -0.894427, 0, 0.447213, 8, 0, -14)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_20" type="MeshInstance3D" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(0.396911, 0, 0.694595, 0, 0.8, 0, -0.694595, 0, 0.396911, 8, 0, -14)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_21")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 20
 camino = NodePath("..")
 punto_camino = 2.0
+tipo = 2
 
-[node name="Casilla_21" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 4, 0, -15)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_21" type="MeshInstance3D" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-3.49691e-08, 0, 0.8, 0, 0.8, 0, -0.8, 0, -3.49691e-08, 4, 0, -15)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_22")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 21
 camino = NodePath("..")
 punto_camino = 3.0
+tipo = 1
 
-[node name="Casilla_22" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-0.447213, 0, 0.894427, 0, 1, 0, -0.894427, 0, -0.447213, 0, 0, -14)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_22" type="MeshInstance3D" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-0.396911, 0, 0.694595, 0, 0.8, 0, -0.694595, 0, -0.396911, 0, 0, -14)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_23")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 22
 camino = NodePath("..")
 punto_camino = 4.0
 
-[node name="Casilla_23" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-0.894427, 0, 0.447214, 0, 1, 0, -0.447214, 0, -0.894427, -3, 0, -11)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_23" type="MeshInstance3D" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-0.694595, 0, 0.396911, 0, 0.8, 0, -0.396911, 0, -0.694595, -3, 0, -11)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../../Path3D/Casilla_1")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 23
 camino = NodePath("..")
 punto_camino = 5.0
 
 [node name="Path3D4" type="Path3D" parent="Tablero"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -0.0512903, 0)
 curve = SubResource("Curve3D_qljf6")
 
-[node name="Casilla_24" parent="Tablero/Path3D4" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-0.894427, 0, -0.447214, 0, 1, 0, 0.447214, 0, -0.894427, -3, 0, 11)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_24" type="MeshInstance3D" parent="Tablero/Path3D4" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-0.694595, 0, -0.396911, 0, 0.8, 0, 0.396911, 0, -0.694595, -3, 0, 11)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_25")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 24
 camino = NodePath("..")
 punto_camino = 1.0
+tipo = 1
 
-[node name="Casilla_25" parent="Tablero/Path3D4" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-0.447213, 0, -0.894427, 0, 1, 0, 0.894427, 0, -0.447213, 0, 0, 14)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_25" type="MeshInstance3D" parent="Tablero/Path3D4" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-0.396911, 0, -0.694595, 0, 0.8, 0, 0.694595, 0, -0.396911, 0, 0, 14)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_26")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 25
 camino = NodePath("..")
 punto_camino = 2.0
+tipo = 2
 
-[node name="Casilla_26" parent="Tablero/Path3D4" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 4, 0, 15)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_26" type="MeshInstance3D" parent="Tablero/Path3D4" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-3.49691e-08, 0, -0.8, 0, 0.8, 0, 0.8, 0, -3.49691e-08, 4, 0, 15)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_27")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 26
 camino = NodePath("..")
 punto_camino = 3.0
 
-[node name="Casilla_27" parent="Tablero/Path3D4" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(0.447213, 0, -0.894427, 0, 1, 0, 0.894427, 0, 0.447213, 8, 0, 14)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_27" type="MeshInstance3D" parent="Tablero/Path3D4" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(0.396911, 0, -0.694595, 0, 0.8, 0, 0.694595, 0, 0.396911, 8, 0, 14)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_28")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 27
 camino = NodePath("..")
 punto_camino = 4.0
+tipo = 1
 
-[node name="Casilla_28" parent="Tablero/Path3D4" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(0.894427, 0, -0.447213, 0, 1, 0, 0.447213, 0, 0.894427, 11, 0, 11)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_28" type="MeshInstance3D" parent="Tablero/Path3D4" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(0.694595, 0, -0.396911, 0, 0.8, 0, 0.396911, 0, 0.694595, 11, 0, 11)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../../Path3D2/Casilla_13")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 28
 camino = NodePath("..")
 punto_camino = 5.0
 
 [node name="Path3D5" type="Path3D" parent="Tablero"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -0.0512903, 0)
 curve = SubResource("Curve3D_nu5t8")
 
-[node name="Casilla_29" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-0.894427, 0, 0.447214, 0, 1, 0, -0.447214, 0, -0.894427, 1, 0, -4)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_29" type="MeshInstance3D" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-0.694595, 0, 0.396911, 0, 0.8, 0, -0.396911, 0, -0.694595, 1, 0, -4)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_30")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 29
 camino = NodePath("..")
 punto_camino = 1.0
+tipo = 2
 
-[node name="Casilla_30" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_30" type="MeshInstance3D" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-0.8, 0, -6.99382e-08, 0, 0.8, 0, 6.99382e-08, 0, -0.8, 0, 0, 0)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../Casilla_31")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 30
 camino = NodePath("..")
 punto_camino = 2.0
+tipo = 1
 
-[node name="Casilla_31" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
-transform = Transform3D(-0.894427, 0, -0.447214, 0, 1, 0, 0.447214, 0, -0.894427, 1, 0, 4)
-mesh = SubResource("CylinderMesh_gd3qw")
+[node name="Casilla_31" type="MeshInstance3D" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "boton", "camino") groups=["casilla"] instance=ExtResource("2_yc70j")]
+transform = Transform3D(-0.694595, 0, -0.396911, 0, 0.8, 0, 0.396911, 0, -0.694595, 1, 0, 4)
+mesh = ExtResource("7_mhckf")
+script = ExtResource("8_df52p")
 casillas_destino = [NodePath("../../Path3D/Casilla_7")]
+boton = NodePath("Boton")
+press_offset = 0.14
 index = 31
 camino = NodePath("..")
 punto_camino = 3.0
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0.707107, -0.353554, 0.612372, -1.63913e-07, 0.866025, 0.5, -0.707107, -0.353554, 0.612372, 35.3046, 24.39, 31.299)
-environment = SubResource("Environment_6fgja")
-fov = 20.0
-size = 20.0
+[node name="Suelo" type="MeshInstance3D" parent="Tablero"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0317915, 0)
+mesh = SubResource("PlaneMesh_df52p")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Tablero/Suelo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0349426, 0.17762, -0.0678101)
+axis_lock_linear_x = true
+axis_lock_linear_y = true
+axis_lock_linear_z = true
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+physics_material_override = SubResource("PhysicsMaterial_df52p")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tablero/Suelo/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.219193, -0.097229, 0.761841)
+shape = SubResource("BoxShape3D_df52p")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.728849, 0.578404, 0.366373, -0.0822096, -0.457303, 0.885503, 0.679722, -0.675517, -0.285754, 15, 32.9384, -19)

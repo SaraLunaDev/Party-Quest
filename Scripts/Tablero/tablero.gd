@@ -1,12 +1,16 @@
 @tool
 extends Node3D
 
-# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+
+# ############################################################
 # Variables
-# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦	
+# ############################################################	
 
 @export var caminos: Array[Path3D]
 @export var casilla_escena: PackedScene
+
+# Si es true, las casillas instanciadas rotarán siguiendo la trayectoria
+@export var rotar_seguir_trayectoria: bool = false
 
 @export var numero_casillas: int
 var asociaciones_puntos: Dictionary = {}
@@ -15,31 +19,57 @@ var posiciones_anteriores: Dictionary = {}
 @export_category("Casillas")
 @export var instanciar_casillas: bool:
 	set(value):
-		if value: _instanciar_casillas()
+		if Engine.is_editor_hint() and value:
+			_instanciar_casillas()
 		instanciar_casillas = false
 
-@export var limpiar_casillas: bool:
+@export var cantidad_casillas_roja_juntas: int = 2:
 	set(value):
-		if value: _limpiar_casillas()
-		limpiar_casillas = false
+		cantidad_casillas_roja_juntas = max(1, value)
+		if Engine.is_editor_hint():
+			_establecer_tipo_casillas(_obtener_casillas_del_tablero())
+
+@export var cantidad_casillas_entre_rojas: int = 2:
+	set(value):
+		cantidad_casillas_entre_rojas = max(0, value)
+		if Engine.is_editor_hint():
+			_establecer_tipo_casillas(_obtener_casillas_del_tablero())
+@export var porcentaje_casillas_minijuego: float = 0.1:
+	set(value):
+		porcentaje_casillas_minijuego = clamp(value, 0.0, 1.0)
+		if Engine.is_editor_hint():
+			_establecer_tipo_casillas(_obtener_casillas_del_tablero())
+
+@export var casillas_inicio_prohibidas_minijuego: int = 6:
+	set(value):
+		casillas_inicio_prohibidas_minijuego = max(0, value)
+		if Engine.is_editor_hint():
+			_establecer_tipo_casillas(_obtener_casillas_del_tablero())
 
 @export_category("Puntos de Union")
 @export var fijar_puntos_de_union: bool:
 	set(value):
-		if value: _asignar_puntos_de_union()
+		if Engine.is_editor_hint() and value:
+			_asignar_puntos_de_union()
 		fijar_puntos_de_union = false
 
 func _ready():
-	for camino in caminos:
-		camino.connect("curve_changed", Callable(self, "_actualizar_posicion_casillas"))
-		camino.connect("curve_changed", Callable(self, "_sincronizar_puntos_de_union"))
-	_asignar_puntos_de_union()
+	if Engine.is_editor_hint():
+		for camino in caminos:
+			if not camino.is_connected("curve_changed", Callable(self , "_actualizar_posicion_casillas")):
+				camino.connect("curve_changed", Callable(self , "_actualizar_posicion_casillas"))
+			if not camino.is_connected("curve_changed", Callable(self , "_sincronizar_puntos_de_union")):
+				camino.connect("curve_changed", Callable(self , "_sincronizar_puntos_de_union"))
+		_asignar_puntos_de_union()
 
-# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+
+# ############################################################
 # Gestion de Casillas
-# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# ############################################################
 
 func _limpiar_casillas() -> void:
+	if not Engine.is_editor_hint():
+		return
 	for camino in caminos:
 		for child in camino.get_children():
 			if child.name.begins_with("Casilla_"):
@@ -47,6 +77,8 @@ func _limpiar_casillas() -> void:
 				child.queue_free()
 
 func _instanciar_casillas() -> Array[Vector3]:
+	if not Engine.is_editor_hint():
+		return []
 	_limpiar_casillas()
 	numero_casillas = 0
 	var puntos: Array[Vector3] = []
@@ -75,31 +107,113 @@ func _instanciar_casillas() -> Array[Vector3]:
 			
 			# Posicionar la casilla en el punto de la curva
 			casilla.global_position = camino.global_position + punto
-			
-			# Calcular la rotacion basada en la direccion de la curva
-			var punto_in = curva.get_point_in(i)
-			var punto_out = curva.get_point_out(i)
-			var es_salto = punto_in.y > 0.5 or punto_out.y > 0.5
-			
-			# Verificar si el punto anterior es un salto
-			var punto_anterior_es_salto = false
-			if i > 0:
-				var punto_anterior_in = curva.get_point_in(i - 1)
-				var punto_anterior_out = curva.get_point_out(i - 1)
-				punto_anterior_es_salto = punto_anterior_in.y > 0.5 or punto_anterior_out.y > 0.5
-			
-			# Solo aplicar rotacion si no es un salto
-			if not (es_salto or punto_anterior_es_salto):
-				var direccion = punto_out.normalized()
-				if direccion.length() > 0.01:
+
+			# Aplicar rotacion siguiendo la trayectoria si está habilitado
+			if rotar_seguir_trayectoria:
+				var prev_idx = i - 1 if i - 1 >= 0 else (point_count - 1 if curva.is_closed() else i)
+				var next_idx = i + 1 if i + 1 < point_count else (0 if curva.is_closed() else i)
+				var prev_p = curva.get_point_position(prev_idx)
+				var next_p = curva.get_point_position(next_idx)
+				var direccion = (next_p - prev_p)
+				if direccion.length() > 0.0001:
+					direccion = direccion.normalized()
 					casilla.look_at(casilla.global_position + direccion, Vector3.UP)
 			
 			todas_las_casillas.append(casilla)
 			numero_casillas += 1
 	
+	# Establecer tipo de casillas
+	_establecer_tipo_casillas(todas_las_casillas)
+	
 	# Configurar conexiones entre casillas
 	_configurar_conexiones_casillas(todas_las_casillas)
 	return puntos
+
+func _obtener_casillas_del_tablero() -> Array[Casilla]:
+	var casillas: Array[Casilla] = []
+	for camino in caminos:
+		for child in camino.get_children():
+			if child is Casilla:
+				casillas.append(child as Casilla)
+	return casillas
+
+func obtener_casillas_del_tablero() -> Array[Casilla]:
+	return _obtener_casillas_del_tablero()
+
+func _establecer_tipo_casillas(casillas: Array[Casilla]) -> void:
+	if not Engine.is_editor_hint():
+		return
+	if casillas.size() == 0:
+		return
+
+	var total = casillas.size()
+	var num_minijuegos = int(round(total * porcentaje_casillas_minijuego))
+
+	# Poner todas las casillas en NORMAL
+	for casilla in casillas:
+		casilla.set_tipo(casilla.tipo_casilla.NORMAL)
+
+	# Asignar casillas ROJAS
+	var i = 0
+	while i < total:
+		# Asignar grupo ROJO
+		for j in range(cantidad_casillas_roja_juntas):
+			var idx = i + j
+			if idx >= total:
+				break
+			casillas[idx].set_tipo(casillas[idx].tipo_casilla.ROJA)
+
+		# Avanzar y aplicar separacion
+		i += cantidad_casillas_roja_juntas
+		i += cantidad_casillas_entre_rojas
+
+	# Contar rojas asignadas
+	var rojas_asignadas = 0
+	for casilla in casillas:
+		if casilla.tipo == casilla.tipo_casilla.ROJA:
+			rojas_asignadas += 1
+
+	# Evitar solapamiento con minijuegos
+	if rojas_asignadas + num_minijuegos > total:
+		num_minijuegos = max(0, total - rojas_asignadas)
+
+	# Asignar casillas de minijuego entre las restantes
+	var disponibles: Array = []
+	for idx in range(total):
+		# Evitar las primeras casillas (configurable)
+		if casillas[idx].tipo == casillas[idx].tipo_casilla.NORMAL and idx >= casillas_inicio_prohibidas_minijuego:
+			disponibles.append(idx)
+
+	# Asegurar que no intentemos asignar más minijuegos de los disponibles
+	num_minijuegos = min(num_minijuegos, disponibles.size())
+
+	if num_minijuegos > 0 and disponibles.size() > 0:
+		var n = disponibles.size()
+		if num_minijuegos >= n:
+			for pos in disponibles:
+				casillas[pos].set_tipo(casillas[pos].tipo_casilla.MINIJUEGO)
+		else:
+			var step = float(n) / float(num_minijuegos)
+			var chosen_positions: Array = []
+			for k in range(num_minijuegos):
+				var pos = int(floor((k + 0.5) * step))
+				if pos >= n:
+					pos = n - 1
+				var final_pos = pos
+				var offset = 0
+				while final_pos in chosen_positions:
+					offset += 1
+					if pos + offset < n and not (pos + offset in chosen_positions):
+						final_pos = pos + offset
+						break
+					if pos - offset >= 0 and not (pos - offset in chosen_positions):
+						final_pos = pos - offset
+						break
+				chosen_positions.append(final_pos)
+
+			for p in chosen_positions:
+				var idx_casilla = disponibles[p]
+				casillas[idx_casilla].set_tipo(casillas[idx_casilla].tipo_casilla.MINIJUEGO)
 
 func _configurar_conexiones_casillas(casillas: Array[Casilla]) -> void:
 	# Primero: Crear mapas de casillas por camino para mejor organizacion
@@ -136,9 +250,10 @@ func _configurar_conexiones_casillas(casillas: Array[Casilla]) -> void:
 		# Asignar todas las conexiones a la casilla
 		casilla_actual.set_casillas_destino(casillas_destino)
 
-# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+
+# ############################################################
 # Detectar casillas especiales
-# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# ############################################################
 
 func _es_casilla_de_camino_abierto(casilla: Casilla) -> bool:
 	var padre = casilla.get_parent()
@@ -155,9 +270,10 @@ func _es_ultima_casilla_camino_abierto(casilla: Casilla) -> bool:
 	
 	return casilla.global_position.distance_to(punto_penultimo_global) <= 0.1
 
-# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+
+# ############################################################
 # Buscar conexiones
-# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# ############################################################
 
 func _encontrar_casilla_punto_final(casilla_ultima_abierto: Casilla, todas_casillas: Array[Casilla]) -> Casilla:
 	return _encontrar_casilla_destino_final(casilla_ultima_abierto, todas_casillas)
@@ -254,13 +370,16 @@ func _encontrar_primera_casilla_camino_abierto(camino_abierto: Path3D, todas_cas
 	
 	return null
 
-# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+
+# ############################################################
 # Sincronizar puntos de union
-# ✦•················•⋅ ∙ ∘ ☽ ☆ ☾ ∘ ⋅ ⋅•················•✦
+# ############################################################
 
 var ignorar_sincronizacion := false
 
 func _asignar_puntos_de_union() -> void:
+	if not Engine.is_editor_hint():
+		return
 	asociaciones_puntos.clear()
 	posiciones_anteriores.clear()
 	
@@ -340,6 +459,8 @@ func _guardar_posiciones_actuales() -> void:
 		posiciones_anteriores[camino.name] = posiciones_camino
 
 func _actualizar_posicion_casillas() -> void:
+	if not Engine.is_editor_hint():
+		return
 	# Actualizar posiciones de todas las casillas basado en sus caminos
 	for camino in caminos:
 		var curva = camino.get_curve()
@@ -374,6 +495,8 @@ func _actualizar_posicion_casillas() -> void:
 					break
 
 func _sincronizar_puntos_de_union() -> void:
+	if not Engine.is_editor_hint():
+		return
 	if ignorar_sincronizacion:
 		return
 	ignorar_sincronizacion = true
@@ -423,6 +546,8 @@ func _detectar_puntos_cambiados() -> Array:
 	return cambios
 
 func _sincronizar_extremos_asociados(cambio: Dictionary) -> void:
+	if not Engine.is_editor_hint():
+		return
 	var camino_cambiado = cambio.camino
 	var indice_cambiado = cambio.indice
 	var nueva_posicion = cambio.posicion_nueva

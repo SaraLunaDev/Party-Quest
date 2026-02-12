@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://djptr8bojngbo"
+path="res://.godot/imported/button_base_blue_button_blue.obj-b1003f72486582a57a9fa8eadb746bc9.mesh"
+
+[deps]
+
+files=["res://.godot/imported/button_base_blue_button_blue.obj-b1003f72486582a57a9fa8eadb746bc9.mesh"]
+
+source_file="res://Assets/Objects/blue/button_base_blue_button_blue.obj"
+dest_files=["res://.godot/imported/button_base_blue_button_blue.obj-b1003f72486582a57a9fa8eadb746bc9.mesh", "res://.godot/imported/button_base_blue_button_blue.obj-b1003f72486582a57a9fa8eadb746bc9.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false
