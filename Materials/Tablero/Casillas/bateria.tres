@@ -1,9 +1,9 @@
 [gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://w6uv2y6gvace"]
 
-[ext_resource type="Texture2D" uid="uid://cth8cbl8fv33h" path="res://Assets/Objects/blue/platformer_texture.png" id="1_awjnr"]
+[ext_resource type="Texture2D" uid="uid://m2ev7eijbfvg" path="res://Textures/platformer_texture.png" id="1_awjnr"]
 
 [resource]
-albedo_color = Color(0, 0, 0, 1)
+albedo_texture = ExtResource("1_awjnr")
 metallic = 1.0
 metallic_texture = ExtResource("1_awjnr")
 metallic_texture_channel = 2

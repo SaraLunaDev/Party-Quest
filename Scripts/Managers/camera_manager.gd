@@ -2,10 +2,8 @@ extends Node
 class_name CameraManager
 
 
-# ############################################################
 # Variables
-# ############################################################
-
+# ---------------------------------------------------------------------------------------
 signal state_changed(old_state, new_state)
 signal state_reached(state)
 
@@ -27,12 +25,10 @@ const STATE_LOOK_AT_FROM_SKY := 3
 @export var follow_look_at_offset: Vector3 = Vector3(0, 1, 0)
 
 @export_group("Overview")
-@export var overview_center: Vector3 = Vector3.ZERO
-@export var overview_use_position: bool = false
-@export var overview_position: Vector3 = Vector3(0, 12, 0)
-@export var overview_distance: float = 18.0
-@export var overview_pitch: float = 75.0
-@export var overview_yaw: float = 0.0
+@export var overview_centers: Array[Vector3] = [Vector3.ZERO]
+@export var overview_offsets: Array[Vector3] = [Vector3(0, 12, 0)]
+@export var overview_pivot_time: float = 5.0
+@export var overview_rotation_speed: float = 10.0
 
 @export_group("Look At")
 @export var look_at_position_offset: Vector3 = Vector3.ZERO
@@ -51,22 +47,40 @@ var _look_at_tf: Transform3D = Transform3D()
 var _has_look_at_from_sky_override: bool = false
 var _look_at_from_sky_tf: Transform3D = Transform3D()
 
+var _current_overview_point_index: int = 0
+var _overview_timer: float = 0.0
+var _overview_rotation_angle: float = 0.0
+var _previous_overview_point_index: int = 0
+var _point_changed_this_frame: bool = false
 
-# ############################################################
-# Funciones
-# ############################################################
 
+# Funciones Basicas
+# ---------------------------------------------------------------------------------------
 func _ready() -> void:
 	if camera == null:
 		push_warning("😢 No se ha asignado ninguna camara")
-	# Asegurar FOV inicial
+	
 	if camera != null:
 		camera.fov = fov
+		
+	if overview_centers.size() != overview_offsets.size():
+		push_warning("😢 Los arrays de centers y offsets deben tener el mismo tamaño")
 
+func _process(delta: float) -> void:
+	if camera == null:
+		return
+	_update_camera(delta, false)
+
+
+# Gestion de la Camara
+# ---------------------------------------------------------------------------------------
+#region
+# Establece el objetivo a seguir para la camara
 func set_target_player(p: Node3D) -> void:
 	target_player = p
 
-func set_state(new_state: int, look_position: Vector3 = Vector3.ZERO, look_rotation_deg: Vector3 = Vector3.ZERO, immediate: bool = false) -> void:
+# Cambia el estado de la camara, con opciones para mirar a una posicion y rotacion o para hacer un cambio progresivo o inmediato
+func set_state(new_state: int, look_position: Vector3 = Vector3.ZERO, look_rotation_deg: Vector3 = Vector3.ZERO, immediate: bool = false, zoom: float = 1.0) -> void:
 	var old = state
 	state = new_state
 	if old != new_state:
@@ -81,7 +95,7 @@ func set_state(new_state: int, look_position: Vector3 = Vector3.ZERO, look_rotat
 			push_warning("😢 No hay posicion objetivo para LOOK_AT.")
 		else:
 			var target_pos: Vector3 = look_position
-			var cam_origin: Vector3 = target_pos + look_at_position_offset
+			var cam_origin: Vector3 = target_pos + look_at_position_offset * zoom
 			var tf := Transform3D()
 			tf.origin = cam_origin
 			tf = tf.looking_at(target_pos, Vector3.UP)
@@ -133,11 +147,7 @@ func set_state(new_state: int, look_position: Vector3 = Vector3.ZERO, look_rotat
 		if reached_state == new_state:
 			return
 
-func _process(delta: float) -> void:
-	if camera == null:
-		return
-	_update_camera(delta, false)
-
+# Actualiza posicion y rotacion de la camara segun el estado actual
 func _update_camera(delta: float, immediate: bool) -> void:
 	var desired_tf: Transform3D = Transform3D()
 	var target_fov = fov
@@ -154,20 +164,29 @@ func _update_camera(delta: float, immediate: bool) -> void:
 	elif state == STATE_LOOK_AT_FROM_SKY and _has_look_at_from_sky_override:
 		desired_tf = _look_at_from_sky_tf
 	else:
-		if overview_use_position:
-			desired_tf.origin = overview_position
-			desired_tf = desired_tf.looking_at(overview_center, Vector3.UP)
-		else:
-			var pitch_r = deg_to_rad(clamp(overview_pitch, 1.0, 89.9))
-			var yaw_r = deg_to_rad(overview_yaw)
-			var height = sin(pitch_r) * overview_distance
-			var horiz = cos(pitch_r) * overview_distance
-			var x = sin(yaw_r) * horiz
-			var z = - cos(yaw_r) * horiz
-			desired_tf.origin = overview_center + Vector3(x, height, z)
-			desired_tf = desired_tf.looking_at(overview_center, Vector3.UP)
+		if overview_centers.size() > 0 and overview_offsets.size() > 0:
+			var point_count = min(overview_centers.size(), overview_offsets.size())
+			_point_changed_this_frame = false
+			_overview_timer += delta
+			if _overview_timer >= overview_pivot_time and point_count > 1:
+				_overview_timer = 0.0
+				_previous_overview_point_index = _current_overview_point_index
+				_current_overview_point_index = (_current_overview_point_index + 1) % point_count
+				if _previous_overview_point_index != _current_overview_point_index:
+					_point_changed_this_frame = true
+			
+			_overview_rotation_angle += overview_rotation_speed * delta
+			if _overview_rotation_angle >= 360.0:
+				_overview_rotation_angle -= 360.0
+			
+			var center: Vector3 = overview_centers[_current_overview_point_index]
+			var offset: Vector3 = overview_offsets[_current_overview_point_index]
+			
+			var rotated_offset = offset.rotated(Vector3.UP, deg_to_rad(_overview_rotation_angle))
+			desired_tf.origin = center + rotated_offset
+			desired_tf = desired_tf.looking_at(center, Vector3.UP)
 
-	if immediate:
+	if immediate or (state == STATE_OVERVIEW and _point_changed_this_frame):
 		camera.global_transform = desired_tf
 		camera.fov = target_fov
 		if _transitioning_to_state == state and not _state_reached_emitted:
@@ -188,7 +207,12 @@ func _update_camera(delta: float, immediate: bool) -> void:
 			_state_reached_emitted = true
 			_transitioning_to_state = -1
 			emit_signal("state_reached", state)
+#endregion
 
+
+# Funciones Utilitarias
+# ---------------------------------------------------------------------------------------
+#region
 func _basis_from_euler_deg(e: Vector3) -> Basis:
 	var b = Basis()
 	b = b.rotated(Vector3(1, 0, 0), deg_to_rad(e.x))
@@ -197,6 +221,6 @@ func _basis_from_euler_deg(e: Vector3) -> Basis:
 	return b
 
 func clear_look_at_override() -> void:
-	# Limpia las sobrescrituras LOOK_AT para que la cámara vuelva a comportarse según su estado actual.
 	_has_look_at_override = false
 	_has_look_at_from_sky_override = false
+#endregion

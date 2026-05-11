@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://v3alme0gtfj7"]
 
 [ext_resource type="Script" uid="uid://dfx0uc7u4mmy8" path="res://Scripts/Jugador/dado.gd" id="1_gva5j"]
-[ext_resource type="FontFile" uid="uid://2jwo7tu1q2r4" path="res://Fonts/Gamtex.ttf" id="2_4eers"]
-[ext_resource type="ArrayMesh" uid="uid://ctoqv2armm72p" path="res://Assets/Objects/blue/button_base_blue.obj" id="3_xoku5"]
+[ext_resource type="ArrayMesh" uid="uid://cueqb4npp6cyn" path="res://Assets/Objects/green/button_base_green.obj" id="2_xoku5"]
+[ext_resource type="FontFile" uid="uid://rcukv55och8r" path="res://Fonts/Super Cartoon.ttf" id="3_4eers"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m0ni2"]
 emission = Color(1, 1, 1, 1)
@@ -23,39 +23,39 @@ numero_caras = [NodePath("Number"), NodePath("Number2"), NodePath("Number3"), No
 
 [node name="Lado" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.58, 0, 0, 0, 0.58, 0, 0, 0, 0.58, -0.00149417, 0.408135, 0)
-mesh = ExtResource("3_xoku5")
+mesh = ExtResource("2_xoku5")
 surface_material_override/0 = SubResource("StandardMaterial3D_4eers")
 
 [node name="Lado2" type="MeshInstance3D" parent="."]
 transform = Transform3D(-0.58, 5.07052e-08, 0, -5.07052e-08, -0.58, 0, 0, 0, 0.58, -0.00149417, -0.407668, 0)
-mesh = ExtResource("3_xoku5")
+mesh = ExtResource("2_xoku5")
 surface_material_override/0 = SubResource("StandardMaterial3D_4eers")
 
 [node name="Lado3" type="MeshInstance3D" parent="."]
 transform = Transform3D(-2.53526e-08, -0.58, 0, 0.58, -2.53526e-08, 0, 0, 0, 0.58, -0.409396, 0.000233811, 0)
-mesh = ExtResource("3_xoku5")
+mesh = ExtResource("2_xoku5")
 surface_material_override/0 = SubResource("StandardMaterial3D_4eers")
 
 [node name="Lado4" type="MeshInstance3D" parent="."]
 transform = Transform3D(7.60578e-08, 0.58, 0, -0.58, 7.60578e-08, 0, 0, 0, 0.58, 0.406407, 0.000233847, 0)
-mesh = ExtResource("3_xoku5")
+mesh = ExtResource("2_xoku5")
 surface_material_override/0 = SubResource("StandardMaterial3D_4eers")
 
 [node name="Lado5" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.1082e-15, 2.53526e-08, -0.58, 0.58, -2.53526e-08, 0, -2.53526e-08, -0.58, -2.53526e-08, -0.00149415, 0.000233811, -0.407901)
-mesh = ExtResource("3_xoku5")
+mesh = ExtResource("2_xoku5")
 surface_material_override/0 = SubResource("StandardMaterial3D_4eers")
 
 [node name="Lado6" type="MeshInstance3D" parent="."]
 transform = Transform3D(-3.32459e-15, -2.53526e-08, -0.58, -0.58, 7.60578e-08, 0, 7.60578e-08, 0.58, -2.53526e-08, -0.00149419, 0.000233847, 0.407901)
-mesh = ExtResource("3_xoku5")
+mesh = ExtResource("2_xoku5")
 surface_material_override/0 = SubResource("StandardMaterial3D_4eers")
 
 [node name="Number" type="Label3D" parent="."]
 transform = Transform3D(1, -1.35287e-11, -4.36557e-11, -1.32729e-11, 1, 0, 0, 0, 1, 0.00289053, -0.025473, 0.454788)
 modulate = Color(1, 0.566667, 0, 1)
 text = "0"
-font = ExtResource("2_4eers")
+font = ExtResource("3_4eers")
 font_size = 140
 outline_size = 50
 
@@ -63,7 +63,7 @@ outline_size = 50
 transform = Transform3D(-0.999998, -0.0019422, 2.93735e-06, -0.0019422, 0.999995, -0.00293468, 2.76248e-06, -0.00293468, -0.999996, 0.00298797, -0.0268101, -0.456497)
 modulate = Color(1, 0.566667, 0, 1)
 text = "0"
-font = ExtResource("2_4eers")
+font = ExtResource("3_4eers")
 font_size = 140
 outline_size = 50
 
@@ -71,7 +71,7 @@ outline_size = 50
 transform = Transform3D(8.99337e-07, 0.000496243, 1, -0.00243844, 0.999997, -0.000496239, -0.999997, -0.00243844, 2.10941e-06, 0.458505, -0.0257003, -0.00167612)
 modulate = Color(1, 0.566667, 0, 1)
 text = "0"
-font = ExtResource("2_4eers")
+font = ExtResource("3_4eers")
 font_size = 140
 outline_size = 50
 
@@ -79,7 +79,7 @@ outline_size = 50
 transform = Transform3D(8.99337e-07, -0.00243844, -0.999998, 0.000496243, 0.999998, -0.00243844, 1, -0.00049624, 2.10935e-06, -0.451894, -0.0265846, -0.00177213)
 modulate = Color(1, 0.566667, 0, 1)
 text = "0"
-font = ExtResource("2_4eers")
+font = ExtResource("3_4eers")
 font_size = 140
 outline_size = 50
 
@@ -87,7 +87,7 @@ outline_size = 50
 transform = Transform3D(-0.000864277, 1, -0.000496274, -0.00136122, -0.00049745, -1, -0.999999, -0.000863601, 0.00136165, 0.00371857, -0.451466, -0.00110005)
 modulate = Color(1, 0.566667, 0, 1)
 text = "0"
-font = ExtResource("2_4eers")
+font = ExtResource("3_4eers")
 font_size = 140
 outline_size = 50
 
@@ -95,6 +95,6 @@ outline_size = 50
 transform = Transform3D(-0.00107792, 0.999997, -0.00243841, 0.00135942, 0.00243987, 0.999997, 0.999999, 0.0010746, -0.00136204, 0.00283451, 0.458934, -0.00243588)
 modulate = Color(1, 0.566667, 0, 1)
 text = "0"
-font = ExtResource("2_4eers")
+font = ExtResource("3_4eers")
 font_size = 140
 outline_size = 50

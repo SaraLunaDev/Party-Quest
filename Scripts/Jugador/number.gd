@@ -1,10 +1,9 @@
 extends Label3D
 
+# Funciones generales
+# ---------------------------------------------------------------------------------------
 
-# ############################################################
-# Logica
-# ############################################################
-
+# Apunta el numero a camara para que siempre sea visible
 func _process(_delta):
 	var cam = get_viewport().get_camera_3d()
 	if cam:

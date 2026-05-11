@@ -1,0 +1,108 @@
+[gd_scene load_steps=5 format=3 uid="uid://cjeo2s2wlqyfj"]
+
+[ext_resource type="Texture2D" uid="uid://dujt8r04wp36n" path="res://Assets/UI/Characters/1.png" id="1_4pykv"]
+[ext_resource type="Script" uid="uid://dmaqf8wi02lf2" path="res://Scenes/UI/playerinfo.gd" id="1_kv0mi"]
+[ext_resource type="FontFile" uid="uid://rcukv55och8r" path="res://Fonts/Super Cartoon.ttf" id="2_an70y"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kv0mi"]
+bg_color = Color(0.115232, 0.199472, 0.27338, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.87451, 0.87451, 0.87451, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+expand_margin_left = 20.0
+expand_margin_top = 20.0
+expand_margin_right = 120.0
+expand_margin_bottom = 20.0
+
+[node name="PlayerInfo" type="MarginContainer" node_paths=PackedStringArray("battery_label", "chips_label", "player_image", "position_label")]
+offset_right = 120.0
+offset_bottom = 146.0
+theme_override_constants/margin_right = 20
+script = ExtResource("1_kv0mi")
+battery_label = NodePath("VBoxContainer/MarginContainer3/Baterias/Label2")
+chips_label = NodePath("VBoxContainer/MarginContainer2/Baterias2/Label2")
+player_image = NodePath("VBoxContainer/MarginContainer/TextureRect")
+position_label = NodePath("VBoxContainer/MarginContainer/TextureRect/Posicion")
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 2
+theme_override_styles/disabled = SubResource("StyleBoxFlat_kv0mi")
+disabled = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/MarginContainer"]
+custom_minimum_size = Vector2(140, 140)
+layout_mode = 2
+size_flags_horizontal = 0
+texture = ExtResource("1_4pykv")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Posicion" type="Label" parent="VBoxContainer/MarginContainer/TextureRect"]
+layout_mode = 2
+offset_right = 15.0
+offset_bottom = 30.0
+theme_override_colors/font_color = Color(1, 0.566667, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("2_an70y")
+theme_override_font_sizes/font_size = 50
+text = "1"
+horizontal_alignment = 2
+
+[node name="MarginContainer3" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Baterias" type="HBoxContainer" parent="VBoxContainer/MarginContainer3"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="VBoxContainer/MarginContainer3/Baterias"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_an70y")
+theme_override_font_sizes/font_size = 21
+text = "Baterias:"
+
+[node name="Label2" type="Label" parent="VBoxContainer/MarginContainer3/Baterias"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_an70y")
+theme_override_font_sizes/font_size = 21
+text = "0"
+horizontal_alignment = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Baterias2" type="HBoxContainer" parent="VBoxContainer/MarginContainer2"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="VBoxContainer/MarginContainer2/Baterias2"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_an70y")
+theme_override_font_sizes/font_size = 21
+text = "Chips:"
+
+[node name="Label2" type="Label" parent="VBoxContainer/MarginContainer2/Baterias2"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("2_an70y")
+theme_override_font_sizes/font_size = 21
+text = "10"
+horizontal_alignment = 2

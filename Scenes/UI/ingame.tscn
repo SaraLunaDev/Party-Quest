@@ -1,0 +1,90 @@
+[gd_scene load_steps=6 format=3 uid="uid://bw4rabeudkls8"]
+
+[ext_resource type="Script" uid="uid://b6tobnmr5qfqm" path="res://Scripts/UI/ingame.gd" id="1_x3rdw"]
+[ext_resource type="FontFile" uid="uid://rcukv55och8r" path="res://Fonts/Super Cartoon.ttf" id="2_x3rdw"]
+[ext_resource type="Texture2D" uid="uid://cagwc6rxouuc3" path="res://Assets/UI/flecha.png" id="3_ml8mn"]
+[ext_resource type="PackedScene" uid="uid://cjeo2s2wlqyfj" path="res://Scenes/UI/playerinfo.tscn" id="4_ecdp5"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x3rdw"]
+bg_color = Color(0.115232, 0.199472, 0.27338, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.87451, 0.87451, 0.87451, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+expand_margin_left = 140.0
+
+[node name="InGame" type="Control" node_paths=PackedStringArray("dice_button", "map_button", "buttons_container", "player_info_position")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_x3rdw")
+dice_button = NodePath("CanvasLayer/Botones/VBoxContainer/Dado")
+map_button = NodePath("CanvasLayer/Botones/VBoxContainer/Mapa")
+buttons_container = NodePath("CanvasLayer/Botones")
+button_icon = ExtResource("3_ml8mn")
+player_info_position = NodePath("CanvasLayer/Jugadores/VBoxContainer")
+player_info_scene = ExtResource("4_ecdp5")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+follow_viewport_enabled = true
+
+[node name="Botones" type="MarginContainer" parent="CanvasLayer"]
+offset_right = 480.0
+offset_bottom = 320.0
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 60
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 60
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Botones"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Dado" type="Button" parent="CanvasLayer/Botones/VBoxContainer"]
+custom_minimum_size = Vector2(400, 100)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_x3rdw")
+theme_override_font_sizes/font_size = 60
+theme_override_styles/normal = SubResource("StyleBoxFlat_x3rdw")
+text = "TIRAR DADO"
+alignment = 0
+expand_icon = true
+
+[node name="Mapa" type="Button" parent="CanvasLayer/Botones/VBoxContainer"]
+custom_minimum_size = Vector2(300, 80)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_fonts/font = ExtResource("2_x3rdw")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_x3rdw")
+text = "MAPA"
+alignment = 0
+expand_icon = true
+
+[node name="Jugadores" type="MarginContainer" parent="CanvasLayer"]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -534.0
+offset_bottom = 534.0
+grow_horizontal = 0
+grow_vertical = 2
+size_flags_horizontal = 8
+size_flags_vertical = 3
+theme_override_constants/margin_top = 60
+theme_override_constants/margin_bottom = 60
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Jugadores"]
+layout_mode = 2
+theme_override_constants/separation = 60

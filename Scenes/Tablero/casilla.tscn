@@ -1,9 +1,9 @@
 [gd_scene load_steps=10 format=3 uid="uid://dofhnfr83kg16"]
 
-[ext_resource type="ArrayMesh" uid="uid://djptr8bojngbo" path="res://Assets/Objects/blue/button_base_blue_button_blue.obj" id="1_b7pks"]
+[ext_resource type="ArrayMesh" uid="uid://cueqb4npp6cyn" path="res://Assets/Objects/green/button_base_green.obj" id="1_8jxmp"]
 [ext_resource type="Script" uid="uid://cg8asbjn6f8h" path="res://Scripts/Tablero/casilla.gd" id="1_pgg6m"]
-[ext_resource type="ArrayMesh" uid="uid://ctoqv2armm72p" path="res://Assets/Objects/blue/button_base_blue.obj" id="4_8jxmp"]
-[ext_resource type="Material" uid="uid://d1wficj4y7wb7" path="res://Materials/Tablero/Casillas/roja.tres" id="5_vtaqy"]
+[ext_resource type="ArrayMesh" uid="uid://d4dbyaog58nle" path="res://Assets/Objects/red/button_base_red_button_red.obj" id="3_8jxmp"]
+[ext_resource type="Material" uid="uid://2gip4h3mnccq" path="res://Materials/Tablero/Casillas/normal.tres" id="4_8jxmp"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fp3us"]
 size = Vector3(2, 0.498779, 2)
@@ -22,14 +22,14 @@ size = Vector3(0.25, 0.5, 2.5)
 
 [node name="Casilla" type="MeshInstance3D" node_paths=PackedStringArray("boton") groups=["casilla"]]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 0, 0)
-mesh = ExtResource("4_8jxmp")
+mesh = ExtResource("1_8jxmp")
 script = ExtResource("1_pgg6m")
 boton = NodePath("Boton")
 press_offset = 0.14
 
 [node name="Boton" type="MeshInstance3D" parent="."]
-mesh = ExtResource("1_b7pks")
-surface_material_override/0 = ExtResource("5_vtaqy")
+mesh = ExtResource("3_8jxmp")
+surface_material_override/0 = ExtResource("4_8jxmp")
 
 [node name="PlayerEnterDetector" type="Area3D" parent="."]
 collision_layer = 2
