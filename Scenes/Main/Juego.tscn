@@ -1,26 +1,28 @@
-[gd_scene load_steps=18 format=3 uid="uid://cj3f644um1a0t"]
+[gd_scene load_steps=20 format=3 uid="uid://cj3f644um1a0t"]
 
-[ext_resource type="Script" uid="uid://j2ohedw75h8s" path="res://Scripts/Managers/game_manager.gd" id="1_54qhx"]
-[ext_resource type="PackedScene" uid="uid://bw4rabeudkls8" path="res://Scenes/UI/ingame.tscn" id="1_g7747"]
-[ext_resource type="Script" uid="uid://dxs1ae606mcct" path="res://Scripts/Tablero/tablero.gd" id="1_lldb4"]
-[ext_resource type="PackedScene" uid="uid://cns8ts8ffh68i" path="res://Scenes/Jugadores/jugador.tscn" id="2_mh750"]
-[ext_resource type="PackedScene" uid="uid://dofhnfr83kg16" path="res://Scenes/Tablero/casilla.tscn" id="2_yc70j"]
-[ext_resource type="PackedScene" uid="uid://cjkq7nkq2fjai" path="res://Scenes/Tablero/flechita.tscn" id="3_qljf6"]
-[ext_resource type="Script" uid="uid://cyc3vafdujx74" path="res://Scripts/Managers/input_manager.gd" id="4_g7747"]
-[ext_resource type="Script" uid="uid://b6213butcd200" path="res://Scripts/Managers/camera_manager.gd" id="4_nu5t8"]
-[ext_resource type="PackedScene" uid="uid://8y4jw3ouwkml" path="res://Scenes/Mapas/mapa_01.tscn" id="8_nu5t8"]
+[ext_resource type="PackedScene" uid="uid://bw4rabeudkls8" path="res://Scenes/UI/ingame.tscn" id="1_f4sch"]
+[ext_resource type="PackedScene" uid="uid://d3nny7meddid" path="res://Scenes/UI/conectar_tutorial.tscn" id="1_iihtj"]
+[ext_resource type="PackedScene" uid="uid://cp8gccb0oeo4i" path="res://Scenes/UI/main_menu.tscn" id="1_w2t84"]
+[ext_resource type="Script" uid="uid://j2ohedw75h8s" path="res://Scripts/Managers/game_manager.gd" id="2_w2t84"]
+[ext_resource type="PackedScene" uid="uid://cns8ts8ffh68i" path="res://Scenes/Jugadores/jugador.tscn" id="3_iihtj"]
+[ext_resource type="PackedScene" uid="uid://cjkq7nkq2fjai" path="res://Scenes/Tablero/flechita.tscn" id="4_kukyw"]
+[ext_resource type="Script" uid="uid://cyc3vafdujx74" path="res://Scripts/Managers/input_manager.gd" id="5_hyjdc"]
+[ext_resource type="Script" uid="uid://b6213butcd200" path="res://Scripts/Managers/camera_manager.gd" id="6_058m5"]
+[ext_resource type="Script" uid="uid://dxs1ae606mcct" path="res://Scripts/Tablero/tablero.gd" id="7_vxy5o"]
+[ext_resource type="PackedScene" uid="uid://dofhnfr83kg16" path="res://Scenes/Tablero/casilla.tscn" id="8_untcm"]
+[ext_resource type="PackedScene" uid="uid://8y4jw3ouwkml" path="res://Scenes/Mapas/mapa_01.tscn" id="9_n53ww"]
 
-[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_mrbu5"]
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_ua1y1"]
 rayleigh_coefficient = 1.0
 energy_multiplier = 2.0
 
-[sub_resource type="Sky" id="Sky_mrbu5"]
-sky_material = SubResource("PhysicalSkyMaterial_mrbu5")
+[sub_resource type="Sky" id="Sky_iihtj"]
+sky_material = SubResource("PhysicalSkyMaterial_ua1y1")
 
 [sub_resource type="Environment" id="Environment_6fgja"]
 background_mode = 2
 background_energy_multiplier = 1.6
-sky = SubResource("Sky_mrbu5")
+sky = SubResource("Sky_iihtj")
 fog_density = 0.1
 volumetric_fog_density = 0.1836
 volumetric_fog_albedo = Color(0.476341, 0.518161, 0.606403, 1)
@@ -63,26 +65,43 @@ _data = {
 }
 point_count = 9
 
-[node name="Mapa_Prueba" type="Node"]
+[node name="Juego" type="Node"]
 
-[node name="InGame" parent="." instance=ExtResource("1_g7747")]
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("tablero", "camera", "spawn_point", "camera_manager", "ingame_ui")]
-script = ExtResource("1_54qhx")
+[node name="ConectarTutorial" parent="UI" instance=ExtResource("1_iihtj")]
+layout_mode = 1
+
+[node name="MainMenu" parent="UI" node_paths=PackedStringArray("game_manager", "conectar_tutorial") instance=ExtResource("1_w2t84")]
+layout_mode = 1
+game_manager = NodePath("../../GameManager")
+conectar_tutorial = NodePath("../ConectarTutorial")
+
+[node name="InGame" parent="UI" instance=ExtResource("1_f4sch")]
+layout_mode = 1
+
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("tablero", "camera", "spawn_point", "camera_manager", "ingame_ui", "main_menu", "conectar_tutorial")]
+script = ExtResource("2_w2t84")
 tablero = NodePath("../Tablero")
-jugador_escena = ExtResource("2_mh750")
-limite_rondas = 10
+jugador_escena = ExtResource("3_iihtj")
+limite_rondas = 14
 camera = NodePath("../Camera3D")
-flecha_escena = ExtResource("3_qljf6")
+flecha_escena = ExtResource("4_kukyw")
 spawn_point = NodePath("../Tablero/StartPoint")
 camera_manager = NodePath("../CameraManager")
-ingame_ui = NodePath("../InGame")
+ingame_ui = NodePath("../UI/InGame")
+main_menu = NodePath("../UI/MainMenu")
+conectar_tutorial = NodePath("../UI/ConectarTutorial")
 
 [node name="InputManager" type="Node" parent="."]
-script = ExtResource("4_g7747")
+script = ExtResource("5_hyjdc")
 
 [node name="CameraManager" type="Node" parent="." node_paths=PackedStringArray("camera")]
-script = ExtResource("4_nu5t8")
+script = ExtResource("6_058m5")
 camera = NodePath("../Camera3D")
 follow_offset = Vector3(3, 4, 3)
 overview_centers = Array[Vector3]([Vector3(8, 0, -9), Vector3(-16, 0, -3), Vector3(35, 0, 3), Vector3(16, 0, -21)])
@@ -99,9 +118,9 @@ fov = 70.0
 size = 20.0
 
 [node name="Tablero" type="Node3D" parent="." node_paths=PackedStringArray("caminos")]
-script = ExtResource("1_lldb4")
+script = ExtResource("7_vxy5o")
 caminos = [NodePath("Path3D"), NodePath("Path3D2"), NodePath("Path3D3"), NodePath("Path3D4"), NodePath("Path3D5")]
-casilla_escena = ExtResource("2_yc70j")
+casilla_escena = ExtResource("8_untcm")
 numero_casillas = 77
 cantidad_casillas_roja_juntas = 1
 porcentaje_casillas_minijuego = 0.2
@@ -113,28 +132,28 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 2, 13)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 curve = SubResource("Curve3D_nu5t8")
 
-[node name="Casilla_0" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_0" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -4, 0, 8)
 casillas_destino = [NodePath("../Casilla_1")]
 index = 0
 camino = NodePath("..")
 tipo = 1
 
-[node name="Casilla_1" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_1" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -7, 0, 5)
 casillas_destino = [NodePath("../Casilla_2")]
 index = 1
 camino = NodePath("..")
 punto_camino = 1
 
-[node name="Casilla_2" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_2" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -11, 0, 5)
 casillas_destino = [NodePath("../Casilla_3")]
 index = 2
 camino = NodePath("..")
 punto_camino = 2
 
-[node name="Casilla_3" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_3" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -15, 0, 5)
 casillas_destino = [NodePath("../Casilla_4")]
 index = 3
@@ -142,14 +161,14 @@ camino = NodePath("..")
 punto_camino = 3
 tipo = 1
 
-[node name="Casilla_4" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_4" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -18, 0, 2)
 casillas_destino = [NodePath("../Casilla_5")]
 index = 4
 camino = NodePath("..")
 punto_camino = 4
 
-[node name="Casilla_5" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_5" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, 0.207055, 0, 0.8, 0, -0.207055, 0, 0.772741, -18, -0.5, -2)
 casillas_destino = [NodePath("../Casilla_6")]
 index = 5
@@ -157,7 +176,7 @@ camino = NodePath("..")
 punto_camino = 5
 movimiento = 1
 
-[node name="Casilla_6" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_6" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, -0.207055, 0, 0.8, 0, 0.207055, 0, 0.772741, -15, -0.5, -5)
 casillas_destino = [NodePath("../Casilla_7")]
 index = 6
@@ -166,7 +185,7 @@ punto_camino = 6
 tipo = 1
 movimiento = 1
 
-[node name="Casilla_7" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_7" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -15, 0, -9)
 casillas_destino = [NodePath("../Casilla_8"), NodePath("../../Path3D2/Casilla_51")]
 index = 7
@@ -174,7 +193,7 @@ camino = NodePath("..")
 punto_camino = 7
 movimiento = 1
 
-[node name="Casilla_8" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_8" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -20, 0, -10)
 casillas_destino = [NodePath("../Casilla_9")]
 index = 8
@@ -182,7 +201,7 @@ camino = NodePath("..")
 punto_camino = 8
 tipo = 2
 
-[node name="Casilla_9" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_9" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -23, 1, -13)
 casillas_destino = [NodePath("../Casilla_10")]
 index = 9
@@ -191,21 +210,21 @@ punto_camino = 9
 tipo = 1
 movimiento = 1
 
-[node name="Casilla_10" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_10" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -25, 1, -17)
 casillas_destino = [NodePath("../Casilla_11")]
 index = 10
 camino = NodePath("..")
 punto_camino = 10
 
-[node name="Casilla_11" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_11" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -25, 1, -21)
 casillas_destino = [NodePath("../Casilla_12")]
 index = 11
 camino = NodePath("..")
 punto_camino = 11
 
-[node name="Casilla_12" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_12" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -23, 1, -25)
 casillas_destino = [NodePath("../Casilla_13")]
 index = 12
@@ -213,7 +232,7 @@ camino = NodePath("..")
 punto_camino = 12
 tipo = 1
 
-[node name="Casilla_13" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_13" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -20, 0, -28)
 casillas_destino = [NodePath("../Casilla_14")]
 index = 13
@@ -222,14 +241,14 @@ punto_camino = 13
 tipo = 2
 movimiento = 1
 
-[node name="Casilla_14" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_14" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -15, 0, -29)
 casillas_destino = [NodePath("../Casilla_15")]
 index = 14
 camino = NodePath("..")
 punto_camino = 14
 
-[node name="Casilla_15" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_15" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -11, -0.5, -29)
 casillas_destino = [NodePath("../Casilla_16")]
 index = 15
@@ -238,7 +257,7 @@ punto_camino = 15
 tipo = 1
 movimiento = 1
 
-[node name="Casilla_16" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_16" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, -0.207055, 0, 0.8, 0, 0.207055, 0, 0.772741, -7, -0.5, -29)
 casillas_destino = [NodePath("../Casilla_17")]
 index = 16
@@ -246,7 +265,7 @@ camino = NodePath("..")
 punto_camino = 16
 movimiento = 1
 
-[node name="Casilla_17" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_17" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, -0.207055, 0, 0.8, 0, 0.207055, 0, 0.772741, -4, -0.5, -26)
 casillas_destino = [NodePath("../Casilla_18")]
 index = 17
@@ -255,7 +274,7 @@ punto_camino = 17
 tipo = 2
 movimiento = 1
 
-[node name="Casilla_18" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_18" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, 0.207055, 0, 0.8, 0, -0.207055, 0, 0.772741, -1, -0.5, -29)
 casillas_destino = [NodePath("../Casilla_19")]
 index = 18
@@ -264,7 +283,7 @@ punto_camino = 18
 tipo = 1
 movimiento = 1
 
-[node name="Casilla_19" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_19" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.69282, 0, 0.4, 0, 0.8, 0, -0.4, 0, 0.69282, 2, -0.5, -26)
 casillas_destino = [NodePath("../Casilla_20")]
 index = 19
@@ -272,7 +291,7 @@ camino = NodePath("..")
 punto_camino = 19
 movimiento = 1
 
-[node name="Casilla_20" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_20" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, -0.207055, 0, 0.8, 0, 0.207055, 0, 0.772741, 5, -0.5, -29)
 casillas_destino = [NodePath("../Casilla_21")]
 index = 20
@@ -280,7 +299,7 @@ camino = NodePath("..")
 punto_camino = 20
 movimiento = 1
 
-[node name="Casilla_21" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_21" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, -0.207055, 0, 0.8, 0, 0.207055, 0, 0.772741, 8, -0.5, -26)
 casillas_destino = [NodePath("../Casilla_22")]
 index = 21
@@ -289,7 +308,7 @@ punto_camino = 21
 tipo = 1
 movimiento = 1
 
-[node name="Casilla_22" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_22" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, 0.207055, 0, 0.8, 0, -0.207055, 0, 0.772741, 11, -0.5, -29)
 casillas_destino = [NodePath("../Casilla_23")]
 index = 22
@@ -298,7 +317,7 @@ punto_camino = 22
 tipo = 2
 movimiento = 1
 
-[node name="Casilla_23" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_23" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 15, -0.5, -29)
 casillas_destino = [NodePath("../Casilla_24")]
 index = 23
@@ -306,7 +325,7 @@ camino = NodePath("..")
 punto_camino = 23
 movimiento = 1
 
-[node name="Casilla_24" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_24" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 19, 0, -27)
 casillas_destino = [NodePath("../Casilla_25")]
 index = 24
@@ -315,14 +334,14 @@ punto_camino = 24
 tipo = 1
 movimiento = 1
 
-[node name="Casilla_25" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_25" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 21, 0, -23)
 casillas_destino = [NodePath("../Casilla_26"), NodePath("../../Path3D5/Casilla_70")]
 index = 25
 camino = NodePath("..")
 punto_camino = 25
 
-[node name="Casilla_26" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_26" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, -0.207055, 0, 0.8, 0, 0.207055, 0, 0.772741, 21, -0.5, -19)
 casillas_destino = [NodePath("../Casilla_27")]
 index = 26
@@ -330,7 +349,7 @@ camino = NodePath("..")
 punto_camino = 26
 movimiento = 1
 
-[node name="Casilla_27" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_27" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.69282, 0, -0.4, 0, 0.8, 0, 0.4, 0, 0.69282, 19, -0.5, -15)
 casillas_destino = [NodePath("../Casilla_28")]
 index = 27
@@ -339,7 +358,7 @@ punto_camino = 27
 tipo = 1
 movimiento = 1
 
-[node name="Casilla_28" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_28" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 15, 0, -13)
 casillas_destino = [NodePath("../Casilla_29"), NodePath("../../Path3D3/Casilla_55")]
 index = 28
@@ -348,14 +367,14 @@ punto_camino = 28
 tipo = 2
 movimiento = 1
 
-[node name="Casilla_29" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_29" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 17, 0, -9)
 casillas_destino = [NodePath("../Casilla_30")]
 index = 29
 camino = NodePath("..")
 punto_camino = 29
 
-[node name="Casilla_30" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_30" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 15, 0, -5)
 casillas_destino = [NodePath("../Casilla_31")]
 index = 30
@@ -363,7 +382,7 @@ camino = NodePath("..")
 punto_camino = 30
 tipo = 1
 
-[node name="Casilla_31" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_31" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 19, -0.5, -3)
 casillas_destino = [NodePath("../Casilla_32")]
 index = 31
@@ -371,7 +390,7 @@ camino = NodePath("..")
 punto_camino = 31
 movimiento = 1
 
-[node name="Casilla_32" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_32" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 23, -0.5, -3)
 casillas_destino = [NodePath("../Casilla_33")]
 index = 32
@@ -379,7 +398,7 @@ camino = NodePath("..")
 punto_camino = 32
 tipo = 2
 
-[node name="Casilla_33" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_33" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 27, 0, -3)
 casillas_destino = [NodePath("../Casilla_34"), NodePath("../../Path3D4/Casilla_68")]
 index = 33
@@ -388,14 +407,14 @@ punto_camino = 33
 tipo = 1
 movimiento = 1
 
-[node name="Casilla_34" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_34" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 31, 0, -3)
 casillas_destino = [NodePath("../Casilla_35")]
 index = 34
 camino = NodePath("..")
 punto_camino = 34
 
-[node name="Casilla_35" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_35" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 35, 0, -3)
 casillas_destino = [NodePath("../Casilla_36")]
 index = 35
@@ -403,7 +422,7 @@ camino = NodePath("..")
 punto_camino = 35
 movimiento = 1
 
-[node name="Casilla_36" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_36" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 39, 0, -2)
 casillas_destino = [NodePath("../Casilla_37")]
 index = 36
@@ -411,7 +430,7 @@ camino = NodePath("..")
 punto_camino = 36
 tipo = 1
 
-[node name="Casilla_37" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_37" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 42, 0, 0)
 casillas_destino = [NodePath("../Casilla_38")]
 index = 37
@@ -419,14 +438,14 @@ camino = NodePath("..")
 punto_camino = 37
 tipo = 2
 
-[node name="Casilla_38" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_38" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 42, 0, 5)
 casillas_destino = [NodePath("../Casilla_39")]
 index = 38
 camino = NodePath("..")
 punto_camino = 38
 
-[node name="Casilla_39" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_39" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 39, 0, 7)
 casillas_destino = [NodePath("../Casilla_40")]
 index = 39
@@ -434,14 +453,14 @@ camino = NodePath("..")
 punto_camino = 39
 tipo = 1
 
-[node name="Casilla_40" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_40" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 35, 0, 8)
 casillas_destino = [NodePath("../Casilla_41")]
 index = 40
 camino = NodePath("..")
 punto_camino = 40
 
-[node name="Casilla_41" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_41" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 31, 0, 8)
 casillas_destino = [NodePath("../Casilla_42")]
 index = 41
@@ -449,7 +468,7 @@ camino = NodePath("..")
 punto_camino = 41
 tipo = 2
 
-[node name="Casilla_42" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_42" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 27, 0, 8)
 casillas_destino = [NodePath("../Casilla_43")]
 index = 42
@@ -457,7 +476,7 @@ camino = NodePath("..")
 punto_camino = 42
 tipo = 1
 
-[node name="Casilla_43" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_43" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, -0.207055, 0, 0.8, 0, 0.207055, 0, 0.772741, 23, -0.5, 8)
 casillas_destino = [NodePath("../Casilla_44")]
 index = 43
@@ -465,7 +484,7 @@ camino = NodePath("..")
 punto_camino = 43
 movimiento = 1
 
-[node name="Casilla_44" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_44" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, 0.207055, 0, 0.8, 0, -0.207055, 0, 0.772741, 20, -0.5, 11)
 casillas_destino = [NodePath("../Casilla_45")]
 index = 44
@@ -473,7 +492,7 @@ camino = NodePath("..")
 punto_camino = 44
 movimiento = 1
 
-[node name="Casilla_45" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_45" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, 0.207055, 0, 0.8, 0, -0.207055, 0, 0.772741, 17, -0.5, 8)
 casillas_destino = [NodePath("../Casilla_46")]
 index = 45
@@ -482,7 +501,7 @@ punto_camino = 45
 tipo = 1
 movimiento = 1
 
-[node name="Casilla_46" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_46" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, -0.207055, 0, 0.8, 0, 0.207055, 0, 0.772741, 14, -0.5, 11)
 casillas_destino = [NodePath("../Casilla_47")]
 index = 46
@@ -491,7 +510,7 @@ punto_camino = 46
 tipo = 2
 movimiento = 1
 
-[node name="Casilla_47" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_47" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, -0.207055, 0, 0.8, 0, 0.207055, 0, 0.772741, 11, -0.5, 8)
 casillas_destino = [NodePath("../Casilla_48")]
 index = 47
@@ -499,7 +518,7 @@ camino = NodePath("..")
 punto_camino = 47
 movimiento = 1
 
-[node name="Casilla_48" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_48" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.772741, 0, 0.207055, 0, 0.8, 0, -0.207055, 0, 0.772741, 8, -0.5, 11)
 casillas_destino = [NodePath("../Casilla_49")]
 index = 48
@@ -508,7 +527,7 @@ punto_camino = 48
 tipo = 1
 movimiento = 1
 
-[node name="Casilla_49" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_49" parent="Tablero/Path3D" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 3, 0, 11)
 casillas_destino = [NodePath("../Casilla_50")]
 index = 49
@@ -516,7 +535,7 @@ camino = NodePath("..")
 punto_camino = 49
 movimiento = 1
 
-[node name="Casilla_50" parent="Tablero/Path3D" node_paths=PackedStringArray("camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_50" parent="Tablero/Path3D" node_paths=PackedStringArray("camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 0, 8)
 index = 50
 camino = NodePath("..")
@@ -527,7 +546,7 @@ tipo = 2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 curve = SubResource("Curve3D_df52p")
 
-[node name="Casilla_51" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_51" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -18, 0, -13)
 casillas_destino = [NodePath("../Casilla_52")]
 index = 51
@@ -535,21 +554,21 @@ camino = NodePath("..")
 punto_camino = 1
 tipo = 1
 
-[node name="Casilla_52" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_52" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -19, 0, -17)
 casillas_destino = [NodePath("../Casilla_53")]
 index = 52
 camino = NodePath("..")
 punto_camino = 2
 
-[node name="Casilla_53" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_53" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -19, 0, -21)
 casillas_destino = [NodePath("../Casilla_54")]
 index = 53
 camino = NodePath("..")
 punto_camino = 3
 
-[node name="Casilla_54" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_54" parent="Tablero/Path3D2" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -18, 0, -25)
 casillas_destino = [NodePath("../../Path3D/Casilla_14")]
 index = 54
@@ -561,7 +580,7 @@ tipo = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 curve = SubResource("Curve3D_mhckf")
 
-[node name="Casilla_55" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_55" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 11, 0, -14)
 casillas_destino = [NodePath("../Casilla_56")]
 index = 55
@@ -569,14 +588,14 @@ camino = NodePath("..")
 punto_camino = 1
 tipo = 2
 
-[node name="Casilla_56" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_56" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 7, 0, -14)
 casillas_destino = [NodePath("../Casilla_57")]
 index = 56
 camino = NodePath("..")
 punto_camino = 2
 
-[node name="Casilla_57" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_57" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 4, 0, -16)
 casillas_destino = [NodePath("../Casilla_58")]
 index = 57
@@ -584,21 +603,21 @@ camino = NodePath("..")
 punto_camino = 3
 tipo = 1
 
-[node name="Casilla_58" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_58" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 0, -17)
 casillas_destino = [NodePath("../Casilla_59")]
 index = 58
 camino = NodePath("..")
 punto_camino = 4
 
-[node name="Casilla_59" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_59" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -4, 0, -16)
 casillas_destino = [NodePath("../Casilla_60")]
 index = 59
 camino = NodePath("..")
 punto_camino = 5
 
-[node name="Casilla_60" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_60" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -7, 0, -13)
 casillas_destino = [NodePath("../Casilla_61")]
 index = 60
@@ -606,7 +625,7 @@ camino = NodePath("..")
 punto_camino = 6
 tipo = 1
 
-[node name="Casilla_61" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_61" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -8, 0, -9)
 casillas_destino = [NodePath("../Casilla_62")]
 index = 61
@@ -614,14 +633,14 @@ camino = NodePath("..")
 punto_camino = 7
 tipo = 2
 
-[node name="Casilla_62" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_62" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -7, 0, -5)
 casillas_destino = [NodePath("../Casilla_63")]
 index = 62
 camino = NodePath("..")
 punto_camino = 8
 
-[node name="Casilla_63" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_63" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, -4, 0, -2)
 casillas_destino = [NodePath("../Casilla_64")]
 index = 63
@@ -629,14 +648,14 @@ camino = NodePath("..")
 punto_camino = 9
 tipo = 1
 
-[node name="Casilla_64" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_64" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 0, -1)
 casillas_destino = [NodePath("../Casilla_65")]
 index = 64
 camino = NodePath("..")
 punto_camino = 10
 
-[node name="Casilla_65" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_65" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 4, 0, -2)
 casillas_destino = [NodePath("../Casilla_66")]
 index = 65
@@ -644,7 +663,7 @@ camino = NodePath("..")
 punto_camino = 11
 tipo = 2
 
-[node name="Casilla_66" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_66" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 7, 0, -4)
 casillas_destino = [NodePath("../Casilla_67")]
 index = 66
@@ -652,7 +671,7 @@ camino = NodePath("..")
 punto_camino = 12
 tipo = 1
 
-[node name="Casilla_67" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_67" parent="Tablero/Path3D3" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 11, 0, -4)
 casillas_destino = [NodePath("../../Path3D/Casilla_30")]
 index = 67
@@ -663,14 +682,14 @@ punto_camino = 13
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 curve = SubResource("Curve3D_egevw")
 
-[node name="Casilla_68" parent="Tablero/Path3D4" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_68" parent="Tablero/Path3D4" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 30, 0, 0)
 casillas_destino = [NodePath("../Casilla_69")]
 index = 68
 camino = NodePath("..")
 punto_camino = 1
 
-[node name="Casilla_69" parent="Tablero/Path3D4" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_69" parent="Tablero/Path3D4" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 30, 0, 5)
 casillas_destino = [NodePath("../../Path3D/Casilla_42")]
 index = 69
@@ -682,7 +701,7 @@ tipo = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 curve = SubResource("Curve3D_uujia")
 
-[node name="Casilla_70" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_70" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 25, 0, -23)
 casillas_destino = [NodePath("../Casilla_71")]
 index = 70
@@ -690,7 +709,7 @@ camino = NodePath("..")
 punto_camino = 1
 tipo = 2
 
-[node name="Casilla_71" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_71" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 29, 1, -23)
 casillas_destino = [NodePath("../Casilla_72")]
 index = 71
@@ -698,7 +717,7 @@ camino = NodePath("..")
 punto_camino = 2
 movimiento = 1
 
-[node name="Casilla_72" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_72" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 33, 1, -22)
 casillas_destino = [NodePath("../Casilla_73")]
 index = 72
@@ -706,14 +725,14 @@ camino = NodePath("..")
 punto_camino = 3
 tipo = 1
 
-[node name="Casilla_73" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_73" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 36, 1, -19)
 casillas_destino = [NodePath("../Casilla_74")]
 index = 73
 camino = NodePath("..")
 punto_camino = 4
 
-[node name="Casilla_74" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_74" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 36, 0, -15)
 casillas_destino = [NodePath("../Casilla_75")]
 index = 74
@@ -722,7 +741,7 @@ punto_camino = 5
 tipo = 2
 movimiento = 1
 
-[node name="Casilla_75" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_75" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 35, -0.5, -11)
 casillas_destino = [NodePath("../Casilla_76")]
 index = 75
@@ -731,14 +750,14 @@ punto_camino = 6
 tipo = 1
 movimiento = 1
 
-[node name="Casilla_76" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("2_yc70j")]
+[node name="Casilla_76" parent="Tablero/Path3D5" node_paths=PackedStringArray("casillas_destino", "camino") instance=ExtResource("8_untcm")]
 transform = Transform3D(0.8, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 35, -0.5, -7)
 casillas_destino = [NodePath("../../Path3D/Casilla_35")]
 index = 76
 camino = NodePath("..")
 punto_camino = 7
 
-[node name="Mapa_01" parent="Tablero" instance=ExtResource("8_nu5t8")]
+[node name="Mapa_01" parent="Tablero" instance=ExtResource("9_n53ww")]
 
 [node name="Luz" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.728849, 0.578404, 0.366373, -0.0822096, -0.457303, 0.885503, 0.679722, -0.675517, -0.285754, 15, 32.9384, -19)

@@ -7,6 +7,7 @@ class_name MainGameManager
 signal partida_iniciada()
 signal partida_finalizada()
 signal turno_iniciado(jugador_actual)
+signal tutorial_avanzado
 
 
 # Variables
@@ -20,12 +21,17 @@ signal turno_iniciado(jugador_actual)
 @export var spawn_space: float = 2.0
 @export var camera_manager: CameraManager
 @export var ingame_ui: IngameUI
+@export var main_menu: MainMenuUI
+@export var conectar_tutorial: ConectarTutorialUI
 
 var flechas_instanciadas: Array = []
+var flechas_mapa: Array = []
+var jugadores_almacenados_para_mapa: Array = []
 
 var jugadores: Array = []
 var jugador_actual_index: int = 0
 var rondas_completadas: int = 0
+var minijuegos_jugados_en_ronda: int = 0
 var partida_activa: bool = false
 var esperando_dado: bool = false
 var tirada_maxima: int = 6
@@ -41,9 +47,14 @@ var en_compra_bateria: bool = false
 var jugador_en_compra: Node3D = null
 var costo_bateria: int = 20
 
+var en_tutorial: bool = false
+
+var en_fase_orden: bool = false
+var resultados_orden: Array = []
+
 var player_slots: Array = []
 var input_manager: Node = null
-var lobby_open: bool = true
+var lobby_open: bool = false
 var waiting_for_spawns: bool = false
 var first_spawner_device = null
 var waiting_first_confirmation: bool = false
@@ -67,6 +78,10 @@ func _ready() -> void:
 		ingame_ui.connect("dice_button_pressed", Callable(self , "_on_ui_dice_button_pressed"))
 		ingame_ui.connect("map_button_pressed", Callable(self , "_on_ui_map_button_pressed"))
 
+	if GameData.tiene_estado_guardado:
+		await _restaurar_desde_minijuego()
+		return
+
 	print("💚 Game Manager Listo\n")
 
 
@@ -85,7 +100,7 @@ func instanciar_jugadores(datos_jugadores: Array):
 
 	jugadores.clear()
 
-	await camera_manager.set_state(CameraManager.STATE_LOOK_AT, spawn_point.global_transform.origin, spawn_point.global_transform.basis.get_euler())
+	await camera_manager.set_state(CameraManager.STATE_GROUP, spawn_point.global_transform.origin)
 	await get_tree().create_timer(.2).timeout
 
 	for datos in datos_jugadores:
@@ -137,6 +152,8 @@ func instanciar_jugadores(datos_jugadores: Array):
 
 # Inicia la partida, verificando que haya suficientes jugadores, asignando dispositivos y determinando el orden de turno
 func comenzar_partida():
+	if conectar_tutorial:
+		conectar_tutorial.ocultar()
 	if player_slots.size() < 2 and jugadores.size() < 2:
 		print("❌ Error: Necesitas al menos 2 jugadores")
 		return
@@ -152,6 +169,10 @@ func comenzar_partida():
 			player_slots[i].instance = jugadores[i]
 			jugadores[i].device_id = player_slots[i].device_id
 
+	if camera_manager != null and spawn_point != null:
+		await camera_manager.set_state(CameraManager.STATE_GROUP, spawn_point.global_transform.origin)
+	SoundManager.play_music(SoundManager.MUSIC_TABLERO)
+
 	if jugadores.size() >= 2:
 		for j in jugadores:
 			if not j.device_id:
@@ -159,37 +180,269 @@ func comenzar_partida():
 				return
 
 	print("\n🎉 Partida iniciada con ", jugadores.size(), " jugadores.")
-	await determinar_orden()
 	partida_activa = true
 	emit_signal("partida_iniciada")
-	await convertir_casilla_lejana_a_bateria()
+	await mostrar_tutoriales()
+	await determinar_orden()
 	iniciar_turno()
 
-# Finaliza la partida, desactivando el estado de partida activa y emitiendo la señal de partida finalizada
+# Finaliza la partida, determina el ganador por baterias + microchips, enfoca camara y reinicia escena
 func finalizar_partida():
 	partida_activa = false
-	
 	emit_signal("partida_finalizada")
-
 	print("🏁 Partida finalizada.")
 
-# Determina el orden de los jugadores al inicio de la partida haciendo que cada uno tire un dado y ordenandolos segun el resultado
+	var ganador: Node3D = null
+
+	print("\n🏆 Resultados finales:")
+	for jugador in jugadores:
+		print("   ", jugador.nombre, ": ", jugador.get_baterias(), " baterias, ", jugador.get_microchips(), " microchips")
+		if ganador == null:
+			ganador = jugador
+		else:
+			var b = jugador.get_baterias()
+			var b_mejor = ganador.get_baterias()
+			if b > b_mejor or (b == b_mejor and jugador.get_microchips() > ganador.get_microchips()):
+				ganador = jugador
+
+	if ganador == null:
+		get_tree().reload_current_scene()
+		return
+
+	print("\n🥇 GANADOR: ", ganador.nombre, " con ", ganador.get_baterias(), " baterias y ", ganador.get_microchips(), " microchips")
+
+	if camera_manager != null and spawn_point != null:
+		await camera_manager.set_state(CameraManager.STATE_GROUP, spawn_point.global_transform.origin)
+		await get_tree().create_timer(0.25).timeout
+
+	if ingame_ui:
+		ingame_ui.set_player_cards_visible(false)
+
+	await _respawn_players_for_podium()
+	await get_tree().create_timer(4.0).timeout
+	var ranking = _ordenar_jugadores_por_resultado()
+	await _mostrar_podio_final(ranking)
+	await get_tree().create_timer(5.0).timeout
+
+	get_tree().reload_current_scene()
+
+func _ordenar_jugadores_por_resultado() -> Array:
+	var orden = jugadores.duplicate()
+	orden.sort_custom(Callable(self , "_comparar_jugadores_por_resultado"))
+	return orden
+
+func _comparar_jugadores_por_resultado(a, b) -> bool:
+	if a.get_baterias() != b.get_baterias():
+		return a.get_baterias() > b.get_baterias()
+	if a.get_microchips() != b.get_microchips():
+		return a.get_microchips() > b.get_microchips()
+	return a.posicion_casilla > b.posicion_casilla
+
+func _respawn_players_for_podium() -> void:
+	if spawn_point == null:
+		return
+
+	var center = (jugadores.size() - 1) * 0.5
+	var right = spawn_point.global_transform.basis.x.normalized()
+	for i in range(jugadores.size()):
+		var jugador = jugadores[i]
+		var offset = (i - center) * spawn_space
+		jugador.global_position = spawn_point.global_position + right * offset
+		jugador.rotation_degrees = spawn_point.rotation_degrees
+		jugador.posicion_casilla = 0
+		jugador.almacenado_en_casilla = false
+		if jugador.has_method("restore_from_storage"):
+			jugador.restore_from_storage()
+		jugador.set_looking_at_camera(true)
+		jugador.set_idle_state(true)
+		jugador.set_spawning_state(true)
+		await get_tree().create_timer(0.12).timeout
+		jugador.set_spawning_state(false)
+
+	await get_tree().create_timer(0.2).timeout
+
+func _mostrar_podio_final(ranking: Array) -> void:
+	for jugador in jugadores:
+		if jugador.has_method("show_podium"):
+			jugador.show_podium(true, false)
+
+	var previous_raise: float = 0.0
+	for i in range(ranking.size()):
+		var jugador = ranking[ranking.size() - 1 - i]
+		var raise_amount = 0.6 + i * 0.4
+		var tween = jugador.create_tween()
+		tween.tween_property(jugador, "global_position:y", jugador.global_position.y + raise_amount, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		await tween.finished
+
+		var camera_raise = raise_amount - previous_raise
+		if camera_manager != null and camera_manager.camera != null and camera_raise != 0.0:
+			camera_manager.shift_group_camera_y(camera_raise)
+		previous_raise = raise_amount
+
+		await get_tree().create_timer(2.0).timeout
+
+	for index in range(ranking.size()):
+		var jugador = ranking[index]
+		if jugador.number_label_3d:
+			jugador.number_label_3d.text = str(index + 1)
+		jugador.set_looking_at_camera(true)
+		await jugador.set_number_visibility_state(true)
+		match index:
+			0:
+				if jugador.has_method("play_final_animation"):
+					jugador.play_final_animation("cheer")
+			1:
+				if jugador.has_method("play_final_animation"):
+					jugador.play_final_animation("wave")
+			2:
+				if jugador.has_method("play_final_animation"):
+					jugador.play_final_animation("idle")
+			3:
+				if jugador.has_method("play_final_animation"):
+					jugador.play_final_animation("hit")
+			_:
+				if jugador.has_method("play_final_animation"):
+					jugador.play_final_animation("idle")
+
+func _restaurar_desde_minijuego() -> void:
+	# Ocultar UI de lobby y menu principal si siguen visibles
+	if main_menu:
+		main_menu.ocultar()
+	if conectar_tutorial:
+		conectar_tutorial.ocultar()
+	if ingame_ui:
+		ingame_ui.mostrar()
+
+	# Restaurar tipos de casilla dinámicos guardados antes de entrar al minijuego
+	if GameData.tablero_casillas.size() > 0:
+		for casilla_info in GameData.tablero_casillas:
+			var casilla = buscar_casilla(casilla_info.index)
+			if casilla != null:
+				casilla.set_tipo(casilla_info.tipo)
+
+	# Instanciar jugadores almacenados en sus casillas desde el primer momento
+	jugadores.clear()
+	for d in GameData.jugadores_data:
+		var j = jugador_escena.instantiate()
+		j.configurar(d.nombre, d.color)
+		j.device_id = d.device_id
+		j.microchips = d.microchips
+		j.baterias = d.baterias
+		j.posicion_casilla = d.posicion_casilla
+		j.pf = null
+		# Marcar como almacenado antes de add_child para que _ready() no deshaga el estado
+		j.almacenado_en_casilla = true
+		if j.player_mesh:
+			j.player_mesh.position.y = -4.0
+		tablero.add_child(j)
+		# Posicionar en casilla tras add_child (global_position requiere estar en el arbol)
+		var casilla = buscar_casilla(j.posicion_casilla)
+		if casilla:
+			j.global_position = casilla.global_position
+			j.posicion_almacenada = casilla.global_position
+			j.mesh_y_almacenada = 0.12
+			casilla.tiene_jugador_almacenado = true
+		jugadores.append(j)
+
+	for resultado in GameData.resultados_minijuego:
+		for jugador in jugadores:
+			if jugador.nombre == resultado.nombre:
+				if resultado.has("microchips_ganados"):
+					jugador.establecer_microchips(resultado.microchips_ganados, false)
+				if resultado.has("baterias_ganadas"):
+					jugador.establecer_baterias(resultado.baterias_ganadas, false)
+				break
+	GameData.resultados_minijuego.clear()
+
+	for j in jugadores:
+		if ingame_ui:
+			ingame_ui.add_player_to_ui(j)
+			ingame_ui.update_player_info(j)
+
+	rondas_completadas = GameData.rondas_completadas
+	limite_rondas = GameData.limite_rondas
+	jugador_actual_index = GameData.jugador_actual_index
+	minijuegos_jugados_en_ronda = 1
+	GameData.tiene_estado_guardado = false
+	GameData.tablero_casillas.clear()
+
+	partida_activa = true
+	SoundManager.play_music(SoundManager.MUSIC_TABLERO)
+	emit_signal("partida_iniciada")
+	print("🔄 Restaurado desde minijuego. Ronda ", rondas_completadas, ", turno de ", jugadores[jugador_actual_index].nombre)
+	if GameData.omitir_incremento_ronda:
+		GameData.omitir_incremento_ronda = false
+		if ingame_ui:
+			SoundManager.play_sfx(SoundManager.SFX_ANUNCIO_RONDA)
+			await ingame_ui.mostrar_ronda(rondas_completadas, limite_rondas)
+		iniciar_turno(true)
+	else:
+		iniciar_turno()
+
+# Determina el orden de los jugadores al inicio de la partida: todos los dados aparecen a la vez y cada jugador tira cuando quiera
 func determinar_orden():
 	print("\n🤔 Determinando el orden")
-	var resultados = []
+	resultados_orden.clear()
+
+	if camera_manager != null and spawn_point != null:
+		await camera_manager.set_state(CameraManager.STATE_GROUP, spawn_point.global_transform.origin)
+
+	await rotate_all_players_towards_camera(0.8)
+
+	if ingame_ui:
+		var texto = TranslationServer.translate("KEY_ORDER_DICE")
+		en_tutorial = true
+		await ingame_ui.mostrar_texto_tutorial(texto)
+		await tutorial_avanzado
+		en_tutorial = false
+		ingame_ui.ocultar_texto_tutorial()
+
 	for jugador in jugadores:
-		var resultado_dado = randi() % tirada_maxima + 1
-		resultados.append({"jugador": jugador, "resultado": resultado_dado})
-		print("   ", "🎲 ", jugador.nombre, " ha tirado: ", resultado_dado)
-	resultados.sort_custom(func(a, b): return a.resultado > b.resultado)
+		var dado = jugador.get_node_or_null("Dado")
+		if dado != null:
+			dado.dice_visibility(true)
+
+	await get_tree().create_timer(1.0).timeout
+	en_fase_orden = true
+	print("   Todos los jugadores: pulsa aceptar para tirar el dado")
+
+	while resultados_orden.size() < jugadores.size():
+		await get_tree().process_frame
+
+	await get_tree().create_timer(2.5).timeout
+	en_fase_orden = false
+
+	for jugador in jugadores:
+		jugador.set_number_visibility_state(false)
+	await get_tree().create_timer(.4).timeout
+
+	resultados_orden.sort_custom(func(a, b): return a.resultado > b.resultado)
 	var jugadores_ordenados = []
-	
+
 	print("\n😯 Orden de Jugadores:")
-	for i in resultados.size():
-		jugadores_ordenados.append(resultados[i].jugador)
-		print("   ", i + 1, ".- ", resultados[i].jugador.nombre)
+	for i in resultados_orden.size():
+		jugadores_ordenados.append(resultados_orden[i].jugador)
+		print("   ", i + 1, ".- ", resultados_orden[i].jugador.nombre, " (", resultados_orden[i].resultado, ")")
 	jugadores = jugadores_ordenados
+	resultados_orden.clear()
 	print()
+
+# Ejecuta la tirada del dado de un jugador concreto durante la fase de determinacion de orden
+func _tirar_dado_orden_jugador(jugador: Node3D):
+	for r in resultados_orden:
+		if r.jugador == jugador:
+			return
+
+	var resultado = randi() % tirada_maxima + 1
+	jugador.set_jumping_state(true)
+	var dado = jugador.get_node_or_null("Dado")
+	if dado != null:
+		dado.stop_dice(resultado)
+		jugador.get_node_or_null("Number").text = str(resultado)
+		await jugador.set_number_visibility_state(true)
+
+	resultados_orden.append({"jugador": jugador, "resultado": resultado})
+	print("   ", "🎲 ", jugador.nombre, " ha tirado: ", resultado)
 #endregion
 
 
@@ -198,21 +451,41 @@ func determinar_orden():
 #region
 
 # Inicia el turno del jugador actual, ajustando su posicion si es necesario, haciendo que salude a la camara y mostrando el dado para que lo tire
-func iniciar_turno():
+func iniciar_turno(skip_round_check: bool = false):
+	if jugador_actual_index == 0 and rondas_completadas == 0:
+		SoundManager.play_music(SoundManager.MUSIC_TABLERO)
 	await get_tree().create_timer(1.4).timeout
 
 	if !partida_activa:
 		return
 
-	if jugador_actual_index == 0:
+	if jugador_actual_index == 0 and not skip_round_check:
 		rondas_completadas += 1
 		if rondas_completadas > limite_rondas:
 			finalizar_partida()
 			return
+		if rondas_completadas % 2 == 0 and minijuegos_jugados_en_ronda == 0:
+			minijuegos_jugados_en_ronda += 1
+			print("\n🎮 Minijuego de ronda ", rondas_completadas)
+			partida_activa = false
+			GameData.omitir_incremento_ronda = true
+			if camera_manager != null:
+				await camera_manager.set_state(CameraManager.STATE_OVERVIEW, Vector3.ZERO, Vector3.ZERO)
+			if ingame_ui:
+				SoundManager.play_sfx(SoundManager.SFX_ANUNCIO_MINIJUEGO)
+				await ingame_ui.mostrar_minijuego()
+			GameData.guardar_estado(jugadores, tablero, 0, rondas_completadas, limite_rondas)
+			var siguiente_minijuego = MinijuegoManager.elegir_aleatorio()
+			GameData.ultimo_minijuego = siguiente_minijuego
+			get_tree().change_scene_to_file(siguiente_minijuego)
+			return
 		else:
+			minijuegos_jugados_en_ronda = 0
 			print("\n🔄 Comenzando ronda ", rondas_completadas)
 			print("----------------------")
-			await get_tree().create_timer(1.0).timeout
+			if ingame_ui:
+				SoundManager.play_sfx(SoundManager.SFX_ANUNCIO_RONDA)
+				await ingame_ui.mostrar_ronda(rondas_completadas, limite_rondas)
 
 	var jugador_actual = jugadores[jugador_actual_index]
 
@@ -221,12 +494,17 @@ func iniciar_turno():
 		await camera_manager.set_state(CameraManager.STATE_FOLLOW, Vector3.ZERO, Vector3.ZERO)
 
 	var casilla_inicio = buscar_casilla(jugador_actual.posicion_casilla)
-	if casilla_inicio != null and not (casilla_inicio.index == 0 and jugador_actual_index == 0 and rondas_completadas == 1):
-		desplazar_fuera_casilla(casilla_inicio, jugador_actual, true)
-		
-		if not (rondas_completadas == 1 and jugador_actual.posicion_casilla == 0):
-			await ajustar_jugador_a_casilla(jugador_actual, casilla_inicio)
-			jugador_actual.set_running_state(false)
+	if jugador_actual.almacenado_en_casilla:
+		if casilla_inicio:
+			await casilla_inicio.abrir_trampilla()
+		if casilla_inicio and casilla_inicio.boton:
+			get_tree().create_timer(0.5).timeout.connect(func(): casilla_inicio.cerrar_trampilla(true), CONNECT_ONE_SHOT)
+		await jugador_actual.sacar_de_casilla()
+		if casilla_inicio:
+			casilla_inicio.tiene_jugador_almacenado = false
+	elif casilla_inicio != null and rondas_completadas > 1:
+		await ajustar_jugador_a_casilla(jugador_actual, casilla_inicio)
+		jugador_actual.set_running_state(false)
 
 	await rotate_player_towards_camera(jugador_actual)
 	await get_tree().create_timer(.6).timeout
@@ -268,6 +546,20 @@ func tirar_dado():
 	await get_tree().create_timer(2).timeout
 	
 	await mover_jugador(jugador_actual, resultado_dado)
+
+	if not partida_activa:
+		return
+
+	var casilla_aterrizaje = buscar_casilla(jugador_actual.posicion_casilla)
+	await get_tree().create_timer(1.0).timeout
+	if casilla_aterrizaje:
+		casilla_aterrizaje.tiene_jugador_almacenado = true
+		if casilla_aterrizaje.boton:
+			casilla_aterrizaje.abrir_trampilla()
+	await jugador_actual.almacenar_en_casilla()
+	if casilla_aterrizaje and casilla_aterrizaje.boton:
+		await casilla_aterrizaje.cerrar_trampilla()
+	print("   📦 ", jugador_actual.nombre, " almacenado en casilla ", jugador_actual.posicion_casilla)
 	
 	jugador_actual_index = (jugador_actual_index + 1) % jugadores.size()
 	iniciar_turno()
@@ -307,6 +599,7 @@ func ajustar_jugador_a_casilla(jugador: Node3D, casilla: Casilla) -> void:
 func mover_jugador(jugador: Node3D, espacios: int) -> void:
 	print("   ", "🚶‍♂️ ", jugador.nombre, " se mueve ", espacios, " espacios.")
 	jugador.set_running_state(true)
+	var _mover_sfx: AudioStreamPlayer = null
 
 
 	var casilla_inicio = buscar_casilla(jugador.posicion_casilla)
@@ -343,15 +636,15 @@ func mover_jugador(jugador: Node3D, espacios: int) -> void:
 		
 		if destinos.size() > 1:
 			jugador.set_running_state(false)
+			SoundManager.stop_sfx_player(_mover_sfx)
 			destino = await manejar_bifurcacion(jugador, destinos)
+			_mover_sfx = SoundManager.play_sfx_looping(SoundManager.SFX_JUGADOR_MOVER, -1.0, 1.0, 0.05, 0.05)
 			jugador.set_running_state(true)
 		else:
 			destino = destinos[0]
 		
 		print("      ", "➡️ ", jugador.nombre, " se mueve a la casilla ", destino.index)
 		
-		desplazar_fuera_casilla(destino, jugador)
-
 		jugador.get_node_or_null("Number").text = str(espacios - (i + 1))
 		
 		jugador.posicion_casilla = destino.index
@@ -372,23 +665,31 @@ func mover_jugador(jugador: Node3D, espacios: int) -> void:
 		
 		# Verificar si el movimiento requiere salto
 		if destino.get_movimiento() == Casilla.tipo_movimiento.SALTAR:
+			SoundManager.stop_sfx_player(_mover_sfx)
+			_mover_sfx = null
 			await realizar_movimiento_salto(jugador, destino, jugador.get_jump_duration())
 		else:
+			if _mover_sfx == null:
+				_mover_sfx = SoundManager.play_sfx_looping(SoundManager.SFX_JUGADOR_MOVER, -1.0, 1.0, 0.15, 0.15)
 			await realizar_movimiento_normal(jugador, destino, duration)
+			SoundManager.play_sfx(SoundManager.SFX_PASO_CASILLA)
 		
 		if destino.get_tipo() == Casilla.tipo_casilla.BATERIA:
 			await jugador.set_number_visibility_state(false)
 			jugador.set_running_state(false)
+			SoundManager.stop_sfx_player(_mover_sfx)
 			await manejar_compra_bateria(jugador)
 			await jugador.set_number_visibility_state(true)
 			if camera_manager != null:
 				camera_manager.set_target_player(jugador)
 				await camera_manager.set_state(CameraManager.STATE_FOLLOW, Vector3.ZERO, Vector3.ZERO)
+			_mover_sfx = SoundManager.play_sfx_looping(SoundManager.SFX_JUGADOR_MOVER, -1.0, 1.0, 0.15, 0.15)
 			jugador.set_running_state(true)
 			continue
 
 	await jugador.set_number_visibility_state(false)
 	print("\n   ", "✅ ", jugador.nombre, " ha llegado a la casilla ", jugador.posicion_casilla, " (", buscar_casilla(jugador.posicion_casilla).get_nombre(), ")")
+	SoundManager.stop_sfx_player(_mover_sfx)
 	jugador.set_running_state(false)
 
 	var casilla_final = buscar_casilla(jugador.posicion_casilla)
@@ -413,40 +714,19 @@ func ejecutar_efecto_casilla(jugador: Node3D, casilla: Casilla) -> void:
 			await get_tree().create_timer(1.6).timeout
 			print("   ", "😢 Quitando 2 microchips a ", jugador.nombre, ". Microchips actuales: ", jugador.get_microchips())
 		2:
-			# TODO: Gestion de Minijuegos
-			print("   ", "🎳 Simulando minijuego.")
-			
-			var jugadores_en_tablero: Array = []
-			for p in jugadores:
-				if not p.is_moved_out:
-					jugadores_en_tablero.append(p)
-			
-			var resultado_minijuego: Array = []
-			for p in jugadores_en_tablero:
-				var resultado = randi() % tirada_maxima + 1
-				resultado_minijuego.append({"jugador": p, "resultado": resultado})
-				print("         ", "🎲 ", p.nombre, " ha tirado: ", resultado)
-			
-			resultado_minijuego.sort_custom(func(a, b): return a.resultado > b.resultado)
-			await get_tree().create_timer(2).timeout
-			print("         ", "🏆 Resultado del minijuego:")
-			
-			for i in resultado_minijuego.size():
-				var premio = 0
-				if i == 0:
-					premio = 4
-				elif i == 1:
-					premio = 2
-				elif i == 2:
-					premio = 1
-				
-				resultado_minijuego[i].jugador.establecer_microchips(premio)
-				
-				if premio > 0 and camera_manager != null:
-					await camera_manager.set_state(CameraManager.STATE_LOOK_AT, resultado_minijuego[i].jugador.global_transform.origin, Vector3.ZERO, true)
-					await rotate_player_towards_camera(resultado_minijuego[i].jugador)
-					await get_tree().create_timer(2).timeout
-					print("            ", i + 1, ".- ", resultado_minijuego[i].jugador.nombre, " con ", resultado_minijuego[i].resultado, " -> premio: ", premio, " microchips. Total: ", resultado_minijuego[i].jugador.get_microchips(), " microchips.")
+			print("   🎳 Lanzando minijuego...")
+			partida_activa = false
+			await camera_manager.set_state(CameraManager.STATE_LOOK_AT, jugador.global_transform.origin, Vector3.ZERO)
+			await rotate_player_towards_camera(jugador)
+			if ingame_ui:
+				SoundManager.play_sfx(SoundManager.SFX_ANUNCIO_MINIJUEGO)
+				await ingame_ui.mostrar_minijuego()
+			var proximo_indice = (jugador_actual_index + 1) % jugadores.size()
+			GameData.guardar_estado(jugadores, tablero, proximo_indice, rondas_completadas, limite_rondas)
+			var siguiente_minijuego = MinijuegoManager.elegir_aleatorio()
+			GameData.ultimo_minijuego = siguiente_minijuego
+			get_tree().change_scene_to_file(siguiente_minijuego)
+			return
 
 # Realiza movimiento normal caminando hacia la casilla destino
 func realizar_movimiento_normal(jugador: Node3D, destino: Casilla, duration: float) -> void:
@@ -478,6 +758,7 @@ func realizar_movimiento_salto(jugador: Node3D, destino: Casilla, duration: floa
 	
 	jugador.set_on_air(true)
 	jugador.set_jumping_state(true)
+	SoundManager.play_sfx(SoundManager.SFX_SALTO_IMPULSO)
 	await get_tree().create_timer(.3).timeout
 	
 	while tiempo_actual < tiempo_total:
@@ -499,6 +780,11 @@ func realizar_movimiento_salto(jugador: Node3D, destino: Casilla, duration: floa
 	# Asegurar posicion final exacta
 	jugador.global_position = posicion_destino
 	jugador.set_on_air(false)
+	jugador.set_jumping_state(false)
+	jugador.set_running_state(false)
+	jugador.set_walking_state(false)
+	jugador.set_idle_state(true)
+	SoundManager.play_sfx(SoundManager.SFX_SALTO_ATERRIZAJE)
 	await get_tree().create_timer(.4).timeout
 #endregion
 
@@ -576,29 +862,40 @@ func desplazar_fuera_casilla(casilla: Casilla, jugador_excluido: Node3D, triangu
 		if otro_jugador != jugador_excluido and otro_jugador.posicion_casilla == casilla.index:
 			otro_jugador.set_running_state(true)
 			print("      ", "👥 ", otro_jugador.nombre, " esta en la casilla ", casilla.index, ", se mueve")
-			var dir_away = casilla.global_transform.basis.x.normalized()
-			var offset_away = dir_away * 2
-			if not triangular:
+			var dir_incoming = (otro_jugador.global_position - jugador_excluido.global_position)
+			dir_incoming.y = 0
+			var misma_posicion = dir_incoming.length() < 0.1
+			if misma_posicion:
 				var tween_away = otro_jugador.create_tween()
-				tween_away.tween_property(otro_jugador, "position", otro_jugador.global_position + offset_away, 0.75)
+				tween_away.tween_property(otro_jugador, "position", jugador_excluido.global_position, 0.75)
 				otro_jugador.set_moved_out(true)
 				await tween_away.finished
 				otro_jugador.set_moved_out(false)
 			else:
-				var start_pos = otro_jugador.global_position
-				var final_dest = casilla.global_transform.origin + dir_away * 2
-				
-				var mid_distance = start_pos.distance_to(final_dest) * 0.8
-				var perpendicular = Vector3(-dir_away.z, 0, dir_away.x).normalized()
-				var mid_point = start_pos.lerp(final_dest, 0.5) + perpendicular * mid_distance * 1.8
-				
-				var tween_circle = otro_jugador.create_tween()
-				otro_jugador.set_moved_out(true)
-				
-				var arc_func = func(t: float): otro_jugador.position = _quadratic_bezier(start_pos, mid_point, final_dest, t)
-				tween_circle.tween_method(arc_func, 0.0, 1.0, 1.0).set_trans(Tween.TRANS_SINE)
-				await tween_circle.finished
-				otro_jugador.set_moved_out(false)
+				dir_incoming = dir_incoming.normalized()
+				var dir_away = Vector3(-dir_incoming.z, 0, dir_incoming.x)
+				var offset_away = dir_away * 2
+				if not triangular:
+					var tween_away = otro_jugador.create_tween()
+					tween_away.tween_property(otro_jugador, "position", otro_jugador.global_position + offset_away, 0.75)
+					otro_jugador.set_moved_out(true)
+					await tween_away.finished
+					otro_jugador.set_moved_out(false)
+				else:
+					var start_pos = otro_jugador.global_position
+					var final_dest = otro_jugador.global_position + dir_away * 2
+					
+					var mid_distance = start_pos.distance_to(final_dest) * 0.8
+					var perpendicular = Vector3(-dir_away.z, 0, dir_away.x).normalized()
+					var mid_point = start_pos.lerp(final_dest, 0.5) + perpendicular * mid_distance * 1.8
+					
+					var tween_circle = otro_jugador.create_tween()
+					otro_jugador.set_moved_out(true)
+					
+					var arc_func = func(t: float): otro_jugador.position = _quadratic_bezier(start_pos, mid_point, final_dest, t)
+					tween_circle.tween_method(arc_func, 0.0, 1.0, 1.0).set_trans(Tween.TRANS_SINE)
+					await tween_circle.finished
+					otro_jugador.set_moved_out(false)
 			
 			await rotate_player_towards_point(otro_jugador, casilla.global_transform.origin)
 			otro_jugador.set_running_state(false)
@@ -618,10 +915,11 @@ func iniciar_seleccion_bifurcacion(jugador: Node3D, destinos: Array[Casilla]):
 	print("         ", "🔀 ", jugador.nombre, " en bifurcacion (", destinos.size(), " opciones). Usa ← → y aceptar para confirmar.")
 	
 	crear_flechas_seleccion(jugador, destinos)
+	SoundManager.play_sfx(SoundManager.SFX_BIFURCACION_FLECHA)
 	actualizar_indicadores_visuales()
 
 # Permite al jugador preseleccionar una opcion de destino en la bifurcacion usando las flechas, actualizando los indicadores visuales para mostrar la opcion actualmente seleccionada
-func preseleccionar_destino(incremento: int) -> Casilla:
+func preseleccionar_destino(incremento: int):
 	if not en_bifurcacion or casillas_destino_disponibles.is_empty():
 		return null
 	
@@ -632,17 +930,17 @@ func preseleccionar_destino(incremento: int) -> Casilla:
 	var casilla_seleccionada = casillas_destino_disponibles[indice_destino_seleccionado]
 	
 	actualizar_indicadores_visuales()
-	
+	SoundManager.play_sfx(SoundManager.SFX_BIFURCACION_NAVEGAR)
 	return casilla_seleccionada
 
 # Confirma la seleccion del destino en la bifurcacion, devolviendo la casilla destino elegida y finalizando el proceso de seleccion
-func seleccionar_destino() -> Casilla:
+func seleccionar_destino():
 	if not en_bifurcacion or casillas_destino_disponibles.is_empty():
 		return null
 	
 	var casilla_elegida = casillas_destino_disponibles[indice_destino_seleccionado]
 	print("         ", "✅ ", jugador_en_bifurcacion.nombre, " eligio casilla ", casilla_elegida.index)
-	
+	SoundManager.play_sfx(SoundManager.SFX_BIFURCACION_CONFIRMAR)
 	ultimo_destino_confirmado = casilla_elegida
 	finalizar_seleccion_bifurcacion()
 	
@@ -696,6 +994,79 @@ func crear_flechas_seleccion(jugador: Node3D, destinos: Array[Casilla]) -> void:
 	if flechas_instanciadas.size() > 0 and indice_destino_seleccionado < flechas_instanciadas.size():
 		set_flecha_selected(flechas_instanciadas[indice_destino_seleccionado], 1.0)
 
+func mostrar_flechas_bifurcaciones() -> void:
+	ocultar_flechas_bifurcaciones()
+	if tablero == null or not tablero.has_method("obtener_casillas_del_tablero"):
+		return
+
+	var todas_casillas = tablero.obtener_casillas_del_tablero()
+	for casilla in todas_casillas:
+		var destinos = casilla.get_casillas_destino()
+		if destinos.size() <= 1:
+			continue
+		for destino in destinos:
+			var f = flecha_escena.instantiate()
+			tablero.add_child(f)
+			var dir = destino.global_position - casilla.global_position
+			dir.y = 0
+			var distancia = 1.5
+			var altura = 1.2
+			f.global_transform.origin = casilla.global_transform.origin + dir.normalized() * distancia + Vector3(0, altura, 0)
+			var yaw = atan2(dir.x, dir.z)
+			yaw += PI
+			var x_offset_deg: float = -90.0
+			f.rotation = Vector3(deg_to_rad(x_offset_deg), yaw, 0)
+			set_flecha_selected(f, 1.0)
+			flechas_mapa.append(f)
+
+func ocultar_flechas_bifurcaciones() -> void:
+	for f in flechas_mapa:
+		if f and f.is_inside_tree():
+			f.queue_free()
+	flechas_mapa.clear()
+
+func _mostrar_vista_mapa() -> void:
+	if ingame_ui:
+		ingame_ui.set_map_view_open(true)
+	if camera_manager != null:
+		await camera_manager.set_state(CameraManager.STATE_MAPVIEW)
+	mostrar_flechas_bifurcaciones()
+	await _guardar_y_sacar_jugadores_de_casillas()
+
+func _ocultar_vista_mapa() -> void:
+	if ingame_ui:
+		ingame_ui.set_map_view_open(false)
+	ocultar_flechas_bifurcaciones()
+	await _restaurar_jugadores_en_casillas()
+
+func _guardar_y_sacar_jugadores_de_casillas() -> void:
+	jugadores_almacenados_para_mapa.clear()
+	var jugadores_esperados: Array = []
+	for jugador in jugadores:
+		if jugador.almacenado_en_casilla:
+			jugadores_almacenados_para_mapa.append(jugador)
+			var casilla = buscar_casilla(jugador.posicion_casilla)
+			if casilla:
+				casilla.tiene_jugador_almacenado = false
+			jugadores_esperados.append(jugador)
+			jugador.sacar_de_casilla()
+
+	for jugador in jugadores_esperados:
+		await jugador.sacado_de_casilla_complete
+
+func _restaurar_jugadores_en_casillas() -> void:
+	var jugadores_esperados: Array = []
+	for jugador in jugadores_almacenados_para_mapa:
+		var casilla = buscar_casilla(jugador.posicion_casilla)
+		if casilla:
+			casilla.tiene_jugador_almacenado = true
+		jugadores_esperados.append(jugador)
+		jugador.almacenar_en_casilla()
+
+	for jugador in jugadores_esperados:
+		await jugador.almacenado_en_casilla_complete
+	jugadores_almacenados_para_mapa.clear()
+
 # Aplica un material con transparencia a la flecha para resaltar la opcion actualmente seleccionada en la bifurcacion, y reproduce una animacion de seleccion si corresponde
 func set_flecha_selected(f: MeshInstance3D, alpha: float) -> void:
 	if f == null:
@@ -719,6 +1090,98 @@ func update_flechas_alpha() -> void:
 			set_flecha_selected(f, 1.0)
 		else:
 			set_flecha_selected(f, 0.25)
+#endregion
+
+
+# Gestion de Tutoriales
+# ---------------------------------------------------------------------------------------
+#region
+
+# Muestra la secuencia de tutoriales al inicio de la partida
+func mostrar_tutoriales() -> void:
+	if ingame_ui == null:
+		return
+
+	var tutos = [
+		{"clave": "KEY_GAME_TUTO_1", "tipo": - 1},
+		{"clave": "KEY_GAME_TUTO_2", "tipo": - 1, "dado": true},
+		{"clave": "KEY_GAME_TUTO_3", "tipo": Casilla.tipo_casilla.NORMAL, "indice": 1},
+		{"clave": "KEY_GAME_TUTO_4", "tipo": Casilla.tipo_casilla.ROJA},
+		{"clave": "KEY_GAME_TUTO_5", "tipo": Casilla.tipo_casilla.MINIJUEGO},
+		{"clave": "KEY_GAME_TUTO_6", "tipo": Casilla.tipo_casilla.BATERIA, "crear_bateria": true},
+		{"clave": "KEY_GAME_TUTO_7", "tipo": Casilla.tipo_casilla.BATERIA},
+		{"clave": "KEY_GAME_TUTO_8", "tipo": - 1},
+		{"clave": "KEY_GAME_TUTO_9", "tipo": - 1},
+	]
+
+	var dado_tuto: Dado = null
+	var dado_base_y: float = 0.0
+
+	for i in tutos.size():
+		var tuto = tutos[i]
+
+		if tuto.get("crear_bateria", false):
+			await convertir_casilla_lejana_a_bateria()
+		elif tuto.get("dado", false):
+			var jugador_ref = jugadores[0]
+			dado_tuto = jugador_ref.get_node_or_null("Dado")
+			if dado_tuto != null:
+				dado_base_y = dado_tuto.position.y
+				dado_tuto.dice_visibility(true)
+				await camera_manager.set_state(CameraManager.STATE_LOOK_AT, jugador_ref.global_transform.origin, Vector3.ZERO)
+		elif tuto.tipo >= 0:
+			var casilla = _buscar_casilla_lejana_tipo(tuto.tipo as Casilla.tipo_casilla, tuto.get("indice", 0))
+			if casilla != null and camera_manager != null:
+				await camera_manager.set_state(CameraManager.STATE_LOOK_AT, casilla.global_transform.origin, Vector3.ZERO)
+
+		var texto = TranslationServer.translate(tuto.clave)
+		en_tutorial = true
+		await ingame_ui.mostrar_texto_tutorial(texto)
+
+		await tutorial_avanzado
+		en_tutorial = false
+
+		if tuto.get("dado", false) and dado_tuto != null:
+			var jugador_ref = jugadores[0]
+			var resultado = randi() % tirada_maxima + 1
+			jugador_ref.set_jumping_state(true)
+			jugador_ref.get_node_or_null("Number").text = str(resultado)
+			await dado_tuto.stop_dice(resultado)
+			await jugador_ref.set_number_visibility_state(true)
+			await get_tree().create_timer(1.5).timeout
+			await jugador_ref.set_number_visibility_state(false)
+			dado_tuto.position.y = dado_base_y
+			dado_tuto = null
+			var siguiente = tutos[i + 1] if i + 1 < tutos.size() else null
+			if siguiente != null and siguiente.tipo < 0 and not siguiente.get("dado", false) and not siguiente.get("crear_bateria", false):
+				if spawn_point != null and camera_manager != null:
+					await camera_manager.set_state(CameraManager.STATE_LOOK_AT, spawn_point.global_transform.origin, Vector3.ZERO)
+
+	ingame_ui.ocultar_texto_tutorial()
+
+# Devuelve la casilla del tipo indicado mas lejana de los jugadores (indice 0 = la mas lejana, 1 = segunda mas lejana)
+func _buscar_casilla_lejana_tipo(tipo: Casilla.tipo_casilla, indice: int = 0) -> Casilla:
+	if tablero == null or not tablero.has_method("obtener_casillas_del_tablero"):
+		return null
+	var todas_casillas = tablero.obtener_casillas_del_tablero()
+	var casillas_tipo = todas_casillas.filter(func(c): return c.get_tipo() == tipo)
+	if casillas_tipo.size() == 0:
+		return null
+
+	var con_distancia: Array = []
+	for casilla in casillas_tipo:
+		var distancia_minima = INF
+		for jugador in jugadores:
+			var d = casilla.global_position.distance_to(jugador.global_position)
+			if d < distancia_minima:
+				distancia_minima = d
+		con_distancia.append({"casilla": casilla, "distancia": distancia_minima})
+
+	con_distancia.sort_custom(func(a, b): return a.distancia > b.distancia)
+
+	if indice >= con_distancia.size():
+		indice = con_distancia.size() - 1
+	return con_distancia[indice].casilla
 #endregion
 
 
@@ -758,6 +1221,7 @@ func convertir_casilla_lejana_a_bateria():
 			await get_tree().create_timer(.6).timeout
 
 		casilla_mas_lejana.set_tipo(Casilla.tipo_casilla.BATERIA)
+		SoundManager.play_sfx(SoundManager.SFX_CASILLA_BATERIA_APARECE)
 		print("🔋 Casilla ", casilla_mas_lejana.index, " convertida a BATERIA.")
 		
 		await get_tree().create_timer(.6).timeout
@@ -778,11 +1242,28 @@ func manejar_compra_bateria(jugador: Node3D) -> void:
 		print("   💰 Tienes ", jugador.get_microchips(), " microchips (necesitas ", costo_bateria, ")")
 		print("   🎯 Aceptar para comprar | Salir para rechazar")
 		
+		if ingame_ui:
+			var texto_compra = TranslationServer.translate("KEY_BATTERY_BUY") % [costo_bateria]
+			await ingame_ui.mostrar_texto_tutorial(texto_compra)
+		
 		while en_compra_bateria:
 			await get_tree().process_frame
+		
+		if ingame_ui:
+			ingame_ui.ocultar_texto_tutorial()
 	else:
 		print("   ❌ No tienes suficientes microchips (tienes ", jugador.get_microchips(), ", necesitas ", costo_bateria, ")")
-		await get_tree().create_timer(2).timeout
+		
+		if ingame_ui:
+			var texto_sin_chips = TranslationServer.translate("KEY_BATTERY_NO_CHIPS")
+			en_tutorial = true
+			await ingame_ui.mostrar_texto_tutorial(texto_sin_chips)
+			await tutorial_avanzado
+			en_tutorial = false
+			ingame_ui.ocultar_texto_tutorial()
+		else:
+			await get_tree().create_timer(2).timeout
+		
 		en_compra_bateria = false
 		jugador_en_compra = null
 
@@ -790,6 +1271,9 @@ func manejar_compra_bateria(jugador: Node3D) -> void:
 func confirmar_compra_bateria(comprar: bool) -> void:
 	if not en_compra_bateria or jugador_en_compra == null:
 		return
+	
+	if ingame_ui:
+		ingame_ui.ocultar_texto_tutorial()
 	
 	var jugador = jugador_en_compra
 	jugador_en_compra = null
@@ -831,33 +1315,47 @@ func confirmar_compra_bateria(comprar: bool) -> void:
 func rotate_player_towards_camera(jugador_actual: Node3D) -> void:
 	if camera == null or jugador_actual == null:
 		return
-	
+
 	var player_pos = jugador_actual.global_transform.origin
 	var cam_pos = camera.global_transform.origin
 	cam_pos.y = player_pos.y
 	var to_cam = cam_pos - player_pos
-	
+
 	if to_cam.length() < 0.01:
 		return
-	
+
 	var yaw_rad = atan2(to_cam.x, to_cam.z)
 	var yaw_deg = rad_to_deg(yaw_rad)
 	var current_deg = jugador_actual.rotation_degrees
-	
+
 	var desired_y = yaw_deg
 	while desired_y - current_deg.y > 180.0:
 		desired_y -= 360.0
 	while desired_y - current_deg.y < -180.0:
 		desired_y += 360.0
-	
-	if abs(desired_y - current_deg.y) < 5.0:
-		return
-	
+
+	var target_deg = Vector3(current_deg.x, desired_y, current_deg.z)
 	jugador_actual.set_looking_at_camera(true)
 	jugador_actual.set_walking_state(true)
-	await get_tree().create_timer(.6).timeout
+
+	var tween = jugador_actual.create_tween()
+	tween.tween_property(jugador_actual, "rotation_degrees", target_deg, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	await tween.finished
+
 	jugador_actual.set_looking_at_camera(false)
 	jugador_actual.set_walking_state(false)
+
+# Hace que todos los jugadores roten suavemente para mirar hacia la camara al mismo tiempo
+func rotate_all_players_towards_camera(duration: float = 0.6) -> void:
+	for jugador in jugadores:
+		jugador.set_looking_at_camera(true)
+		jugador.set_walking_state(true)
+
+	await get_tree().create_timer(duration).timeout
+
+	for jugador in jugadores:
+		jugador.set_looking_at_camera(false)
+		jugador.set_walking_state(false)
 
 # Hace que el jugador rote suavemente para mirar hacia un punto especifico, ajustando su rotacion segun la posicion del punto y aplicando una animacion de caminata durante el giro
 func rotate_player_towards_point(jugador_actual: Node3D, target_point: Vector3) -> void:
@@ -947,6 +1445,20 @@ func _on_device_action(device_id, action_name: String) -> void:
 		await _finalize_start()
 		return
 
+	if en_tutorial and action_name == "ui_accept":
+		if ingame_ui and ingame_ui.escribiendo_texto:
+			ingame_ui.saltar_texto_tutorial()
+		else:
+			emit_signal("tutorial_avanzado")
+		return
+
+	if en_fase_orden and action_name == "ui_accept":
+		for jugador in jugadores:
+			if jugador.device_id == device_id:
+				await _tirar_dado_orden_jugador(jugador)
+				break
+		return
+
 	if partida_activa:
 		var jugador_actual = jugadores[jugador_actual_index]
 		if jugador_actual != null and jugador_actual.device_id == device_id:
@@ -970,13 +1482,15 @@ func _on_device_action(device_id, action_name: String) -> void:
 				"ui_left":
 					if en_bifurcacion:
 						preseleccionar_destino(-1)
-					elif ingame_ui:
-						ingame_ui.navigate_selection(-1)
 				"ui_right":
 					if en_bifurcacion:
 						preseleccionar_destino(1)
-					elif ingame_ui:
+				"ui_up":
+					if ingame_ui and not en_bifurcacion:
 						ingame_ui.navigate_selection(1)
+				"ui_down":
+					if ingame_ui and not en_bifurcacion:
+						ingame_ui.navigate_selection(-1)
 				"ui_cancel":
 					if en_compra_bateria:
 						await confirmar_compra_bateria(false)
@@ -1013,6 +1527,15 @@ func _add_player_slot(device_id) -> void:
 	var slot_name = "Player " + str(idx + 1)
 	var slot = {"name": slot_name, "color": color, "device_id": device_id, "spawned": false, "instance": null}
 	player_slots.append(slot)
+	SoundManager.play_sfx(SoundManager.SFX_JUGADOR_UNIRSE)
+	SoundManager.play_music(SoundManager.MUSIC_MAIN_MENU)
+	if ingame_ui:
+		ingame_ui.add_slot_to_ui(slot_name)
+	if conectar_tutorial:
+		if player_slots.size() >= 2:
+			conectar_tutorial.mostrar_hint_inicio(player_slots[0].device_id == "keyboard")
+		else:
+			conectar_tutorial.ocultar_hint_inicio()
 	print("🔔 Dispositivo ", device_id, " se ha unido como ", slot_name)
 
 # Spawnea al jugador correspondiente a un dispositivo en el tablero, asignandole el nombre y color del slot, posicionandolo en el punto de spawn y actualizando el estado del slot para indicar que el jugador ha sido spawneado
@@ -1063,10 +1586,13 @@ func _finalize_start() -> void:
 		print("❌ No hay jugadores spawneados para iniciar la partida.")
 		return
 	print("\n🎉 Partida iniciada con ", jugadores.size(), " jugadores (spawn-confirmed).")
-	await determinar_orden()
+	if camera_manager != null and spawn_point != null:
+		await camera_manager.set_state(CameraManager.STATE_GROUP, spawn_point.global_transform.origin)
+	SoundManager.play_music(SoundManager.MUSIC_TABLERO)
 	partida_activa = true
 	emit_signal("partida_iniciada")
-	await convertir_casilla_lejana_a_bateria()
+	await mostrar_tutoriales()
+	await determinar_orden()
 	iniciar_turno()
 
 # Funciones de callback para los botones de UI
@@ -1075,6 +1601,21 @@ func _on_ui_dice_button_pressed():
 		tirar_dado()
 
 func _on_ui_map_button_pressed():
-	# Implementar funcionalidad del boton mapa aqui
-	print("📍 Boton mapa presionado")
-#endregion
+	if not partida_activa or ingame_ui == null:
+		return
+
+	if ingame_ui.is_map_view_open():
+		if camera_manager != null and jugadores.size() > 0 and jugador_actual_index >= 0 and jugador_actual_index < jugadores.size():
+			camera_manager.set_target_player(jugadores[jugador_actual_index])
+			camera_manager.set_state(CameraManager.STATE_FOLLOW, Vector3.ZERO, Vector3.ZERO)
+
+		_ocultar_vista_mapa()
+		return
+
+	if not esperando_dado:
+		return
+
+	await _mostrar_vista_mapa()
+	return
+
+# Funciones de callback para los botones de UI

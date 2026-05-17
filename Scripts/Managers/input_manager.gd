@@ -18,10 +18,14 @@ func _map_key(scancode: int) -> String:
 			return "ui_accept"
 		KEY_S, KEY_ENTER:
 			return "start"
-		KEY_D, KEY_RIGHT, KEY_UP:
+		KEY_D, KEY_RIGHT:
 			return "ui_right"
-		KEY_A, KEY_LEFT, KEY_DOWN:
+		KEY_A, KEY_LEFT:
 			return "ui_left"
+		KEY_UP:
+			return "ui_up"
+		KEY_DOWN:
+			return "ui_down"
 		KEY_ESCAPE:
 			return "ui_cancel"
 		_:
@@ -37,9 +41,9 @@ func _map_joy(button_index: int) -> String:
 		6:
 			return "start"
 		11:
-			return "ui_right"
+			return "ui_up"
 		12:
-			return "ui_left"
+			return "ui_down"
 		13:
 			return "ui_left"
 		14:

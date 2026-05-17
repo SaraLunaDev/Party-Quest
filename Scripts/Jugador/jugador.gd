@@ -5,6 +5,8 @@ class_name Jugador
 # Senales
 # ---------------------------------------------------------------------------------------
 signal stats_updated(jugador: Node3D)
+signal almacenado_en_casilla_complete
+signal sacado_de_casilla_complete
 
 
 # Variables
@@ -21,9 +23,12 @@ var device_id = null
 var speed: float = 4.0
 var on_air: bool = false
 @export var jump_duration: float = 0.5
+@export var interact_duration: float = 0.6
 
 var is_running: bool = false
 var is_jumping: bool = false
+var is_interacting: bool = false
+var _interact_token: int = 0
 var is_idling: bool = true
 var is_walking: bool = false
 var is_waving: bool = false
@@ -32,6 +37,10 @@ var is_cheering: bool = false
 var is_looking_at_camera: bool = false
 
 var is_in_casilla: bool = false
+
+var almacenado_en_casilla: bool = false
+var posicion_almacenada: Vector3 = Vector3.ZERO
+var mesh_y_almacenada: float = 0.0
 
 @export var animation_tree: AnimationTree
 @export var rotation_speed: float = 8.0
@@ -43,9 +52,16 @@ var moved_out_position: Vector3 = Vector3.ZERO
 var moved_out_rotation: Vector3 = Vector3.ZERO
 
 @export var number_label_3d: Label3D
+@export var label_chips_resultado: Label3D
+@export var wood_resultado: MeshInstance3D
 
 @export var particle_get_diamante: GPUParticles3D
+@export var particle_get_bateria: GPUParticles3D
 @export var particle_lose_diamante: GPUParticles3D
+
+@export var particle_explosion_debris: GPUParticles3D
+@export var particle_explosion_fire: GPUParticles3D
+@export var particle_explosion_smoke: GPUParticles3D
 
 @export var player_mesh: Node3D
 
@@ -91,6 +107,35 @@ func _init(p_nombre: String = "", p_color: Color = Color.WHITE) -> void:
 func configurar(p_nombre: String, p_color: Color) -> void:
 	nombre = p_nombre
 	color = p_color
+	_aplicar_textura()
+
+func _aplicar_textura() -> void:
+	if not player_mesh:
+		return
+	var regex = RegEx.new()
+	regex.compile("\\d+")
+	var match_result = regex.search(nombre)
+	if not match_result:
+		return
+	var player_number = match_result.get_string()
+	var texture_path = "res://Assets/Jugador/Mannequin Character/Textures/" + player_number + ".png"
+	var player_texture = load(texture_path)
+	if not player_texture:
+		return
+	var mat = StandardMaterial3D.new()
+	mat.albedo_texture = player_texture
+	mat.metallic = 0.0
+	mat.roughness = 0.8
+	for mesh_inst in _find_mesh_instances(player_mesh):
+		mesh_inst.material_override = mat
+
+func _find_mesh_instances(node: Node) -> Array:
+	var result = []
+	if node is MeshInstance3D:
+		result.append(node)
+	for child in node.get_children():
+		result.append_array(_find_mesh_instances(child))
+	return result
 
 
 # Estado del Jugador
@@ -112,18 +157,38 @@ func set_number_visibility_state(visible_state: bool) -> void:
 		await t.finished
 		number_label_3d.visible = false
 
+# Controla la visibilidad del label de chips del resultado
+func set_chips_visibility_state(visible_state: bool) -> void:
+	if not label_chips_resultado:
+		return
+
+	if visible_state:
+		label_chips_resultado.visible = true
+		label_chips_resultado.scale = Vector3.ZERO
+		var t = create_tween()
+		t.tween_property(label_chips_resultado, "scale", Vector3.ONE, 0.1).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	else:
+		var t = create_tween()
+		t.tween_property(label_chips_resultado, "scale", Vector3.ZERO, 0.05).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		await t.finished
+		label_chips_resultado.visible = false
+
 # Actualiza el numero de microchips con efecto visual
 func establecer_microchips(cantidad: int, animar: bool = true) -> void:
 	microchips = max(0, microchips + cantidad)
+	emit_signal("stats_updated", self )
 	await get_tree().create_timer(1).timeout
 	if !animar:
 		emit_signal("stats_updated", self )
 		return
 	if cantidad > 0:
+		prepare_for_celebration()
+		await get_tree().process_frame
+		SoundManager.play_sfx(SoundManager.SFX_JUGADOR_CHIPS)
 		if particle_get_diamante:
 			particle_get_diamante.amount = cantidad
 			particle_get_diamante.emitting = true
-			set_cheering_state(true)
+		await set_cheering_state(true)
 	elif cantidad < 0:
 		if particle_lose_diamante:
 			await get_tree().create_timer(.8).timeout
@@ -137,15 +202,18 @@ func establecer_microchips(cantidad: int, animar: bool = true) -> void:
 # Actualiza el numero de baterias con efecto visual
 func establecer_baterias(cantidad: int, animar: bool = true) -> void:
 	baterias = max(0, baterias + cantidad)
+	emit_signal("stats_updated", self )
 	await get_tree().create_timer(1).timeout
 	if !animar:
 		emit_signal("stats_updated", self )
 		return
 	if cantidad > 0:
-		if particle_get_diamante:
-			particle_get_diamante.amount = cantidad
-			particle_get_diamante.emitting = true
-			set_cheering_state(true)
+		prepare_for_celebration()
+		await get_tree().process_frame
+		if particle_get_bateria:
+			particle_get_bateria.amount = cantidad
+			particle_get_bateria.emitting = true
+		await set_cheering_state(true)
 	elif cantidad < 0:
 		if particle_lose_diamante:
 			await get_tree().create_timer(.8).timeout
@@ -236,6 +304,27 @@ func set_jumping_state(state_name: bool) -> void:
 	if state_name:
 		set_jumping_state(false)
 
+func set_jumping_insta_state() -> void:
+	var playback: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/playback")
+	playback.start("Rig_Medium_MovementBasic_Jump_Full_Short 2", true)
+
+func set_interact_state(state_name: bool) -> void:
+	if state_name:
+		_interact_token += 1
+		var token = _interact_token
+		is_interacting = true
+		animation_tree.set("parameters/conditions/interact", true)
+		var playback: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/playback")
+		playback.start("Rig_Medium_General_Interact", true)
+		await get_tree().create_timer(interact_duration).timeout
+		if token == _interact_token:
+			animation_tree.set("parameters/conditions/interact", false)
+			is_interacting = false
+	else:
+		_interact_token += 1
+		animation_tree.set("parameters/conditions/interact", false)
+		is_interacting = false
+
 # Idle
 func set_idle_state(state_name: bool) -> void:
 	animation_tree.set("parameters/conditions/idling", state_name)
@@ -249,12 +338,18 @@ func set_waving_state(state_name: bool) -> void:
 		await get_tree().create_timer(.1).timeout
 		set_waving_state(false)
 
+func prepare_for_celebration() -> void:
+	set_running_state(false)
+	set_walking_state(false)
+	set_jumping_state(false)
+	set_idle_state(true)
+
 # Celebrar
 func set_cheering_state(state_name: bool) -> void:
 	animation_tree.set("parameters/conditions/cheering", state_name)
 	is_cheering = state_name
 	if is_cheering:
-		await get_tree().create_timer(.1).timeout
+		await get_tree().create_timer(.35).timeout
 		set_cheering_state(false)
 
 # Golpeado
@@ -262,15 +357,27 @@ func set_hited_state(state_name: bool) -> void:
 	animation_tree.set("parameters/conditions/hited", state_name)
 	is_hited = state_name
 	if is_hited:
+		SoundManager.play_sfx(SoundManager.SFX_JUGADOR_DAÑO)
 		await get_tree().create_timer(.1).timeout
 		set_hited_state(false)
+
+func iniciar_explosion() -> void:
+	if particle_explosion_debris:
+		particle_explosion_debris.restart()
+	if particle_explosion_fire:
+		particle_explosion_fire.restart()
+	if particle_explosion_smoke:
+		particle_explosion_smoke.restart()
+	if player_mesh:
+		var t = player_mesh.create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		t.tween_property(player_mesh, "scale", Vector3.ZERO, 0.2)
 
 # Controla la altura del mesh del jugador para simular que esta subiendo de una casilla
 func set_player_mesh_height_offset(offset: float) -> void:
 	if not player_mesh:
 		return
 	
-	if on_air:
+	if on_air or almacenado_en_casilla:
 		return
 	
 	# Aplicar el offset con animacion suave
@@ -282,7 +389,7 @@ func return_player_mesh_height_offset() -> void:
 	if not player_mesh:
 		return
 	
-	if on_air:
+	if on_air or almacenado_en_casilla:
 		return
 	
 	# Devolver a la altura original con animacion suave
@@ -294,4 +401,91 @@ func get_player_mesh_offset() -> float:
 	if not player_mesh:
 		return 0.0
 	return player_mesh.position.y
+
+# Sentarse / inicio del almacenamiento en casilla
+func set_sitting_state(state_name: bool) -> void:
+	animation_tree.set("parameters/conditions/sitting", state_name)
+
+# Spawnear / salir del almacenamiento en casilla
+func set_spawning_state(state_name: bool) -> void:
+	animation_tree.set("parameters/conditions/spawning", state_name)
+
+func show_podium(show: bool, animate: bool = true) -> void:
+	var podio = get_node_or_null("Podio")
+	if podio == null:
+		return
+	if not animate:
+		podio.visible = show
+		return
+
+	if show:
+		podio.visible = true
+		podio.scale = Vector3.ZERO
+		var t = create_tween()
+		t.tween_property(podio, "scale", Vector3.ONE, 0.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	else:
+		var t = create_tween()
+		t.tween_property(podio, "scale", Vector3.ZERO, 0.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		await t.finished
+		podio.visible = false
+
+func play_final_animation(state: String) -> void:
+	if animation_tree == null:
+		return
+	animation_tree.set("parameters/conditions/cheering", false)
+	animation_tree.set("parameters/conditions/waving", false)
+	animation_tree.set("parameters/conditions/idling", false)
+	animation_tree.set("parameters/conditions/hited", false)
+	animation_tree.set("parameters/conditions/running", false)
+	animation_tree.set("parameters/conditions/walking", false)
+	animation_tree.set("parameters/conditions/jumping", false)
+	animation_tree.set("parameters/conditions/interact", false)
+	animation_tree.set("parameters/conditions/sitting", false)
+	animation_tree.set("parameters/conditions/spawning", false)
+	match state:
+		"cheer":
+			animation_tree.set("parameters/conditions/cheering", true)
+		"wave":
+			animation_tree.set("parameters/conditions/waving", true)
+		"idle":
+			animation_tree.set("parameters/conditions/idling", true)
+		"hit":
+			animation_tree.set("parameters/conditions/hited", true)
+
+func restore_from_storage() -> void:
+	almacenado_en_casilla = false
+	if player_mesh:
+		player_mesh.visible = true
+		player_mesh.scale = Vector3.ONE
+		player_mesh.position.y = 0.0
+
+# Almacena al jugador dentro de la casilla bajando su mesh hasta ocultarlo
+func almacenar_en_casilla() -> void:
+	posicion_almacenada = global_position
+	if player_mesh:
+		mesh_y_almacenada = player_mesh.position.y
+	set_idle_state(true)
+	set_sitting_state(true)
+	await get_tree().create_timer(0.1).timeout
+	set_sitting_state(false)
+	if player_mesh:
+		var t = create_tween()
+		t.tween_property(player_mesh, "position:y", -4.0, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		await t.finished
+	almacenado_en_casilla = true
+	emit_signal("almacenado_en_casilla_complete")
+
+# Saca al jugador de la casilla teletransportandolo a su posicion y subiendo su mesh
+func sacar_de_casilla() -> void:
+	global_position = posicion_almacenada
+	set_spawning_state(true)
+	await get_tree().create_timer(0.1).timeout
+	set_spawning_state(false)
+	if player_mesh:
+		player_mesh.position.y = -4.0
+		var t = create_tween()
+		t.tween_property(player_mesh, "position:y", mesh_y_almacenada, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		await t.finished
+	almacenado_en_casilla = false
+	emit_signal("sacado_de_casilla_complete")
 #endregion

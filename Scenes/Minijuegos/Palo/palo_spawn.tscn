@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://dln3khscngjmi"]
+
+[ext_resource type="ArrayMesh" uid="uid://bblgkukf2sbek" path="res://Assets/Objects/neutral/structure_B.obj" id="1_lm2fq"]
+[ext_resource type="ArrayMesh" uid="uid://bgxmxgmt3y0hr" path="res://Assets/Objects/neutral/floor_wood_2x2.obj" id="2_r2mdr"]
+
+[node name="SpawnPalo" type="MeshInstance3D"]
+mesh = ExtResource("1_lm2fq")
+
+[node name="PlayerSpawn" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="FloorWood2x2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = ExtResource("2_r2mdr")

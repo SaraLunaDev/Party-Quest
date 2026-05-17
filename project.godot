@@ -15,16 +15,24 @@ run/main_scene="uid://cj3f644um1a0t"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+GameData="*res://Scripts/Managers/game_data.gd"
+MinijuegoManager="*res://Scripts/Managers/minijuego_manager.gd"
+SoundManager="*res://Scripts/Managers/sound_manager.gd"
+
 [display]
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
+window/size/mode=3
+window/size/borderless=true
 window/stretch/mode="canvas_items"
 
 [editor]
 
 movie_writer/mjpeg_quality=0.25
-movie_writer/movie_file="C:/Users/black/Videos/Godot/debug.avi"
+movie_writer/movie_file="C:/Users/Sara/Documents/Godot/Games/party-quest/Party-Quest/Videos/debug.avi"
 movie_writer/disable_vsync=true
 
 [global_group]
@@ -54,11 +62,16 @@ start={
 ]
 }
 
+[internationalization]
+
+locale/translations=PackedStringArray("res://Translations/translations.en.translation", "res://Translations/translations.es.translation")
+
 [layer_names]
 
 3d_physics/layer_1="Jugador"
 3d_physics/layer_2="Casilla"
 3d_physics/layer_3="Suelo"
+3d_physics/layer_4="Palo"
 
 [rendering]
 

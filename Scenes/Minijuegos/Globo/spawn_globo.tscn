@@ -1,0 +1,43 @@
+[gd_scene load_steps=7 format=3 uid="uid://0ot3e7mim7ww"]
+
+[ext_resource type="ArrayMesh" uid="uid://cm6gcxn15vlle" path="res://Assets/Objects/neutral/pillar_1x1x1.obj" id="1_2omjp"]
+[ext_resource type="ArrayMesh" uid="uid://q3b6m3jl67bq" path="res://Assets/Objects/neutral/ball.obj" id="2_6p00d"]
+[ext_resource type="ArrayMesh" uid="uid://dnwvo12j37y03" path="res://Assets/Objects/neutral/floor_wood_1x1.obj" id="3_6p00d"]
+[ext_resource type="ArrayMesh" uid="uid://dxi2iev403i5b" path="res://Assets/Objects/neutral/pillar_2x2x4.obj" id="4_nihc0"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nihc0"]
+albedo_color = Color(0.766837, 0.272537, 0.232015, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_nihc0"]
+material = SubResource("StandardMaterial3D_nihc0")
+top_radius = 0.14
+bottom_radius = 0.14
+height = 0.14
+radial_segments = 20
+
+[node name="SpawnGlobo" type="Node3D"]
+
+[node name="Pilar" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.5)
+mesh = ExtResource("1_2omjp")
+skeleton = NodePath("../..")
+
+[node name="Ball" type="Node3D" parent="."]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.903644, -3.5)
+
+[node name="Ball" type="MeshInstance3D" parent="Ball"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = ExtResource("2_6p00d")
+skeleton = NodePath("../../..")
+
+[node name="Soporte" type="MeshInstance3D" parent="."]
+mesh = ExtResource("3_6p00d")
+skeleton = NodePath("../../..")
+
+[node name="Pilar2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, -0.5, 0, 1)
+mesh = ExtResource("4_nihc0")
+
+[node name="Button" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1.22196, 1)
+mesh = SubResource("CylinderMesh_nihc0")

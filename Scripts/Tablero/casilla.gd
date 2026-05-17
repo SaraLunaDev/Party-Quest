@@ -11,7 +11,9 @@ enum tipo_movimiento {CAMINAR, SALTAR}
 
 @export var boton: MeshInstance3D
 var is_boton_pressed: bool = false
+var tiene_jugador_almacenado: bool = false
 @export var press_offset: float = 0.4
+@export var trampilla_offset: float = 1.2
 @onready var boton_initial_y: float = 0.0
 @export var index: int = -1
 @export var camino: Path3D
@@ -128,14 +130,36 @@ func _on_player_enter_detector_body_exited(body: Node3D) -> void:
 	if jugador:
 		release_button()
 
+func abrir_trampilla() -> void:
+	if boton:
+		SoundManager.play_sfx(SoundManager.SFX_TRAMPILLA_ABRIR)
+		var t = create_tween()
+		t.tween_property(boton, "position:y", boton_initial_y - trampilla_offset, 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		await t.finished
+
+func cerrar_trampilla(con_jugador: bool = false) -> void:
+	if boton:
+		SoundManager.play_sfx(SoundManager.SFX_TRAMPILLA_CERRAR)
+		var target_y = boton_initial_y - press_offset if con_jugador else boton_initial_y
+		var t = create_tween()
+		t.tween_property(boton, "position:y", target_y, 0.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		await t.finished
+		if con_jugador:
+			is_boton_pressed = true
+		else:
+			is_boton_pressed = false
+
 func press_button(time: float = 0.4) -> void:
 	if boton and not is_boton_pressed:
 		is_boton_pressed = true
+		SoundManager.play_sfx(SoundManager.SFX_CASILLA_PRESIONAR)
 		var t = create_tween()
 		t.tween_property(boton, "position:y", boton_initial_y - press_offset, time).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 func release_button(time: float = 0.2) -> void:
 	if boton and is_boton_pressed:
+		if tiene_jugador_almacenado:
+			return
 		if has_node("PlayerEnterDetector"):
 			var area: Area3D = $PlayerEnterDetector
 			for b in area.get_overlapping_bodies():
@@ -143,6 +167,7 @@ func release_button(time: float = 0.2) -> void:
 					return
 		
 		is_boton_pressed = false
+		SoundManager.play_sfx(SoundManager.SFX_CASILLA_SOLTAR)
 		var t = create_tween()
 		t.tween_property(boton, "position:y", boton_initial_y, time).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 #endregion

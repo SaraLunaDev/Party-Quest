@@ -17,6 +17,7 @@ var moving: bool = true
 var _text_timer: float = 0.0
 var _dice_time: float = 0.0
 var _last_axis: Vector3 = Vector3.ZERO
+var _girar_player: AudioStreamPlayer = null
 
 
 # Funciones Basicas
@@ -53,6 +54,7 @@ func dice_visibility(visible_state: bool = true, base_y: float = 0.0):
 	if not visible_state:
 		reset_dice(base_y)
 	else:
+		_girar_player = SoundManager.play_sfx_looping(SoundManager.SFX_DADO_GIRAR)
 		var tween := get_tree().create_tween()
 		self.scale = Vector3.ZERO
 		tween.tween_property(self , "scale", Vector3.ONE, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
@@ -65,6 +67,9 @@ func stop_dice(number: int):
 	var tween := get_tree().create_tween()
 	tween.tween_property(self , "position:y", base_y + 1, 0.1).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	await tween.finished
+	SoundManager.stop_sfx_player(_girar_player)
+	_girar_player = null
+	SoundManager.play_sfx(SoundManager.SFX_DADO_RESULTADO)
 	dice_visibility(false, base_y)
 	
 	self.rotation = Vector3.ZERO

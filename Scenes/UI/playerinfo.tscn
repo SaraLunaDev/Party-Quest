@@ -21,8 +21,8 @@ expand_margin_right = 120.0
 expand_margin_bottom = 20.0
 
 [node name="PlayerInfo" type="MarginContainer" node_paths=PackedStringArray("battery_label", "chips_label", "player_image", "position_label")]
-offset_right = 120.0
-offset_bottom = 146.0
+offset_right = 160.0
+offset_bottom = 192.0
 theme_override_constants/margin_right = 20
 script = ExtResource("1_kv0mi")
 battery_label = NodePath("VBoxContainer/MarginContainer3/Baterias/Label2")

@@ -1,9 +1,15 @@
-[gd_scene load_steps=10 format=3 uid="uid://dofhnfr83kg16"]
+[gd_scene load_steps=12 format=3 uid="uid://dofhnfr83kg16"]
 
 [ext_resource type="ArrayMesh" uid="uid://cueqb4npp6cyn" path="res://Assets/Objects/green/button_base_green.obj" id="1_8jxmp"]
 [ext_resource type="Script" uid="uid://cg8asbjn6f8h" path="res://Scripts/Tablero/casilla.gd" id="1_pgg6m"]
 [ext_resource type="ArrayMesh" uid="uid://d4dbyaog58nle" path="res://Assets/Objects/red/button_base_red_button_red.obj" id="3_8jxmp"]
 [ext_resource type="Material" uid="uid://2gip4h3mnccq" path="res://Materials/Tablero/Casillas/normal.tres" id="4_8jxmp"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_8jxmp"]
+size = Vector2(1.5, 1.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vtaqy"]
+albedo_color = Color(0.0475577, 0.0475576, 0.0475576, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fp3us"]
 size = Vector3(2, 0.498779, 2)
@@ -30,6 +36,11 @@ press_offset = 0.14
 [node name="Boton" type="MeshInstance3D" parent="."]
 mesh = ExtResource("3_8jxmp")
 surface_material_override/0 = ExtResource("4_8jxmp")
+
+[node name="Negro" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.022305, 0)
+mesh = SubResource("PlaneMesh_8jxmp")
+surface_material_override/0 = SubResource("StandardMaterial3D_vtaqy")
 
 [node name="PlayerEnterDetector" type="Area3D" parent="."]
 collision_layer = 2

@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://u1wcqtoqo3dm"]
+
+[ext_resource type="ArrayMesh" uid="uid://c8pwaj842sb3m" path="res://Assets/Objects/neutral/pillar_2x2x2.obj" id="1_0ox8o"]
+[ext_resource type="ArrayMesh" uid="uid://cd8xj1u8n0tvj" path="res://Assets/Objects/red/barrier_1x1x4_red.obj" id="2_0ox8o"]
+[ext_resource type="ArrayMesh" uid="uid://b7gt6ekjwak6r" path="res://Assets/Objects/neutral/strut_horizontal.obj" id="3_wugvy"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_wugvy"]
+height = 12.0
+radius = 0.0419922
+
+[node name="MeshInstance3D" type="MeshInstance3D"]
+mesh = ExtResource("1_0ox8o")
+
+[node name="Barrier1x1x4Red" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1.5, -2)
+mesh = ExtResource("2_0ox8o")
+
+[node name="Barrier1x1x4Red2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1.5, -6)
+mesh = ExtResource("2_0ox8o")
+
+[node name="Barrier1x1x4Red3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1.5, -10)
+mesh = ExtResource("2_0ox8o")
+
+[node name="StrutHorizontal" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.00646973, 1.55413, -1.16316)
+mesh = ExtResource("3_wugvy")
+
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -3)
+collision_layer = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -2.38419e-07, -5)
+shape = SubResource("CylinderShape3D_wugvy")

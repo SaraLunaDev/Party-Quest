@@ -1,0 +1,3383 @@
+[gd_scene load_steps=43 format=3 uid="uid://dm5hxyg6hl5kp"]
+
+[ext_resource type="FontFile" uid="uid://rcukv55och8r" path="res://Fonts/Super Cartoon.ttf" id="1_pv86v"]
+[ext_resource type="Script" uid="uid://hx62sebjql7q" path="res://Scripts/Minijuegos/globo_minijuego.gd" id="1_vtc82"]
+[ext_resource type="PackedScene" uid="uid://cns8ts8ffh68i" path="res://Scenes/Jugadores/jugador.tscn" id="2_1lv4u"]
+[ext_resource type="Texture2D" uid="uid://cdpmys3vsentn" path="res://Assets/UI/Buttons/Keys/A-Key.png" id="2_vp8kx"]
+[ext_resource type="Texture2D" uid="uid://caut5fh6jvnjl" path="res://Assets/UI/Buttons/Keys/Space-Key.png" id="3_h7kb1"]
+[ext_resource type="VideoStream" uid="uid://dwklpkfvoeti1" path="res://Videos/tutorial_globo.ogv" id="5_imo4s"]
+[ext_resource type="ArrayMesh" uid="uid://cc80ujhm1x8jh" path="res://Assets/Objects/blue/platform_2x2x1_blue.obj" id="8_gfxi6"]
+[ext_resource type="ArrayMesh" uid="uid://j0bysew8ppqt" path="res://Assets/Objects/blue/platform_4x2x1_blue.obj" id="9_7ojnp"]
+[ext_resource type="ArrayMesh" uid="uid://dmtr4s1y6qn81" path="res://Assets/Objects/blue/platform_4x4x1_blue.obj" id="10_cgjas"]
+[ext_resource type="ArrayMesh" uid="uid://braxge3mhedve" path="res://Assets/Objects/blue/platform_6x2x1_blue.obj" id="11_imo4s"]
+[ext_resource type="ArrayMesh" uid="uid://qgaek82i0riv" path="res://Assets/Objects/green/platform_1x1x1_green.obj" id="12_876cg"]
+[ext_resource type="PackedScene" uid="uid://0ot3e7mim7ww" path="res://Scenes/Minijuegos/Globo/spawn_globo.tscn" id="12_globo"]
+[ext_resource type="ArrayMesh" uid="uid://cjw1hc1yxdak0" path="res://Assets/Objects/green/platform_4x2x1_green.obj" id="13_gvt4m"]
+[ext_resource type="ArrayMesh" uid="uid://dmk86cm6i2v87" path="res://Assets/Objects/green/platform_2x2x1_green.obj" id="14_2duuj"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_876cg"]
+font = ExtResource("1_pv86v")
+font_size = 80
+font_color = Color(0.115232, 0.199472, 0.27338, 1)
+outline_size = 24
+
+[sub_resource type="LabelSettings" id="LabelSettings_gvt4m"]
+font = ExtResource("1_pv86v")
+font_size = 200
+font_color = Color(1, 0.566667, 0, 1)
+outline_size = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_876cg"]
+bg_color = Color(0.115232, 0.199472, 0.27338, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_imo4s"]
+bg_color = Color(1, 1, 1, 1)
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+expand_margin_left = 8.0
+expand_margin_top = 8.0
+expand_margin_right = 8.0
+expand_margin_bottom = 8.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_vp8kx"]
+line_spacing = 6.0
+font = ExtResource("1_pv86v")
+font_size = 40
+
+[sub_resource type="LabelSettings" id="LabelSettings_imo4s"]
+font = ExtResource("1_pv86v")
+font_size = 60
+font_color = Color(1, 0.566667, 0, 1)
+outline_size = 24
+
+[sub_resource type="LabelSettings" id="LabelSettings_nvdve"]
+font = ExtResource("1_pv86v")
+font_size = 40
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_mrbu5"]
+rayleigh_coefficient = 1.0
+energy_multiplier = 2.0
+
+[sub_resource type="Sky" id="Sky_imo4s"]
+sky_material = SubResource("PhysicalSkyMaterial_mrbu5")
+
+[sub_resource type="Environment" id="Environment_imo4s"]
+background_mode = 2
+background_energy_multiplier = 1.6
+sky = SubResource("Sky_imo4s")
+fog_density = 0.1
+volumetric_fog_density = 0.1836
+volumetric_fog_albedo = Color(0.476341, 0.518161, 0.606403, 1)
+volumetric_fog_length = 45.0
+volumetric_fog_detail_spread = 5.65685
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_qj13h"]
+points = PackedVector3Array(-0.476963, 0.0385269, -0.461563, 0.497818, 0.951047, 0.451135, 0.451171, 0.99766, 0.451169, -0.451119, 0.0489455, 0.497826, 0.497818, 0.0489532, -0.451135, -0.451154, 0.997669, -0.451177, 0.451136, 0.951046, -0.497817, -0.497802, 0.951055, 0.451143, 0.451171, 0.00233968, 0.451169, 0.451136, 0.951046, 0.497817, -0.451119, 0.0489455, -0.497826, -0.451154, 0.00233085, -0.451177, -0.497802, 0.0489452, 0.451143, -0.497802, 0.951055, -0.451143, -0.451119, 0.951054, 0.497826, 0.497818, 0.951047, -0.451135, 0.451136, 0.0489535, -0.497817, -0.451119, 0.951054, -0.497826, 0.497818, 0.0489532, 0.451135, 0.451136, 0.0489535, 0.497817, -0.451154, 0.997669, 0.451177, -0.451154, 0.00233085, 0.451177, 0.451171, 0.99766, -0.451169, 0.451171, 0.00233968, -0.451169, -0.497802, 0.0489452, -0.451143)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ys1l6"]
+points = PackedVector3Array(-0.476963, 0.0385269, -0.461563, 0.497818, 0.951047, 0.451135, 0.451171, 0.99766, 0.451169, -0.451119, 0.0489455, 0.497826, 0.497818, 0.0489532, -0.451135, -0.451154, 0.997669, -0.451177, 0.451136, 0.951046, -0.497817, -0.497802, 0.951055, 0.451143, 0.451171, 0.00233968, 0.451169, 0.451136, 0.951046, 0.497817, -0.451119, 0.0489455, -0.497826, -0.451154, 0.00233085, -0.451177, -0.497802, 0.0489452, 0.451143, -0.497802, 0.951055, -0.451143, -0.451119, 0.951054, 0.497826, 0.497818, 0.951047, -0.451135, 0.451136, 0.0489535, -0.497817, -0.451119, 0.951054, -0.497826, 0.497818, 0.0489532, 0.451135, 0.451136, 0.0489535, 0.497817, -0.451154, 0.997669, 0.451177, -0.451154, 0.00233085, 0.451177, 0.451171, 0.99766, -0.451169, 0.451171, 0.00233968, -0.451169, -0.497802, 0.0489452, -0.451143)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_117xa"]
+points = PackedVector3Array(-0.476963, 0.0385269, -0.461563, 0.497818, 0.951047, 0.451135, 0.451171, 0.99766, 0.451169, -0.451119, 0.0489455, 0.497826, 0.497818, 0.0489532, -0.451135, -0.451154, 0.997669, -0.451177, 0.451136, 0.951046, -0.497817, -0.497802, 0.951055, 0.451143, 0.451171, 0.00233968, 0.451169, 0.451136, 0.951046, 0.497817, -0.451119, 0.0489455, -0.497826, -0.451154, 0.00233085, -0.451177, -0.497802, 0.0489452, 0.451143, -0.497802, 0.951055, -0.451143, -0.451119, 0.951054, 0.497826, 0.497818, 0.951047, -0.451135, 0.451136, 0.0489535, -0.497817, -0.451119, 0.951054, -0.497826, 0.497818, 0.0489532, 0.451135, 0.451136, 0.0489535, 0.497817, -0.451154, 0.997669, 0.451177, -0.451154, 0.00233085, 0.451177, 0.451171, 0.99766, -0.451169, 0.451171, 0.00233968, -0.451169, -0.497802, 0.0489452, -0.451143)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_raj47"]
+points = PackedVector3Array(-0.476963, 0.0385269, -0.461563, 0.497818, 0.951047, 0.451135, 0.451171, 0.99766, 0.451169, -0.451119, 0.0489455, 0.497826, 0.497818, 0.0489532, -0.451135, -0.451154, 0.997669, -0.451177, 0.451136, 0.951046, -0.497817, -0.497802, 0.951055, 0.451143, 0.451171, 0.00233968, 0.451169, 0.451136, 0.951046, 0.497817, -0.451119, 0.0489455, -0.497826, -0.451154, 0.00233085, -0.451177, -0.497802, 0.0489452, 0.451143, -0.497802, 0.951055, -0.451143, -0.451119, 0.951054, 0.497826, 0.497818, 0.951047, -0.451135, 0.451136, 0.0489535, -0.497817, -0.451119, 0.951054, -0.497826, 0.497818, 0.0489532, 0.451135, 0.451136, 0.0489535, 0.497817, -0.451154, 0.997669, 0.451177, -0.451154, 0.00233085, 0.451177, 0.451171, 0.99766, -0.451169, 0.451171, 0.00233968, -0.451169, -0.497802, 0.0489452, -0.451143)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ey1c6"]
+points = PackedVector3Array(-0.476963, 0.0385269, -0.461563, 0.497818, 0.951047, 0.451135, 0.451171, 0.99766, 0.451169, -0.451119, 0.0489455, 0.497826, 0.497818, 0.0489532, -0.451135, -0.451154, 0.997669, -0.451177, 0.451136, 0.951046, -0.497817, -0.497802, 0.951055, 0.451143, 0.451171, 0.00233968, 0.451169, 0.451136, 0.951046, 0.497817, -0.451119, 0.0489455, -0.497826, -0.451154, 0.00233085, -0.451177, -0.497802, 0.0489452, 0.451143, -0.497802, 0.951055, -0.451143, -0.451119, 0.951054, 0.497826, 0.497818, 0.951047, -0.451135, 0.451136, 0.0489535, -0.497817, -0.451119, 0.951054, -0.497826, 0.497818, 0.0489532, 0.451135, 0.451136, 0.0489535, 0.497817, -0.451154, 0.997669, 0.451177, -0.451154, 0.00233085, 0.451177, 0.451171, 0.99766, -0.451169, 0.451171, 0.00233968, -0.451169, -0.497802, 0.0489452, -0.451143)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_2hyfs"]
+points = PackedVector3Array(-0.476963, 0.0385269, -0.461563, 0.497818, 0.951047, 0.451135, 0.451171, 0.99766, 0.451169, -0.451119, 0.0489455, 0.497826, 0.497818, 0.0489532, -0.451135, -0.451154, 0.997669, -0.451177, 0.451136, 0.951046, -0.497817, -0.497802, 0.951055, 0.451143, 0.451171, 0.00233968, 0.451169, 0.451136, 0.951046, 0.497817, -0.451119, 0.0489455, -0.497826, -0.451154, 0.00233085, -0.451177, -0.497802, 0.0489452, 0.451143, -0.497802, 0.951055, -0.451143, -0.451119, 0.951054, 0.497826, 0.497818, 0.951047, -0.451135, 0.451136, 0.0489535, -0.497817, -0.451119, 0.951054, -0.497826, 0.497818, 0.0489532, 0.451135, 0.451136, 0.0489535, 0.497817, -0.451154, 0.997669, 0.451177, -0.451154, 0.00233085, 0.451177, 0.451171, 0.99766, -0.451169, 0.451171, 0.00233968, -0.451169, -0.497802, 0.0489452, -0.451143)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_2b6pe"]
+points = PackedVector3Array(-0.476963, 0.0385269, -0.461563, 0.497818, 0.951047, 0.451135, 0.451171, 0.99766, 0.451169, -0.451119, 0.0489455, 0.497826, 0.497818, 0.0489532, -0.451135, -0.451154, 0.997669, -0.451177, 0.451136, 0.951046, -0.497817, -0.497802, 0.951055, 0.451143, 0.451171, 0.00233968, 0.451169, 0.451136, 0.951046, 0.497817, -0.451119, 0.0489455, -0.497826, -0.451154, 0.00233085, -0.451177, -0.497802, 0.0489452, 0.451143, -0.497802, 0.951055, -0.451143, -0.451119, 0.951054, 0.497826, 0.497818, 0.951047, -0.451135, 0.451136, 0.0489535, -0.497817, -0.451119, 0.951054, -0.497826, 0.497818, 0.0489532, 0.451135, 0.451136, 0.0489535, 0.497817, -0.451154, 0.997669, 0.451177, -0.451154, 0.00233085, 0.451177, 0.451171, 0.99766, -0.451169, 0.451171, 0.00233968, -0.451169, -0.497802, 0.0489452, -0.451143)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_3k71u"]
+points = PackedVector3Array(-0.476963, 0.0385269, -0.461563, 0.497818, 0.951047, 0.451135, 0.451171, 0.99766, 0.451169, -0.451119, 0.0489455, 0.497826, 0.497818, 0.0489532, -0.451135, -0.451154, 0.997669, -0.451177, 0.451136, 0.951046, -0.497817, -0.497802, 0.951055, 0.451143, 0.451171, 0.00233968, 0.451169, 0.451136, 0.951046, 0.497817, -0.451119, 0.0489455, -0.497826, -0.451154, 0.00233085, -0.451177, -0.497802, 0.0489452, 0.451143, -0.497802, 0.951055, -0.451143, -0.451119, 0.951054, 0.497826, 0.497818, 0.951047, -0.451135, 0.451136, 0.0489535, -0.497817, -0.451119, 0.951054, -0.497826, 0.497818, 0.0489532, 0.451135, 0.451136, 0.0489535, 0.497817, -0.451154, 0.997669, 0.451177, -0.451154, 0.00233085, 0.451177, 0.451171, 0.99766, -0.451169, 0.451171, 0.00233968, -0.451169, -0.497802, 0.0489452, -0.451143)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ngqcr"]
+points = PackedVector3Array(-0.476963, 0.0385269, -0.461563, 0.497818, 0.951047, 0.451135, 0.451171, 0.99766, 0.451169, -0.451119, 0.0489455, 0.497826, 0.497818, 0.0489532, -0.451135, -0.451154, 0.997669, -0.451177, 0.451136, 0.951046, -0.497817, -0.497802, 0.951055, 0.451143, 0.451171, 0.00233968, 0.451169, 0.451136, 0.951046, 0.497817, -0.451119, 0.0489455, -0.497826, -0.451154, 0.00233085, -0.451177, -0.497802, 0.0489452, 0.451143, -0.497802, 0.951055, -0.451143, -0.451119, 0.951054, 0.497826, 0.497818, 0.951047, -0.451135, 0.451136, 0.0489535, -0.497817, -0.451119, 0.951054, -0.497826, 0.497818, 0.0489532, 0.451135, 0.451136, 0.0489535, 0.497817, -0.451154, 0.997669, 0.451177, -0.451154, 0.00233085, 0.451177, 0.451171, 0.99766, -0.451169, 0.451171, 0.00233968, -0.451169, -0.497802, 0.0489452, -0.451143)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_qioym"]
+points = PackedVector3Array(1.84883, 0.0606119, 1, -1.95647, 0.0493958, -0.99293, -1.94392, 0.963538, -0.986462, 1.95647, 0.0493958, -0.99293, 1.96438, 0.968332, 0.967286, -1.96438, 0.968332, 0.967286, -1.91223, -1.11022e-16, 0.942028, 1.94392, 0.963538, -0.986462, 1.91223, -1.11022e-16, -0.910089, 1.91223, -1.11022e-16, 0.942028, 1.79445, 1, -0.881153, -1.79445, 1, 0.913086, -1.91223, 0, -0.910089, -1.79445, 1, -0.881153, 1.79445, 1, 0.913086, -1.84203, 0.953617, 0.996383, -1.84883, 0.0606119, 1, 1.84203, 0.953617, 0.996383, 1.82739, 0.00684131, -0.956841, -1.82739, 0.00684131, -0.956841)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_41tm8"]
+points = PackedVector3Array(1.84883, 0.0606119, 1, -1.95647, 0.0493958, -0.99293, -1.94392, 0.963538, -0.986462, 1.95647, 0.0493958, -0.99293, 1.96438, 0.968332, 0.967286, -1.96438, 0.968332, 0.967286, -1.91223, -1.11022e-16, 0.942028, 1.94392, 0.963538, -0.986462, 1.91223, -1.11022e-16, -0.910089, 1.91223, -1.11022e-16, 0.942028, 1.79445, 1, -0.881153, -1.79445, 1, 0.913086, -1.91223, 0, -0.910089, -1.79445, 1, -0.881153, 1.79445, 1, 0.913086, -1.84203, 0.953617, 0.996383, -1.84883, 0.0606119, 1, 1.84203, 0.953617, 0.996383, 1.82739, 0.00684131, -0.956841, -1.82739, 0.00684131, -0.956841)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_cmhtr"]
+points = PackedVector3Array(0.956865, 0.986269, 0.956865, -0.950917, 0.0325834, -0.981666, -0.950969, 0.00193861, -0.950969, -0.987793, 0.955355, 0.956852, 0.950969, 0.00193861, 0.950969, 0.956852, 0.955355, -0.987793, -0.956865, 0.986269, -0.956865, 0.950969, 0.00193861, -0.950969, -0.950917, 0.0325834, 0.981666, 0.894509, 1, -0.894509, -0.894509, 1, 0.894509, 0.987793, 0.955355, -0.956852, 0.956852, 0.955355, 0.987793, -0.950969, 0.00193861, 0.950969, -0.981666, 0.0325834, -0.950917, 0.981666, 0.0325834, 0.950917, -0.956852, 0.955355, 0.987793, 0.987793, 0.955355, 0.956852, -0.987793, 0.955355, -0.956852, -0.956852, 0.955355, -0.987793, 0.981666, 0.0325834, -0.950917, 0.950917, 0.0325834, 0.981666, 0.950917, 0.0325834, -0.981666, -0.981666, 0.0325834, 0.950917, -0.894509, 1, -0.894509, 0.894509, 1, 0.894509, -0.956865, 0.986269, 0.956865, 0.956865, 0.986269, -0.956865)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_cltrb"]
+points = PackedVector3Array(0.956865, 0.986269, 0.956865, -0.950917, 0.0325834, -0.981666, -0.950969, 0.00193861, -0.950969, -0.987793, 0.955355, 0.956852, 0.950969, 0.00193861, 0.950969, 0.956852, 0.955355, -0.987793, -0.956865, 0.986269, -0.956865, 0.950969, 0.00193861, -0.950969, -0.950917, 0.0325834, 0.981666, 0.894509, 1, -0.894509, -0.894509, 1, 0.894509, 0.987793, 0.955355, -0.956852, 0.956852, 0.955355, 0.987793, -0.950969, 0.00193861, 0.950969, -0.981666, 0.0325834, -0.950917, 0.981666, 0.0325834, 0.950917, -0.956852, 0.955355, 0.987793, 0.987793, 0.955355, 0.956852, -0.987793, 0.955355, -0.956852, -0.956852, 0.955355, -0.987793, 0.981666, 0.0325834, -0.950917, 0.950917, 0.0325834, 0.981666, 0.950917, 0.0325834, -0.981666, -0.981666, 0.0325834, 0.950917, -0.894509, 1, -0.894509, 0.894509, 1, 0.894509, -0.956865, 0.986269, 0.956865, 0.956865, 0.986269, -0.956865)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_nl7lk"]
+points = PackedVector3Array(0.956865, 0.986269, 0.956865, -0.950917, 0.0325834, -0.981666, -0.950969, 0.00193861, -0.950969, -0.987793, 0.955355, 0.956852, 0.950969, 0.00193861, 0.950969, 0.956852, 0.955355, -0.987793, -0.956865, 0.986269, -0.956865, 0.950969, 0.00193861, -0.950969, -0.950917, 0.0325834, 0.981666, 0.894509, 1, -0.894509, -0.894509, 1, 0.894509, 0.987793, 0.955355, -0.956852, 0.956852, 0.955355, 0.987793, -0.950969, 0.00193861, 0.950969, -0.981666, 0.0325834, -0.950917, 0.981666, 0.0325834, 0.950917, -0.956852, 0.955355, 0.987793, 0.987793, 0.955355, 0.956852, -0.987793, 0.955355, -0.956852, -0.956852, 0.955355, -0.987793, 0.981666, 0.0325834, -0.950917, 0.950917, 0.0325834, 0.981666, 0.950917, 0.0325834, -0.981666, -0.981666, 0.0325834, 0.950917, -0.894509, 1, -0.894509, 0.894509, 1, 0.894509, -0.956865, 0.986269, 0.956865, 0.956865, 0.986269, -0.956865)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_imo4s"]
+size = Vector2(2000, 2000)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7ojnp"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.6
+
+[sub_resource type="SphereMesh" id="SphereMesh_imo4s"]
+lightmap_size_hint = Vector2i(3143, 1572)
+flip_faces = true
+radius = 100.0
+height = 100.0
+is_hemisphere = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_876cg"]
+emission_enabled = true
+emission = Color(0.115232, 0.199472, 0.27338, 1)
+emission_energy_multiplier = 0.6
+
+[node name="Globo" type="Node3D" node_paths=PackedStringArray("spawn_center", "spawn_elements_center", "label_cuenta_atras", "panel_tutorial", "label_tutorial", "label_timer", "panel_resultados", "label_resultados")]
+script = ExtResource("1_vtc82")
+spawn_globo_escena = ExtResource("12_globo")
+spawn_center = NodePath("PlayerSpawn")
+spawn_elements_center = NodePath("SpawnPoints")
+label_cuenta_atras = NodePath("CanvasLayer/Timer/CountDown")
+jugador_escena = ExtResource("2_1lv4u")
+tiempo_maximo = 45.0
+panel_tutorial = NodePath("CanvasLayer/Tutorial")
+label_tutorial = NodePath("CanvasLayer/Tutorial/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/Label")
+label_timer = NodePath("CanvasLayer/Timer/Timer")
+panel_resultados = NodePath("CanvasLayer/Resultados")
+label_resultados = NodePath("CanvasLayer/Resultados/Label")
+altura_camara_resultados = 5.0
+distancia_jugadores_camara = 4.5
+offset_z_jugadores = -1.25
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Timer" type="MarginContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="Timer" type="Label" parent="CanvasLayer/Timer"]
+layout_mode = 2
+size_flags_vertical = 1
+text = "23"
+label_settings = SubResource("LabelSettings_876cg")
+horizontal_alignment = 1
+
+[node name="CountDown" type="Label" parent="CanvasLayer/Timer"]
+layout_mode = 2
+text = "3"
+label_settings = SubResource("LabelSettings_gvt4m")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Tutorial" type="Panel" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_876cg")
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/Tutorial"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 120
+theme_override_constants/margin_top = 220
+theme_override_constants/margin_right = 120
+theme_override_constants/margin_bottom = 220
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Tutorial/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 120
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Tutorial/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 270
+alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/Tutorial/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 80
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="CanvasLayer/Tutorial/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 40
+
+[node name="Panel" type="Panel" parent="CanvasLayer/Tutorial/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_imo4s")
+
+[node name="VideoStreamPlayer" type="VideoStreamPlayer" parent="CanvasLayer/Tutorial/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+audio_track = 1
+stream = ExtResource("5_imo4s")
+autoplay = true
+expand = true
+loop = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/Tutorial/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2"]
+layout_mode = 2
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/Tutorial/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_vp8kx")
+expand_mode = 3
+
+[node name="Label3" type="Label" parent="CanvasLayer/Tutorial/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer"]
+custom_minimum_size = Vector2(1, 60)
+layout_mode = 2
+size_flags_vertical = 8
+text = "KEY_OR"
+label_settings = SubResource("LabelSettings_vp8kx")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureRect2" type="TextureRect" parent="CanvasLayer/Tutorial/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("3_h7kb1")
+expand_mode = 3
+
+[node name="Label2" type="Label" parent="CanvasLayer/Tutorial/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer"]
+custom_minimum_size = Vector2(100, 60)
+layout_mode = 2
+size_flags_vertical = 8
+text = "KEY_MINIJUEGO_GLOBO_CONTROLS"
+label_settings = SubResource("LabelSettings_vp8kx")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="CanvasLayer/Tutorial/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer"]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Tutorial/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="Title" type="Label" parent="CanvasLayer/Tutorial/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(700, 0)
+layout_mode = 2
+text = "KEY_MINIJUEGO_GLOBO_NOMBRE"
+label_settings = SubResource("LabelSettings_imo4s")
+
+[node name="Label" type="Label" parent="CanvasLayer/Tutorial/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "KEY_MINIJUEGO_GLOBO_DESC"
+label_settings = SubResource("LabelSettings_vp8kx")
+autowrap_mode = 2
+
+[node name="Resultados" type="Panel" parent="CanvasLayer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="CanvasLayer/Resultados"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "wd awd aw dawd aw"
+label_settings = SubResource("LabelSettings_nvdve")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 5.5, 4.25)
+environment = SubResource("Environment_imo4s")
+fov = 70.0
+size = 20.0
+
+[node name="SpawnPoints" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+
+[node name="PlayerSpawn" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+
+[node name="Mapa" type="Node3D" parent="."]
+
+[node name="Globos" type="Node3D" parent="Mapa"]
+
+[node name="Ball1" type="Node3D" parent="Mapa/Globos"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -4.11323, 1.92827, -2.59053)
+
+[node name="Ball2" type="Node3D" parent="Mapa/Globos"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -1.61323, 1.92827, -2.59053)
+
+[node name="Ball3" type="Node3D" parent="Mapa/Globos"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 1.38677, 1.92827, -2.59053)
+
+[node name="Ball4" type="Node3D" parent="Mapa/Globos"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 4.38677, 1.92827, -2.59053)
+
+[node name="Plataforma" type="Node3D" parent="Mapa"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Entorno" type="Node3D" parent="Mapa"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0, 7.25)
+
+[node name="0" type="Node3D" parent="Mapa/Entorno"]
+metadata/_edit_lock_ = true
+
+[node name="Platform2x2x1Blue" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.5, 0, -1.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue6" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 0, -3.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue5" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0, 6.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue4" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 0, -3.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue3" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 0, -1.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue2" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 0, 2.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0, -1.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue4" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -8.5, 0, -4.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue2" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -12.5, 0, 3.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue8" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -16.5, 0, 5.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue6" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -11.5, 0, 6.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue7" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -9.5, 0, 4.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue10" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -5.5, 0, -5.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue11" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, -6.5, 0, -0.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue9" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -5.5, 0, 2.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue3" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -14.5, 0, -2.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue5" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.5, 0, -5.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0, 1.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue3" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0, 5.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue2" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0, -4.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 0, 0.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue2" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -14.5, 0, 4.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue3" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -4.5, 0, -1.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue7" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, -1.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue8" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -3.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue9" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 6.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue10" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -3.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue11" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -1.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue12" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 2.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue12" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -1.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue13" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 5.5, 0, -4.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue14" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 1.5, 0, 3.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue15" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -2.5, 0, 5.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue16" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 2.5, 0, 6.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue17" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 4.5, 0, 4.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue18" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 8.5, 0, -5.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue19" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 7.5, 0, -0.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue20" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 8.5, 0, 2.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue21" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.5, 0, -2.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue22" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -5.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue4" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 1.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue5" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, 5.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue6" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -4.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue4" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue5" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.5, 0, 4.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue6" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 9.5, 0, -1.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue13" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.5, 0, -1.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue14" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 0, -3.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue15" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0, 6.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue16" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, -3.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue17" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, -1.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue18" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, 2.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue23" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.5, 0, -1.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue24" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 19.5, 0, -4.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue25" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 15.5, 0, 3.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue26" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 11.5, 0, 5.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue27" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 16.5, 0, 6.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue28" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 18.5, 0, 4.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue29" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 22.5, 0, -5.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue30" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 21.5, 0, -0.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue31" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 22.5, 0, 2.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue32" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 13.5, 0, -2.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue33" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.5, 0, -5.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue7" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.5, 0, 1.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue8" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.5, 0, 5.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue9" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 0, -4.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue7" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 0, 0.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue8" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 13.5, 0, 4.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue9" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 23.5, 0, -1.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue19" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.5, 0, -1.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue20" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.5, 0, -3.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue21" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.5, 0, 6.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue22" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5, 0, -3.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue23" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5, 0, -1.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue24" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5, 0, 2.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue34" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.5, 0, -1.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue35" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 33.5, 0, -4.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue36" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 29.5, 0, 3.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue37" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 25.5, 0, 5.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue38" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 30.5, 0, 6.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue39" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 32.5, 0, 4.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue40" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 36.5, 0, -5.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue41" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 35.5, 0, -0.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue42" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 36.5, 0, 2.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue43" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 27.5, 0, -2.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue44" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.5, 0, -5.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue10" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.5, 0, 1.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue11" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36.5, 0, 5.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue12" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.5, 0, -4.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue10" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 0, 0.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue11" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 27.5, 0, 4.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue12" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 37.5, 0, -1.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue25" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.5, 0, -1.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue26" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.5, 0, -21.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue27" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47.5, 0, 6.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue28" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39.5, 0, -3.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue29" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39.5, 0, -1.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue30" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39.5, 0, 2.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue45" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.5, 0, -1.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue46" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 47.5, 0, -4.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue47" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 43.5, 0, 3.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue48" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 39.5, 0, 5.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue49" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 44.5, 0, 6.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue50" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 46.5, 0, 4.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue52" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 49.5, 0, -0.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue53" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 50.5, 0, 2.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue54" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 41.5, 0, -2.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue55" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.5, 0, -5.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue13" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.5, 0, 1.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue14" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.5, 0, 5.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue15" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.5, 0, -4.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue13" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.5, 0, 0.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue14" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 41.5, 0, 4.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue31" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.5, 0, 12.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue32" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47.5, 0, 10.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue33" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47.5, 0, 16.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue149" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5, 0, 18.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue39" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.5, 0, 8.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue34" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5, 0, 10.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue35" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5, 0, 12.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue36" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5, 0, 16.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue56" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.5, 0, 12.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue57" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 45.5, 0, 9.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue62" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 48.5, 0, 8.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue63" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 47.5, 0, 13.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue65" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 39.5, 0, 11.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue66" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.5, 0, 8.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue16" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.5, 0, 15.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue18" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42.5, 0, 9.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue16" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39.5, 0, 14.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue18" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 49.5, 0, 12.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue37" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 0, 12.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue38" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.5, 0, 10.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue45" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5, 0, 16.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue150" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 0, 16.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue40" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 0, 10.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue41" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 0, 12.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue42" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 0, 16.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue67" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.5, 0, 12.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue68" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 31.5, 0, 9.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue72" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 30.5, 0, 18.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue104" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 40.5, 0, 18.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue82" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 40.5, 0, 16.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue103" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 34.5, 0, 18.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue73" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 34.5, 0, 8.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue74" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 33.5, 0, 13.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue75" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 34.5, 0, 16.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue76" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 25.5, 0, 11.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue77" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.5, 0, 8.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue19" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.5, 0, 15.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue21" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.5, 0, 9.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue19" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5, 0, 14.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue21" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 35.5, 0, 12.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue43" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 0, 12.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue44" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0, 10.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue46" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, 10.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue47" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, 12.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue48" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, 16.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue78" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 0, 12.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue79" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 17.5, 0, 9.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue80" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 13.5, 0, 17.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue81" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 9.5, 0, 19.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue83" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 16.5, 0, 18.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue84" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 20.5, 0, 8.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue85" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 19.5, 0, 13.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue86" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 20.5, 0, 16.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue87" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 11.5, 0, 11.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue88" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 0, 8.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue22" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 0, 15.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue24" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 0, 9.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue22" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, 14.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue23" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 11.5, 0, 18.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue24" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 21.5, 0, 12.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue49" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 12.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue50" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, 10.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue51" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, 20.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue52" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, 10.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue53" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, 12.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue54" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, 16.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue89" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 12.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue90" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 3.5, 0, 9.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue91" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.5, 0, 17.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue92" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -4.5, 0, 19.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue93" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0.5, 0, 20.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue94" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 2.5, 0, 18.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue95" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 6.5, 0, 8.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue96" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 5.5, 0, 13.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue97" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 6.5, 0, 16.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue98" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -2.5, 0, 11.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue99" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, 8.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue25" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 15.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue26" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, 19.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue27" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 9.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue25" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 14.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue26" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -2.5, 0, 18.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue29" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -22.5, 0, 10.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue27" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 7.5, 0, 12.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue55" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 0, 12.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue56" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0, 10.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue57" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 0, 20.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue78" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 0, 14.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue98" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.5, 0, 8.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue58" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5, 0, 10.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue59" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5, 0, 12.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue60" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 0, 12.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue100" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0, 12.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue101" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -10.5, 0, 9.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue102" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -14.5, 0, 17.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue105" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -11.5, 0, 18.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue156" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -17.5, 0, 16.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue106" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -7.5, 0, 8.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue107" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, -8.5, 0, 13.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue108" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -7.5, 0, 16.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue109" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -16.5, 0, 11.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue110" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.5, 0, 8.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue28" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0, 15.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue39" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.5, 0, 9.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue45" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.5, 0, 15.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue29" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, 19.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue30" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.5, 0, 9.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue28" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 0, 14.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue30" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -6.5, 0, 12.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue61" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -26.5, 0, -1.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue62" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 0, -3.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue63" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.5, 0, 6.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue64" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.5, 0, -3.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue65" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.5, 0, -1.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue66" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.5, 0, 2.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue77" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.5, 0, 4.25)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue111" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.5, 0, -1.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue112" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -22.5, 0, -4.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue113" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -26.5, 0, 3.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue150" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -20.5, 0, 9.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue114" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -30.5, 0, 5.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue115" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -25.5, 0, 6.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue116" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -23.5, 0, 4.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue143" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -25.5, 0, 12.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue117" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -19.5, 0, -5.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue118" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, -20.5, 0, -0.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue119" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -19.5, 0, 2.25)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue120" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -28.5, 0, -2.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue121" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.5, 0, -5.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue31" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.5, 0, 1.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue32" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.5, 0, 5.25)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue33" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.5, 0, -4.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue31" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.5, 0, 0.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue32" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -28.5, 0, 4.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue37" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -32.5, 0, 0.25)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue38" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -34.5, 0, -1.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue33" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -18.5, 0, -1.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue67" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.5, 0, -15.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue68" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.5, 0, -17.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue69" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 0, -7.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue70" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.5, 0, -17.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue71" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.5, 0, -15.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue72" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.5, 0, -11.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue73" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34.5, 0, -9.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue122" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.5, 0, -15.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue123" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -24.5, 0, -18.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue124" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -28.5, 0, -10.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue142" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -34.5, 0, -6.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue125" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -32.5, 0, -8.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue136" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -32.5, 0, -4.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue126" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -27.5, 0, -7.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue127" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -25.5, 0, -9.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue128" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -21.5, 0, -19.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue129" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, -22.5, 0, -14.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue130" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -21.5, 0, -11.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue131" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -30.5, 0, -16.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue132" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.5, 0, -19.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue34" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.5, 0, -12.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue35" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.5, 0, -8.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue36" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27.5, 0, -18.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue34" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.5, 0, -13.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue35" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -30.5, 0, -9.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue36" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -20.5, 0, -15.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue74" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.5, 0, -21.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue76" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.5, 0, -31.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue75" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.5, 0, -21.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue133" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.5, 0, -29.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue134" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -24.5, 0, -32.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue135" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -28.5, 0, -24.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue137" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -27.5, 0, -21.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue138" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -25.5, 0, -23.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue139" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -21.5, 0, -33.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue140" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, -22.5, 0, -28.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue141" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -21.5, 0, -25.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue37" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.5, 0, -26.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue38" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.5, 0, -22.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue39" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -20.5, 0, -29.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue79" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 0, -33.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue80" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0, -35.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue81" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 0, -25.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue82" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5, 0, -35.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue83" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5, 0, -33.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue86" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 0, -35.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue84" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5, 0, -29.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue144" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0, -33.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue145" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.5, 0, -35.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue146" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -14.5, 0, -28.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue147" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -18.5, 0, -26.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue148" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -13.5, 0, -25.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue149" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -11.5, 0, -27.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue151" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, -8.5, 0, -32.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue152" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -7.5, 0, -29.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue153" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -16.5, 0, -34.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue40" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0, -30.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue41" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -26.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue40" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 0, -31.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue41" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -16.5, 0, -27.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue42" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -6.5, 0, -33.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue112" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 0, -19.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue113" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0, -21.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue114" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 0, -11.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue115" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5, 0, -21.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue116" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5, 0, -19.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue117" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5, 0, -15.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue206" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0, -19.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue207" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -10.5, 0, -22.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue208" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -14.5, 0, -14.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue209" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -18.5, 0, -12.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue210" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -13.5, 0, -11.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue211" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -11.5, 0, -13.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue212" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -7.5, 0, -23.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue213" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, -8.5, 0, -18.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue214" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -7.5, 0, -15.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue215" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -16.5, 0, -20.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue216" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.5, 0, -23.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue58" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.5, 0, -16.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue59" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -12.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue60" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.5, 0, -22.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue59" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 0, -17.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue60" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -16.5, 0, -13.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue61" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -6.5, 0, -19.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue118" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -19.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue119" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0, -21.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue120" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -11.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue121" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, -21.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue122" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, -19.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue123" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, -15.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue217" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -19.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue218" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 3.5, 0, -22.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue219" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.5, 0, -14.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue220" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -4.5, 0, -12.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue221" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0.5, 0, -11.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue222" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 2.5, 0, -13.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue223" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 6.5, 0, -23.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue224" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 5.5, 0, -18.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue225" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 6.5, 0, -15.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue226" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -2.5, 0, -20.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue227" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -23.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue61" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -16.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue62" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, -12.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue63" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -22.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue62" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -17.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue63" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -2.5, 0, -13.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue64" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 7.5, 0, -19.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue124" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 0, -19.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue125" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0, -21.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue126" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 0, -11.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue145" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 0, -9.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue140" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -9.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue141" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -7.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue142" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 0, -9.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue127" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -21.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue128" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -19.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue129" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -15.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue228" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 0, -19.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue229" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 17.5, 0, -22.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue230" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 13.5, 0, -14.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue231" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 9.5, 0, -12.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue232" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 14.5, 0, -11.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue233" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 16.5, 0, -13.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue234" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 20.5, 0, -23.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue235" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 19.5, 0, -18.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue236" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 20.5, 0, -15.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue237" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 11.5, 0, -20.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue238" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 0, -23.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue64" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 0, -16.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue65" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 0, -12.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue66" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.5, 0, -22.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue65" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, -17.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue66" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 11.5, 0, -13.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue67" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 21.5, 0, -19.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue130" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 0, -15.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue131" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.5, 0, -17.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue132" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.5, 0, -7.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue133" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 0, -17.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue134" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 0, -15.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue135" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 0, -11.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue239" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.5, 0, -15.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue240" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 31.5, 0, -18.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue241" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 27.5, 0, -10.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue242" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 23.5, 0, -8.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue243" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 28.5, 0, -7.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue244" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 30.5, 0, -9.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue245" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 34.5, 0, -19.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue246" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 33.5, 0, -14.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue247" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 34.5, 0, -11.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue248" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 25.5, 0, -16.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue249" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.5, 0, -19.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue67" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.5, 0, -12.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue68" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.5, 0, -8.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue69" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.5, 0, -18.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue68" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5, 0, -13.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue69" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 25.5, 0, -9.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue70" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 35.5, 0, -15.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue85" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, -33.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue87" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -25.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue88" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, -35.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue89" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, -33.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue148" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 0, -35.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue90" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, -29.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue155" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -33.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue157" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.5, 0, -28.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue158" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -4.5, 0, -26.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue159" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0.5, 0, -25.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue160" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 2.5, 0, -27.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue162" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 5.5, 0, -32.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue163" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 6.5, 0, -29.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue164" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -2.5, 0, -34.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue43" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, -30.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue44" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, -26.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue43" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, -31.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue44" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -2.5, 0, -27.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue45" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 7.5, 0, -33.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue91" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 0, -33.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue104" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 0, -35.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue92" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 0, -35.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue93" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 0, -25.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue94" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -35.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue95" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -33.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue96" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -29.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue166" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 0, -33.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue167" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 0, -35.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue168" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 13.5, 0, -28.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue169" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 9.5, 0, -26.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue170" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 14.5, 0, -25.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue171" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 16.5, 0, -27.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue173" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 19.5, 0, -32.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue174" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 20.5, 0, -29.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue175" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 11.5, 0, -34.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue46" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.5, 0, -30.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue47" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 0, -26.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue46" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.5, 0, -31.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue47" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 11.5, 0, -27.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue48" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 21.5, 0, -33.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue97" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 0, -29.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue99" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.5, 0, -21.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue100" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 0, -31.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue101" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 0, -29.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue102" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 0, -25.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue177" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.5, 0, -29.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue179" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 27.5, 0, -24.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue180" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 23.5, 0, -22.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue181" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 28.5, 0, -21.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue182" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 30.5, 0, -23.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue184" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 33.5, 0, -28.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue185" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 34.5, 0, -25.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue186" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 25.5, 0, -30.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue187" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.5, 0, -33.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue49" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.5, 0, -26.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue50" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.5, 0, -22.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue49" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5, 0, -27.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue50" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 25.5, 0, -23.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue103" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.5, 0, -25.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue105" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45.5, 0, -17.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue106" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5, 0, -27.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue146" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.5, 0, -27.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue147" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.5, 0, -31.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue107" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5, 0, -25.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue108" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5, 0, -21.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue190" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 41.5, 0, -20.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue191" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 37.5, 0, -18.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue192" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 42.5, 0, -17.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue193" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 44.5, 0, -19.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue197" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 39.5, 0, -26.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue52" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39.5, 0, -23.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue53" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 39.5, 0, -19.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue109" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45.5, 0, -7.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue111" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.5, 0, -15.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue110" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5, 0, -11.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue199" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 41.5, 0, -10.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue200" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 37.5, 0, -8.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue201" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 42.5, 0, -7.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue202" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 44.5, 0, -9.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue204" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 44.5, 0, -15.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue205" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 38.5, 0, -15.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue55" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.5, 0, -12.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue136" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 0, -7.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue143" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5, 0, -9.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue144" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.5, 0, -7.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue250" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -18.5, 0, -8.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue251" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -13.5, 0, -7.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue252" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -11.5, 0, -9.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue260" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -1.5, 0, -9.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue261" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 15.5, 0, -8.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue138" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, 0, -7.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue256" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 10.5, 0, -7.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue257" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 12.5, 0, -9.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue139" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.5, 0, -7.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue258" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 18.5, 0, -7.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue259" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 20.5, 0, -9.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue70" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, -8.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform2x2x1Blue137" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -7.75)
+mesh = ExtResource("8_gfxi6")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue253" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -4.5, 0, -8.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue254" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0.5, 0, -7.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x2x1Blue255" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 2.5, 0, -9.75)
+mesh = ExtResource("9_7ojnp")
+skeleton = NodePath("../..")
+
+[node name="Platform4x4x1Blue71" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 0, -8.75)
+mesh = ExtResource("10_cgjas")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue55" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39.5, 0, -13.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform6x2x1Blue56" type="MeshInstance3D" parent="Mapa/Entorno/0"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 39.5, 0, -9.75)
+mesh = ExtResource("11_imo4s")
+skeleton = NodePath("../..")
+
+[node name="Platform1x1x1Green45" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 1, -5.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green45"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green45/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_qj13h")
+
+[node name="Platform1x1x1Green46" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 1, -6.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green46"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green46/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_ys1l6")
+
+[node name="Platform1x1x1Green52" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 1, -7.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green52"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green52/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_ys1l6")
+
+[node name="Platform1x1x1Green57" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.75, 1, -7.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green57"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green57/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_ys1l6")
+
+[node name="Platform1x1x1Green63" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.75, 1, -7.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green63"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green63/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_ys1l6")
+
+[node name="Platform1x1x1Green47" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 1, -9.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green47"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green47/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_117xa")
+
+[node name="Platform1x1x1Green48" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.75, 1, -9.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green48"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green48/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_raj47")
+
+[node name="Platform1x1x1Green49" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.75, 1, -7.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green49"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green49/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_ey1c6")
+
+[node name="Platform1x1x1Green50" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 1, -5.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green50"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green50/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_2hyfs")
+
+[node name="Platform1x1x1Green60" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.75, 1, -8.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green60"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green60/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_2hyfs")
+
+[node name="Platform1x1x1Green51" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 1, -6.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green51"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green51/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_2b6pe")
+
+[node name="Platform1x1x1Green53" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.75, 1, -4.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green53"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green53/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green54" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.75, 1, -3.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green54"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green54/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green58" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 1, -3.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green58"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green58/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green59" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.75, 1, -9.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green59"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green59/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green64" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.75, 1, -10.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green64"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green64/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green65" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.75, 1, -11.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green65"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green65/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green66" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 1, -11.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green66"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green66/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green67" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.75, 1, -11.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green67"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green67/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green68" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.75, 1, -10.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green68"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green68/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green69" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.75, 1, -11.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green69"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green69/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green70" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75, 1, -11.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green70"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green70/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green71" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.75, 1, -11.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green71"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green71/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green72" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.75, 1, -9.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green72"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green72/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green73" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.75, 1, -10.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green73"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green73/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green74" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.75, 1, -7.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green74"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green74/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green75" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.75, 1, -8.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green75"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green75/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green61" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 1, -10.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green61"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green61/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green62" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.75, 1, -9.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green62"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green62/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_3k71u")
+
+[node name="Platform1x1x1Green55" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.75, 1, -4.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green55"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green55/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_ngqcr")
+
+[node name="Platform1x1x1Green56" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.75, 1, -4.75)
+mesh = ExtResource("12_876cg")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform1x1x1Green56"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform1x1x1Green56/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_ngqcr")
+
+[node name="Platform4x2x1Green16" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 8.25, 1, -5.25)
+mesh = ExtResource("13_gvt4m")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform4x2x1Green16"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform4x2x1Green16/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_qioym")
+
+[node name="Platform4x2x1Green19" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 11.25, 1, -7.25)
+mesh = ExtResource("13_gvt4m")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform4x2x1Green19"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform4x2x1Green19/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_qioym")
+
+[node name="Platform4x2x1Green20" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 11.25, 1, -4.25)
+mesh = ExtResource("13_gvt4m")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform4x2x1Green20"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform4x2x1Green20/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_qioym")
+
+[node name="Platform4x2x1Green18" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 5.25, 1, -6.25)
+mesh = ExtResource("13_gvt4m")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform4x2x1Green18"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform4x2x1Green18/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_41tm8")
+
+[node name="Platform2x2x1Green13" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.25, 1, -8.25)
+mesh = ExtResource("14_2duuj")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform2x2x1Green13"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform2x2x1Green13/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmhtr")
+
+[node name="Platform2x2x1Green14" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25, 1, -9.25)
+mesh = ExtResource("14_2duuj")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform2x2x1Green14"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform2x2x1Green14/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cmhtr")
+
+[node name="Platform2x2x1Green15" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.25, 1, -8.25)
+mesh = ExtResource("14_2duuj")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform2x2x1Green15"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform2x2x1Green15/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cltrb")
+
+[node name="Platform2x2x1Green17" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.25, 1, -4.25)
+mesh = ExtResource("14_2duuj")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform2x2x1Green17"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform2x2x1Green17/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cltrb")
+
+[node name="Platform2x2x1Green20" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.25, 1, -6.25)
+mesh = ExtResource("14_2duuj")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform2x2x1Green20"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform2x2x1Green20/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cltrb")
+
+[node name="Platform2x2x1Green19" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25, 1, -6.25)
+mesh = ExtResource("14_2duuj")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform2x2x1Green19"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform2x2x1Green19/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cltrb")
+
+[node name="Platform2x2x1Green18" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.25, 1, -8.25)
+mesh = ExtResource("14_2duuj")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform2x2x1Green18"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform2x2x1Green18/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_cltrb")
+
+[node name="Platform2x2x1Green16" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.25, 1, -10.25)
+mesh = ExtResource("14_2duuj")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform2x2x1Green16"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform2x2x1Green16/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_nl7lk")
+
+[node name="Platform2x2x1Green21" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.25, 1, -11.25)
+mesh = ExtResource("14_2duuj")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform2x2x1Green21"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform2x2x1Green21/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_nl7lk")
+
+[node name="Platform2x2x1Green22" type="MeshInstance3D" parent="Mapa/Entorno"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.25, 1, -10.25)
+mesh = ExtResource("14_2duuj")
+skeleton = NodePath("../..")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Mapa/Entorno/Platform2x2x1Green22"]
+collision_layer = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Mapa/Entorno/Platform2x2x1Green22/StaticBody3D"]
+shape = SubResource("ConvexPolygonShape3D_nl7lk")
+
+[node name="Base" type="MeshInstance3D" parent="Mapa"]
+mesh = SubResource("PlaneMesh_imo4s")
+surface_material_override/0 = SubResource("StandardMaterial3D_7ojnp")
+
+[node name="Base2" type="MeshInstance3D" parent="Mapa"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.717255, -1.61938, -0.279973)
+mesh = SubResource("SphereMesh_imo4s")
+skeleton = NodePath("../Base")
+surface_material_override/0 = SubResource("StandardMaterial3D_876cg")
+
+[node name="Luz" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.728849, 0.578404, 0.366373, -0.0822096, -0.457303, 0.885503, 0.679722, -0.675517, -0.285754, 15, 32.9384, -19)
+light_color = Color(1, 0.97956, 0.952488, 1)
+shadow_enabled = true

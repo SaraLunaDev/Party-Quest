@@ -1,4 +1,4 @@
-[gd_scene load_steps=425 format=3 uid="uid://8y4jw3ouwkml"]
+[gd_scene load_steps=427 format=3 uid="uid://8y4jw3ouwkml"]
 
 [ext_resource type="ArrayMesh" uid="uid://dmk86cm6i2v87" path="res://Assets/Objects/green/platform_2x2x1_green.obj" id="1_febbs"]
 [ext_resource type="ArrayMesh" uid="uid://qgaek82i0riv" path="res://Assets/Objects/green/platform_1x1x1_green.obj" id="2_3sxyr"]
@@ -1201,11 +1201,26 @@ points = PackedVector3Array(0.82834, 1.07708, 0.92042, -0.737254, 1.01629, -0.98
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_8lick"]
 points = PackedVector3Array(-0.494504, 0.0145037, -0.479035, 0.489155, 0.490845, 0.473851, 0.462184, 0.5, 0.462201, -0.479, 0.0145106, 0.494511, 0.477289, 0, -0.477306, -0.473819, 0.490839, -0.489161, 0.473822, 0.490839, -0.489161, -0.489154, 0.490846, 0.473853, 0.477289, 0, 0.477306, -0.477285, 0, 0.477306, 0.494505, 0.0145047, -0.479033, -0.462181, 0.5, -0.462201, 0.479003, 0.0145106, -0.494511, 0.473822, 0.490839, 0.489161, -0.477285, 0, -0.477306, 0.494505, 0.0145047, 0.479033, 0.462184, 0.5, -0.462201, -0.462181, 0.5, 0.462201, -0.494504, 0.0145037, 0.479035, 0.479003, 0.0145106, 0.494511, -0.479, 0.0145106, -0.494511, -0.489154, 0.490846, -0.473853, 0.489155, 0.490845, -0.473851, -0.473819, 0.490839, 0.489161)
 
+[sub_resource type="SphereMesh" id="SphereMesh_ysbb7"]
+lightmap_size_hint = Vector2i(3143, 1572)
+flip_faces = true
+radius = 100.0
+height = 100.0
+is_hemisphere = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kljtq"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.6
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_xmry2"]
 size = Vector2(2000, 2000)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xmry2"]
 albedo_color = Color(0.779291, 0.779291, 0.779291, 1)
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.6
 
 [node name="Mapa_01" type="Node3D"]
 
@@ -7979,6 +7994,12 @@ skeleton = NodePath("../..")
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 39.5, 0, -9.75)
 mesh = ExtResource("5_jihro")
 skeleton = NodePath("../..")
+
+[node name="Base2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.53587, -1.61938, -9.35928)
+mesh = SubResource("SphereMesh_ysbb7")
+skeleton = NodePath("../Base")
+surface_material_override/0 = SubResource("StandardMaterial3D_kljtq")
 
 [node name="Base" type="MeshInstance3D" parent="."]
 mesh = SubResource("PlaneMesh_xmry2")

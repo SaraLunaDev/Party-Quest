@@ -11,6 +11,8 @@ const STATE_FOLLOW := 0
 const STATE_OVERVIEW := 1
 const STATE_LOOK_AT := 2
 const STATE_LOOK_AT_FROM_SKY := 3
+const STATE_GROUP := 4
+const STATE_MAPVIEW := 5
 
 @export_group("General")
 @export var smooth: float = 6.0
@@ -35,6 +37,8 @@ const STATE_LOOK_AT_FROM_SKY := 3
 @export var look_at_rotation_deg_offset: Vector3 = Vector3.ZERO
 @export var look_at_from_sky_position_offset: Vector3 = Vector3(0, 8, 0)
 @export var look_at_from_sky_rotation_deg_offset: Vector3 = Vector3.ZERO
+@export var group_position_offset: Vector3 = Vector3(0, 5, 6)
+@export var group_rotation_deg_offset: Vector3 = Vector3.ZERO
 
 var state: int = STATE_OVERVIEW
 var target_player: Node3D = null
@@ -46,6 +50,10 @@ var _has_look_at_override: bool = false
 var _look_at_tf: Transform3D = Transform3D()
 var _has_look_at_from_sky_override: bool = false
 var _look_at_from_sky_tf: Transform3D = Transform3D()
+var _has_group_override: bool = false
+var _group_tf: Transform3D = Transform3D()
+var _has_mapview_override: bool = false
+var _mapview_tf: Transform3D = Transform3D()
 
 var _current_overview_point_index: int = 0
 var _overview_timer: float = 0.0
@@ -89,6 +97,9 @@ func set_state(new_state: int, look_position: Vector3 = Vector3.ZERO, look_rotat
 	_transitioning_to_state = new_state
 	_state_reached_emitted = false
 	_has_look_at_override = false
+	_has_look_at_from_sky_override = false
+	_has_group_override = false
+	_has_mapview_override = false
 
 	if new_state == STATE_LOOK_AT:
 		if look_position == Vector3.ZERO:
@@ -130,6 +141,29 @@ func set_state(new_state: int, look_position: Vector3 = Vector3.ZERO, look_rotat
 			_look_at_from_sky_tf.origin = cam_origin
 			_has_look_at_from_sky_override = true
 
+	if new_state == STATE_GROUP:
+		if look_position == Vector3.ZERO:
+			push_warning("😢 No hay posicion objetivo para STATE_GROUP.")
+		else:
+			var target_pos: Vector3 = look_position
+			var cam_origin: Vector3 = target_pos + group_position_offset
+			var tf := Transform3D()
+			tf.origin = cam_origin
+			tf = tf.looking_at(target_pos, Vector3.UP)
+			var euler_rad = tf.basis.get_euler()
+			var euler_deg = Vector3(rad_to_deg(euler_rad.x), rad_to_deg(euler_rad.y), rad_to_deg(euler_rad.z))
+			euler_deg += group_rotation_deg_offset
+			var rot = _basis_from_euler_deg(euler_deg)
+			_group_tf = Transform3D()
+			_group_tf.basis = rot
+			_group_tf.origin = cam_origin
+			_has_group_override = true
+	if new_state == STATE_MAPVIEW:
+		_mapview_tf = Transform3D()
+		_mapview_tf.origin = Vector3(8.0, 36.0, -8.0)
+		_mapview_tf.basis = _basis_from_euler_deg(Vector3(-90.0, 0.0, 0.0))
+		_has_mapview_override = true
+
 	if camera == null:
 		_state_reached_emitted = true
 		_transitioning_to_state = -1
@@ -148,6 +182,18 @@ func set_state(new_state: int, look_position: Vector3 = Vector3.ZERO, look_rotat
 			return
 
 # Actualiza posicion y rotacion de la camara segun el estado actual
+func shift_group_camera_y(amount: float, immediate: bool = false) -> void:
+	if camera == null:
+		return
+
+	if not _has_group_override:
+		_group_tf = camera.global_transform
+		_has_group_override = true
+
+	_group_tf.origin.y += amount
+	if immediate:
+		camera.global_transform = _group_tf
+
 func _update_camera(delta: float, immediate: bool) -> void:
 	var desired_tf: Transform3D = Transform3D()
 	var target_fov = fov
@@ -163,6 +209,10 @@ func _update_camera(delta: float, immediate: bool) -> void:
 		desired_tf = _look_at_tf
 	elif state == STATE_LOOK_AT_FROM_SKY and _has_look_at_from_sky_override:
 		desired_tf = _look_at_from_sky_tf
+	elif state == STATE_GROUP and _has_group_override:
+		desired_tf = _group_tf
+	elif state == STATE_MAPVIEW and _has_mapview_override:
+		desired_tf = _mapview_tf
 	else:
 		if overview_centers.size() > 0 and overview_offsets.size() > 0:
 			var point_count = min(overview_centers.size(), overview_offsets.size())
@@ -223,4 +273,5 @@ func _basis_from_euler_deg(e: Vector3) -> Basis:
 func clear_look_at_override() -> void:
 	_has_look_at_override = false
 	_has_look_at_from_sky_override = false
+	_has_group_override = false
 #endregion
